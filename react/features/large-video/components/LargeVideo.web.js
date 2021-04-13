@@ -188,8 +188,10 @@ class LargeVideo extends Component<Props> {
                 <SharedVideo />
                 {_whiteboardEnabled && <Whiteboard />}
                 <div id = 'etherpad' />
-
-                <Watermarks />
+                {/*
+                    Sally - Remove watermarks
+                    */}
+                {/*<Watermarks />*/}
 
                 <div
                     id = 'dominantSpeaker'

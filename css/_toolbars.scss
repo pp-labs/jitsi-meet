@@ -23,17 +23,17 @@
  * TODO: when the old filmstrip has been removed, remove the "new-" prefix.
  */
 .new-toolbox {
-    bottom: calc((#{$newToolbarSize} * 2) * -1);
+    top: calc((#{$newToolbarSize} * 2) * -1);
     left: 0;
     position: absolute;
     right: 0;
-    transition: bottom .3s ease-in;
+    transition: top .3s ease-in;
     width: 100%;
     pointer-events: none;
     z-index: $toolbarZ + 2;
 
     &.visible {
-        bottom: 0;
+        top: 0;
     }
 
     &.no-buttons {
@@ -42,7 +42,8 @@
 }
 
 .toolbox-content {
-    align-items: center;
+    background-color: $newToolbarBackgroundColor;
+    justify-content: flex-end;
     box-sizing: border-box;
     display: flex;
     margin-bottom: 16px;
@@ -88,7 +89,6 @@
 .toolbox-content-wrapper {
     display: flex;
     flex-direction: column;
-    margin: 0 auto;
     max-width: 100%;
     pointer-events: all;
     border-radius: 6px;
