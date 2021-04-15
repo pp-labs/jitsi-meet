@@ -411,9 +411,7 @@ function _mapStateToProps(state, ownProps) {
     const isScreenShare = videoTrack?.videoType === VIDEO_TYPE.DESKTOP;
     const participantCount = getParticipantCount(state);
     const renderDominantSpeakerIndicator = participant && participant.dominantSpeaker && participantCount > 2;
-    const _isEveryoneModerator = isEveryoneModerator(state);
-    const renderModeratorIndicator = tileView && !_isEveryoneModerator
-        && participant?.role === PARTICIPANT_ROLE.MODERATOR;
+    const renderModeratorIndicator = false;
     const { gifUrl: gifSrc } = getGifForParticipant(state, id);
     const mode = getGifDisplayMode(state);
 

@@ -93,7 +93,7 @@ class StatusIndicators extends Component<Props> {
  * }}
 */
 function _mapStateToProps(state, ownProps) {
-    const { participantID, audio, moderator, screenshare } = ownProps;
+    const { participantID } = ownProps;
 
     // Only the local participant won't have id for the time when the conference is not yet joined.
     const participant = getParticipantByIdOrUndefined(state, participantID);
@@ -110,14 +110,13 @@ function _mapStateToProps(state, ownProps) {
         isScreenSharing = track?.videoType === 'desktop';
         isAudioMuted = isRemoteTrackMuted(tracks, MEDIA_TYPE.AUDIO, participantID);
     }
+    // sally 
 
-    const { disableModeratorIndicator } = state['features/base/config'];
 
     return {
-        _showAudioMutedIndicator: isAudioMuted && audio,
-        _showModeratorIndicator:
-            !disableModeratorIndicator && participant && participant.role === PARTICIPANT_ROLE.MODERATOR && moderator,
-        _showScreenShareIndicator: isScreenSharing && screenshare
+        _showAudioMutedIndicator: isAudioMuted,
+        _showModeratorIndicator: false,
+        _showScreenShareIndicator: isScreenSharing
     };
 }
 

@@ -72,7 +72,7 @@ var interfaceConfig = {
 
     ENABLE_FEEDBACK_ANIMATION: false, // Enables feedback star animation.
 
-    FILM_STRIP_MAX_HEIGHT: 120,
+    FILM_STRIP_MAX_HEIGHT: 100,
 
     GENERATE_ROOMNAMES_ON_WELCOME_PAGE: true,
 
@@ -141,7 +141,7 @@ var interfaceConfig = {
      * @type {boolean}
      */
     RECENT_LIST_ENABLED: false,
-    REMOTE_THUMBNAIL_RATIO: 1, // 1:1
+    REMOTE_THUMBNAIL_RATIO: 16 / 9, // 1:1
 
     SETTINGS_SECTIONS: [ 'devices', 'language', 'moderator', 'profile', 'calendar', 'sounds', 'more' ],
 

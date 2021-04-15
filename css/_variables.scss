@@ -15,9 +15,12 @@ $hangupFontSize: 2em;
  */
 
 // Video layout.
-$thumbnailVideoMargin: 2px;
-$thumbnailsBorder: 2px;
-$thumbnailVideoBorder: 2px;
+$thumbnailToolbarHeight: 22px;
+$thumbnailIndicatorBorder: 2px;
+$thumbnailIndicatorSize: $thumbnailToolbarHeight;
+$thumbnailVideoMargin: 1px;
+$thumbnailsBorder: 1px;
+$thumbnailVideoBorder: 1px;
 $filmstripToggleButtonWidth: 17px;
 
 
@@ -51,6 +54,8 @@ $overflowMenuItemBackground: #36383C;
 /**
  * Video layout
  */
+$videoThumbnailHovered: rgba(22, 94, 204, .4);
+$videoThumbnailSelected: #bd2a2a;
 $participantNameColor: #fff;
 $audioLevelBg: #44A5FF;
 $audioLevelShadow: rgba(9, 36, 77, 0.9);
@@ -91,7 +96,8 @@ $sidebarWidth: 315px;
  /**
  * Misc.
  */
-$borderRadius: 4px;
+$borderRadius: 0px;
+$popoverMenuPadding: 13px;
 $happySoftwareBackground: transparent;
 $desktopAppDragBarHeight: 25px;
 $scrollHeight: 7px;
