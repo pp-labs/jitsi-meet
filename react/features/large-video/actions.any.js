@@ -134,9 +134,15 @@ function _electParticipantInLargeVideo(state) {
     // remote) when the filmstrip on stage is disabled.
     let participant = getPinnedParticipant(state);
 
-    if (participant) {
-        return participant.id;
-    }
+
+    // 1. If a participant is pinned, they will be shown in the LargeVideo
+    // (regardless of whether they are local or remote).
+    // const participants = state['features/base/participants'];
+    // let participant = participants.find(p => p.pinned);
+
+    // if (participant) {
+    //     return participant.id;
+    // }
 
     if (getAutoPinSetting()) {
         // Pick the most recent remote screenshare that was added to the conference.
@@ -158,31 +164,44 @@ function _electParticipantInLargeVideo(state) {
             return screenshareParticipant?.id ?? participant.id;
         }
 
-        return participant.id;
+        // sally
+        // next pick the trainer
+        const participantArray = state['features/base/participants'];
+        participant = participantArray.find(p => p.name === 'trainer');
+
+        if (participant) {
+            return participant.id;
+        }
+
+        // 3. Next, pick the dominant speaker (other than self).
+        participant = participants.find(p => p.dominantSpeaker && !p.local);
+        if (participant) {
+            return participant.id;
+        }
+
+        // In case this is the local participant.
+        participant = undefined;
+
+        // Next, pick the most recent participant with video.
+        const tracks = state['features/base/tracks'];
+        const videoTrack = _electLastVisibleRemoteVideo(tracks);
+
+        if (videoTrack) {
+            return videoTrack.participantId;
+        }
+
+        // Last, select the participant that joined last (other than poltergist or other bot type participants).
+        const participants = [...getRemoteParticipants(state).values()];
+
+        for (let i = participants.length; i > 0 && !participant; i--) {
+            const p = participants[i - 1];
+
+            !p.botType && (participant = p);
+        }
+        if (participant) {
+            return participant.id;
+        }
+
+        return getLocalParticipant(state)?.id;
     }
-
-    // In case this is the local participant.
-    participant = undefined;
-
-    // Next, pick the most recent participant with video.
-    const tracks = state['features/base/tracks'];
-    const videoTrack = _electLastVisibleRemoteVideo(tracks);
-
-    if (videoTrack) {
-        return videoTrack.participantId;
-    }
-
-    // Last, select the participant that joined last (other than poltergist or other bot type participants).
-    const participants = [ ...getRemoteParticipants(state).values() ];
-
-    for (let i = participants.length; i > 0 && !participant; i--) {
-        const p = participants[i - 1];
-
-        !p.botType && (participant = p);
-    }
-    if (participant) {
-        return participant.id;
-    }
-
-    return getLocalParticipant(state)?.id;
 }

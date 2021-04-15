@@ -3,6 +3,7 @@
 import {
     DOMINANT_SPEAKER_CHANGED,
     PARTICIPANT_JOINED,
+    PARTICIPANT_UPDATED,
     PARTICIPANT_LEFT,
     PIN_PARTICIPANT,
     getDominantSpeakerParticipant,
@@ -52,7 +53,14 @@ MiddlewareRegistry.register(store => next => action => {
 
         return result;
     }
-    case PARTICIPANT_JOINED:
+    case PARTICIPANT_JOINED: {
+        store.dispatch(selectParticipantInLargeVideo());
+        break
+    }
+    case PARTICIPANT_UPDATED: {
+        console.log('BANG')
+        store.dispatch(selectParticipantInLargeVideo());
+    }
     case PARTICIPANT_LEFT:
     case PIN_PARTICIPANT:
     case TOGGLE_DOCUMENT_EDITING:
