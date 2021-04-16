@@ -156,12 +156,9 @@ class Filmstrip extends Component <Props> {
 
         // sally - trainer on top in vertical view
         if (!tileViewActive) {
-         console.log('here')
-         console.log(_participants)
-         remoteParticipants = _participants.filter(p => !(p.name === 'Trainer'));
-         console.log(remoteParticipants)
+         remoteParticipants = _participants.filter(p => !p.name.startsWith('Trainer'));
         }
-        const trainer = _participants.find(p => p.name === 'Trainer');
+        const trainer = _participants.find(p => p.name.startsWith('Trainer'));
         switch (_currentLayout) {
         case LAYOUTS.VERTICAL_FILMSTRIP_VIEW:
             // Adding 18px for the 2px margins, 2px borders on the left and right and 5px padding on the left and right.

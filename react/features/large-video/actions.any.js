@@ -175,7 +175,7 @@ function _electParticipantInLargeVideo(state) {
         }
 
         // 3. Next, pick the dominant speaker (other than self).
-        participant = participants.find(p => p.dominantSpeaker && !p.local);
+        participant = participantArray.find(p => p.dominantSpeaker && !p.local);
         if (participant) {
             return participant.id;
         }
