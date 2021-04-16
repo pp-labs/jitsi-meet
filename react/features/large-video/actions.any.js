@@ -167,7 +167,8 @@ function _electParticipantInLargeVideo(state) {
         // sally
         // next pick the trainer
         const participantArray = state['features/base/participants'];
-        participant = participantArray.find(p => p.name === 'trainer');
+
+        participant = participantArray.find(p => p.name === 'Trainer');
 
         if (participant) {
             return participant.id;

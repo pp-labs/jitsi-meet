@@ -22,7 +22,7 @@ import interfaceConfigOverride from '../../../../interface_config'
 var configOverride = {
     startWithAudioMuted: true,
     startWithVideoMuted: true,
-    disableTileView: true,
+    disableTileView: false,
     toolbarButtons: [
        'microphone', 'camera', 'desktop', 'profile', 'settings',
         'filmstrip'

@@ -158,10 +158,10 @@ class Filmstrip extends Component <Props> {
         if (!tileViewActive) {
          console.log('here')
          console.log(_participants)
-         remoteParticipants = _participants.filter(p => !(p.name === 'trainer'));
+         remoteParticipants = _participants.filter(p => !(p.name === 'Trainer'));
          console.log(remoteParticipants)
         }
-        const trainer = _participants.find(p => p.name === 'trainer');
+        const trainer = _participants.find(p => p.name === 'Trainer');
         switch (_currentLayout) {
         case LAYOUTS.VERTICAL_FILMSTRIP_VIEW:
             // Adding 18px for the 2px margins, 2px borders on the left and right and 5px padding on the left and right.
