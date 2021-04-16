@@ -44,6 +44,9 @@
 .videocontainer {
     position: relative;
     text-align: center;
+    .displayNameContainer {
+        visibility: visible;
+    }
 
     &__background {
         @include topLeft();
@@ -631,6 +634,32 @@
         visibility: hidden;
     }
 
+    .displayNameContainer {
+        visibility: visible;
+    }
+
+    .videocontainer__hoverOverlay {
+        visibility: hidden;
+    }
+
+    video {
+        visibility: visible;
+    }
+}
+
+.display-name-on-video {
+    .avatar-container {
+        visibility: hidden;
+    }
+
+    .displayNameContainer {
+        visibility: visible;
+    }
+
+    .videocontainer__hoverOverlay {
+        visibility: visible;
+    }
+
     video {
         visibility: visible;
     }
@@ -639,6 +668,14 @@
 .display-avatar-only {
     .avatar-container {
         visibility: visible;
+    }
+
+    .displayNameContainer {
+        visibility: visible;
+    }
+
+    .videocontainer__hoverOverlay {
+        visibility: hidden;
     }
 
     video {
