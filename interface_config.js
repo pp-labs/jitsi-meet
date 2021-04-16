@@ -72,7 +72,7 @@ var interfaceConfig = {
 
     ENABLE_FEEDBACK_ANIMATION: false, // Enables feedback star animation.
 
-    FILM_STRIP_MAX_HEIGHT: 150,
+    FILM_STRIP_MAX_HEIGHT: 200,
 
     GENERATE_ROOMNAMES_ON_WELCOME_PAGE: true,
 
