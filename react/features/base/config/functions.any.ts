@@ -22,9 +22,10 @@ import interfaceConfigOverride from '../../../../interface_config'
 var configOverride = {
     startWithAudioMuted: true,
     startWithVideoMuted: true,
+    disableTileView: true,
     toolbarButtons: [
-       'microphone', 'camera', 'desktop', 'profile', 'sharedvideo', 'settings',
-       'videoquality', 'filmstrip','tileview'
+       'microphone', 'camera', 'desktop', 'profile', 'settings',
+        'filmstrip'
     ]
 }
 // XXX The function getRoomName is split out of
