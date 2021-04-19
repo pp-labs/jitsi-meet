@@ -154,28 +154,28 @@ class Filmstrip extends Component <Props> {
         const localParticipant = getLocalParticipant(_participants);
         const tileViewActive = _currentLayout === LAYOUTS.TILE_VIEW;
 
-        // sally - trainer on top in vertical view
+        // sally - no trainer in left side
         if (!tileViewActive) {
-         remoteParticipants = _participants.filter(p => !p.name.startsWith('Trainer'));
+         remoteParticipants = _participants.filter(p => !p.name.startsWith('Trainer') && !p.local);
         }
-        const trainer = _participants.find(p => p.name.startsWith('Trainer'));
+        // const trainer = _participants.find(p => p.name.startsWith('Trainer'));
         switch (_currentLayout) {
         case LAYOUTS.VERTICAL_FILMSTRIP_VIEW:
             // Adding 18px for the 2px margins, 2px borders on the left and right and 5px padding on the left and right.
             // Also adding 7px for the scrollbar.
             filmstripStyle.maxWidth = (interfaceConfig.FILM_STRIP_MAX_HEIGHT || 120) + 25;
             break;
-        case LAYOUTS.TILE_VIEW: {
-            // The size of the side margins for each tile as set in CSS.
-            const { _columns, _rows, _filmstripWidth } = this.props;
+            case LAYOUTS.TILE_VIEW: {
+                // The size of the side margins for each tile as set in CSS.
+                const { _columns, _rows, _filmstripWidth } = this.props;
 
-            if (_rows > _columns) {
-                remoteVideoContainerClassName += ' has-overflow';
+                if (_rows > _columns) {
+                    remoteVideoContainerClassName += ' has-overflow';
+                }
+
+                filmstripRemoteVideosContainerStyle.width = _filmstripWidth;
+                break;
             }
-
-            filmstripRemoteVideosContainerStyle.width = _filmstripWidth;
-            break;
-        }
         }
 
         let remoteVideosWrapperClassName = 'filmstrip__videos';
@@ -204,9 +204,9 @@ class Filmstrip extends Component <Props> {
                          {/*sally- display trainer here when not in tile view */}
                         <div id = 'filmstripLocalVideoThumbnail'>
                             {
-                                !tileViewActive && trainer && <Thumbnail
+                                !tileViewActive && <Thumbnail
                                     key = 'local'
-                                    participantID = { trainer.id } />
+                                    participantID = { localParticipant.id } />
                             }
                         </div>
                     </div>
@@ -230,7 +230,6 @@ class Filmstrip extends Component <Props> {
                                             participantID = { p.id } />
                                     ))
                             }
-                        {/* Sally- display local video here even in filmstip view*/}
                             <div id = 'localVideoTileViewContainer'>
                                 {
                                     tileViewActive && <Thumbnail
