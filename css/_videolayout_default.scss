@@ -294,9 +294,9 @@
 .videocontainer .editdisplayname {
     display: inline-block;
     position: absolute;
-    left: 10%;
+    left: 5%;
     width: 80%;
-    bottom: 0;
+    bottom: -10;
     @include transform(translateY(-40%));
     color: $participantNameColor;
     text-align: left;
