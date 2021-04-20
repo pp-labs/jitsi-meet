@@ -64,7 +64,23 @@
         padding-left: 7px;
     }
 
-    .remote-videos {
+    /**
+     * The size of the thumbnails should be set with javascript, based on
+     * desired column count and window width. The rows are created using flex
+     * and allowing the thumbnails to wrap.
+     */
+
+     //sally tile view display name position
+    #alwaysOnTop .displayname,
+    .videocontainer .displayname,
+    .videocontainer .editdisplayname {
+        left: 10%;
+        bottom: -10;
+    }
+
+    #filmstripRemoteVideosContainer {
+        align-content: center;
+        align-items: center;
         box-sizing: border-box;
         display: flex;
         flex-wrap: wrap;
