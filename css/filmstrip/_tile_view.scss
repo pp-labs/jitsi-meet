@@ -2,7 +2,15 @@
  * CSS styles that are specific to the filmstrip that shows the thumbnail tiles.
  */
 .tile-view {
-    .remote-videos {
+    /**
+     * Add a border around the active speaker to make the thumbnail easier to
+     * see.
+     */
+    .active-speaker {
+        box-shadow: 0 0 0 3px $videoThumbnailSelected
+    }
+
+    #filmstripRemoteVideos {
         align-items: center;
         box-sizing: border-box;
         overscroll-behavior: contain;
