@@ -120,6 +120,40 @@
     margin: 8px 0;
 }
 
+.toolbox-icon {
+    display: flex;
+    border-radius: 3px;
+    flex-direction: column;
+    font-size: 24px;
+    height: $newToolbarSize;
+    justify-content: center;
+    width: $newToolbarSize;
+
+    // @media (hover: hover) and (pointer: fine) {
+    //     &:hover {
+    //         background: $newToolbarButtonHoverColor;
+    //     }
+    // }
+
+    @media (max-width: 320px) {
+        height: 36px;
+        width: 36px;
+    }
+
+    // &.toggled {
+    //     background: $newToolbarButtonToggleColor;
+    // }
+
+    &.disabled {
+        cursor: initial !important;
+        background-color: #36383c !important;
+
+        svg {
+            fill: #929292 !important;
+        }
+    }
+}
+
 .hangup-button {
     background-color: $hangupColor;
 
@@ -175,9 +209,9 @@
     .toolbox-icon.toggled {
         background: none;
 
-        &:hover {
-            background: $newToolbarButtonHoverColor;
-        }
+        // &:hover {
+        //     background: $newToolbarButtonHoverColor;
+        // }
     }
 
 }
