@@ -58,7 +58,6 @@ MiddlewareRegistry.register(store => next => action => {
         break
     }
     case PARTICIPANT_UPDATED: {
-        console.log('BANG')
         store.dispatch(selectParticipantInLargeVideo());
     }
     case PARTICIPANT_LEFT:
