@@ -93,8 +93,13 @@
     pointer-events: all;
     border-radius: 6px;
 
-    .toolbox-content-items {
-        @include ltr;
+    >div {
+        // sally - remove margin spacing for toolbar buttons
+        margin-left: 0px;
+
+        &:first-child {
+            margin-left: 0;
+        }
     }
 }
 
