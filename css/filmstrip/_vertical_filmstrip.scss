@@ -46,7 +46,7 @@
 
     &.reduce-height {
         // sally
-        height: calc(100% - #{$newToolbarSizeWithPadding});
+        height: calc(100% - #{$newToolbarSizeWithPadding} + 7px);
     }
 
     /**

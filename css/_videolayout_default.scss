@@ -295,8 +295,8 @@
     display: inline-block;
     position: absolute;
     left: 5%;
-    width: 80%;
-    bottom: -10;
+    bottom: -9;
+    background-color: rgb(0,0,0, 0.5);
     @include transform(translateY(-40%));
     color: $participantNameColor;
     text-align: left;
