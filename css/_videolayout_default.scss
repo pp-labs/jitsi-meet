@@ -84,15 +84,16 @@
 
         .indicator-container {
             display: inline-block;
-            float: left;
+            float: right;
             pointer-events: all;
         }
     }
 
     &__toolbar {
-        bottom: 0;
+        top: 0;
         height: $thumbnailToolbarHeight;
         padding: 0 5px 0 5px;
+        text-align: right;
     }
 
     &__toptoolbar {
@@ -294,8 +295,9 @@
 .videocontainer .editdisplayname {
     display: inline-block;
     position: absolute;
-    left: 5%;
+    left: 4%;
     bottom: -9;
+    max-width: 92%;
     background-color: rgb(0,0,0, 0.5);
     @include transform(translateY(-40%));
     color: $participantNameColor;
@@ -698,3 +700,4 @@
     white-space: nowrap;
     width: 100%;
 }
+
