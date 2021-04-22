@@ -204,7 +204,12 @@
                 margin: 3px;
                 order: 5;
             }
+
         }
+    }
+    #trainerVideoVerticalViewContainer {
+        display: none;
+    }
 
         .remote-videos {
             display: flex;

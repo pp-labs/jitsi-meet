@@ -158,6 +158,7 @@ class Filmstrip extends Component <Props> {
         if (!tileViewActive) {
          remoteParticipants = _participants.filter(p => !p.name.startsWith('Trainer') && !p.local);
         }
+        const trainer = _participants.find(p => p.name.startsWith('Trainer'))
         // const trainer = _participants.find(p => p.name.startsWith('Trainer'));
         switch (_currentLayout) {
         case LAYOUTS.VERTICAL_FILMSTRIP_VIEW:
@@ -230,6 +231,13 @@ class Filmstrip extends Component <Props> {
                                             participantID = { p.id } />
                                     ))
                             }
+                            <div id = 'trainerVideoVerticalViewContainer'>
+                                {
+                                    !tileViewActive && trainer && <Thumbnail
+                                        key = { `remote_${trainer.id}` }
+                                        participantID = { trainer.id } />
+                                }
+                            </div>
                             <div id = 'localVideoTileViewContainer'>
                                 {
                                     tileViewActive && <Thumbnail
