@@ -119,6 +119,40 @@
     text-transform: uppercase;
 }
 
+.overflow-menu-item-icon {
+    .avatar {
+        border-width: 2px;
+        border-color: $audiRed;
+        border-style: solid;
+        box-sizing: border-box;
+        box-shadow: 0 0 0 0px rgb(245, 5, 55, .2);
+    }
+    margin-right: 16px;
+
+    i {
+        display: inline;
+        font-size: 24px;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+        i:hover {
+            background-color: initial;
+        }
+    }
+
+    img {
+        max-width: 24px;
+        max-height: 24px;
+    }
+
+    svg {
+        fill: #fff;
+        height: 20px;
+        width: 20px;
+    }
+}
+
+
 .overflow-menu-hr {
     border-top: 1px solid #4C4D50;
     border-bottom: 0;
