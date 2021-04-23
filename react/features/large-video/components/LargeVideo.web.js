@@ -191,7 +191,7 @@ class LargeVideo extends Component<Props> {
                 {/*
                     Sally - Remove watermarks
                     */}
-                {/*<Watermarks />*/}
+                {/* <Watermarks />*/}
 
                 <div
                     id = 'dominantSpeaker'
@@ -292,7 +292,6 @@ class LargeVideo extends Component<Props> {
 
             styles.backgroundColor = alphaColor;
         }
-
         if (_customBackgroundImageUrl) {
             styles.backgroundImage = `url(${_customBackgroundImageUrl})`;
             styles.backgroundSize = 'cover';
@@ -358,10 +357,14 @@ function _mapStateToProps(state) {
 
     const isOnSpot = defaultLocalDisplayName === SPOT_DISPLAY_NAME;
 
+    // sally set background image
+    const audiBackgroundImageUrl = 'images/BG-LOT.png';
+
+
     return {
         _backgroundAlpha: state['features/base/config'].backgroundAlpha,
         _customBackgroundColor: backgroundColor,
-        _customBackgroundImageUrl: backgroundImageUrl,
+        _customBackgroundImageUrl: audiBackgroundImageUrl,
         _displayScreenSharingPlaceholder: isLocalScreenshareOnLargeVideo && !seeWhatIsBeingShared && !isOnSpot,
         _isChatOpen: isChatOpen,
         _isScreenSharing: isLocalScreenshareOnLargeVideo,
