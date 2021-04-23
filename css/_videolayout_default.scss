@@ -296,7 +296,7 @@
     display: inline-block;
     position: absolute;
     left: 4%;
-    bottom: -9;
+    bottom: -5;
     max-width: 92%;
     background-color: rgb(0,0,0, 0.5);
     @include transform(translateY(-40%));
@@ -539,6 +539,7 @@
     position: relative;
     overflow: hidden;
     visibility: inherit;
+    padding: 15px;
 }
 
 .dynamic-shadow {
@@ -558,6 +559,7 @@
     height: 50%;
     width: auto;
     overflow: hidden;
+    padding: 20px;
 
     .userAvatar {
         height: 100%;
@@ -566,6 +568,7 @@
         top: 0px;
         left: 0px;
         position: absolute;
+        border-width: 5px;
     }
 }
 
