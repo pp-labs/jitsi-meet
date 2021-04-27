@@ -195,7 +195,8 @@ class Filmstrip extends Component <Props> {
             <div
                 className = { `filmstrip ${this.props._className}` }
                 style = { filmstripStyle }>
-                { toolbar }
+                {/*sally - move tooldbar button*/}
+                {/*{ toolbar }*/}
                 <div
                     className = { this.props._videosClassName }
                     id = 'remoteVideos'>
@@ -247,6 +248,8 @@ class Filmstrip extends Component <Props> {
                             </div>
                         </div>
                     </div>
+                     {/*{ moved toolbar button }*/}
+                    {toolbar}
                 </div>
             </div>
         );
