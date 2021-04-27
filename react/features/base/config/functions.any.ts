@@ -18,12 +18,12 @@ import logger from './logger';
 // Sally - For local testing only  -- REMOVE 
 import interfaceConfigOverride from '../../../../interface_config'
 // import configOverride from '../../../../config'
-
+//     channelLastN: 3,
 var configOverride = {
     startWithAudioMuted: true,
     startWithVideoMuted: true,
     toolbarButtons: [
-       'microphone', 'camera', 'desktop', 'profile', 'settings', 'filmstrip',
+       'microphone', 'camera', 'desktop', 'profile', 'settings', 'filmstrip'
     ]
 }
 // XXX The function getRoomName is split out of
