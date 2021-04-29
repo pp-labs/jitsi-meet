@@ -187,8 +187,7 @@ class Filmstrip extends Component <Props> {
            
             const isRemoteParticipant = !p?.isFakeParticipant && !p?.local;
             const participantID = p.id
-            const _videoTrack = isLocal
-                ? getLocalVideoTrack(_tracks) : getTrackByMediaTypeAndParticipant(_tracks, MEDIA_TYPE.VIDEO, participantID);
+            const _videoTrack = getTrackByMediaTypeAndParticipant(_tracks, MEDIA_TYPE.VIDEO, participantID);
             const videoStreamMuted = _videoTrack ? _videoTrack.muted : 'no stream'
 
             const isScreenSharing = _videoTrack?.videoType === 'desktop'
@@ -196,10 +195,7 @@ class Filmstrip extends Component <Props> {
                 p.order = 2;
                 return p;
             }
-            if (!_isDominantSpeakerDisabled && p?.dominantSpeaker) {
-                p.order = 3
-                return p;
-            }
+            
             if (isRemoteParticipant && !videoStreamMuted) {
                 p.order = 4;
                 return p
@@ -207,10 +203,11 @@ class Filmstrip extends Component <Props> {
             const _audioTrack = isLocal
                 ? getLocalAudioTrack(_tracks) : getTrackByMediaTypeAndParticipant(_tracks, MEDIA_TYPE.AUDIO, participantID);
 
-            if (isRemoteParticipant && _audioTrack && !_audioTrack.muted) {
-                p.order = 5;
-                return p;
-            }  
+            // sally - don't prioritize audio only to prevent jumping
+            // if (isRemoteParticipant && _audioTrack && !_audioTrack.muted) {
+            //     p.order = 5;
+            //     return p;
+            // }  
 
             p.order = 6;
             return p;
@@ -229,6 +226,27 @@ class Filmstrip extends Component <Props> {
             if (a.order === b.order) {return 0}
             return a.order > b.order ? 1 : -1
         })
+
+        // sally - order dominant speaker only if they are outside the box
+        try{
+            if (!_isDominantSpeakerDisabled && remoteParticipants.length > _lastN) {
+                
+                let i = remoteParticipants.findIndex((p) => p?.dominantSpeaker)
+                
+                if (i !== -1 && i >= _lastN) {
+                    remoteParticipants[i].order = 3;
+                }
+                remoteParticipants.sort((a,b) => {
+                    if (a.order === b.order) {return 0}
+                    return a.order > b.order ? 1 : -1
+                })
+
+            }
+        } catch (e) {console.log(e)}
+        // if (!_isDominantSpeakerDisabled && p?.dominantSpeaker) {
+        //         p.order = 3
+        //         return p;
+        //     }
 
         
 

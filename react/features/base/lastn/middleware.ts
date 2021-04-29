@@ -162,7 +162,7 @@ function _updateLastN({ getState }) {
 
     // sally  - hard code lastn to 8 for Tile View
     if (layout === LAYOUTS.TILE_VIEW) {
-        lastN = 8;
+        lastN = 5;
     } else {
         // dynamically set lastN when not in tile view based on client height
         lastN = Math.round(clientHeight / 200) + 1;
