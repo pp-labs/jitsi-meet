@@ -98,15 +98,32 @@
         margin-bottom: 2px;
         justify-content: center;
 
+        #localVideoTileViewContainer {
+            order: 100 !important;
+        }
+
         .videocontainer {
             border: 0;
             box-sizing: border-box;
             display: block;
             margin: 2px;
+            order: 11;
         }
-        .no-video {
+        .hide-participant {
             display: none;
         }
+        // .audio-only {
+        //     order: 10;
+        // }
+        // .has-video {
+        //     order: 8;
+        // }
+        // .active-speaker {
+        //     order: 5;
+        // }
+        // .trainer-participant {
+        //     order: 1 !important;
+        // }
 
         video {
             object-fit: contain;

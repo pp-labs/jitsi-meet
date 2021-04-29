@@ -95,7 +95,7 @@
         align-self: initial;
         bottom: 5px;
         display: flex;
-        flex-direction: column-reverse;
+        flex-direction: column;
         height: auto;
         justify-content: flex-start;
 
@@ -112,101 +112,56 @@
             }
         }
 
-        /**
-         * Re-styles the local Video to better fit vertical filmstrip layout.
-         */
-        #filmstripLocalVideo {
-            align-self: initial;
-            margin-bottom: 5px;
-            display: flex;
-            flex-direction: column-reverse;
-            height: auto;
-            justify-content: flex-start;
-            width: 100%;
+    }
 
-            #filmstripLocalVideoThumbnail {
-                width: calc(100% - 15px);
+    /**
+     * Remove unnecssary padding that is normally used to prevent horizontal
+     * filmstrip from overlapping the left edge of the screen.
+     */
+    #filmstripLocalVideo,
+    #filmstripRemoteVideos {
+        padding: 0;
+    }
 
-                .videocontainer {
-                    height: 0px;
-                    width: 100%;
-                }
-            }
-        }
+    #filmstripRemoteVideos {
+        @include minHWAutoFix();
 
-        #filmstripLocalScreenShare {
-            align-self: initial;
-            margin-bottom: 5px;
-            display: flex;
-            flex-direction: column-reverse;
-            height: auto;
-            justify-content: flex-start;
-            width: 100%;
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        height: auto;
+        overflow-x: hidden;
+        overflow-y: scroll;
 
-            #filmstripLocalScreenShareThumbnail {
-                width: calc(100% - 15px);
-
-                .videocontainer {
-                    height: 0px;
-                    width: 100%;
-                }
-            }
-        }
-
-        /**
-         * Remove unnecessary padding that is normally used to prevent horizontal
-         * filmstrip from overlapping the left edge of the screen.
-         */
-        #filmstripLocalVideo,
-        #filmstripLocalScreenShare,
-        .remote-videos {
-            padding: 0;
-        }
-
-        #remoteVideos {
+        #filmstripRemoteVideosContainer {
             @include minHWAutoFix();
-
             flex-direction: column;
-            flex-grow: 1;
-        }
-
-        .resizable-filmstrip #remoteVideos .videocontainer {
-            border-left: 0;
-            margin: 0;
-        }
-
-        &.reduce-height {
-            height: calc(100% - calc(#{$newToolbarSizeWithPadding} + #{$scrollHeight}));
-        }
-
-        .filmstrip__videos.vertical-view-grid#remoteVideos {
-            align-items: 'center';
-            border: 0px;
-            padding-right: 7px;
-
-            &.has-scroll {
-                padding-right: 0px;
-            }
-
-            .remote-videos > div {
-                left: 0px; // fixes an issue on FF - the div is aligned to the right by default for some reason
-            }
+            overflow: visible;
+            width: calc(100% - 8px); // 8px for margin + border of the thumbnails
 
             .videocontainer {
                 border: 0;
                 border-radius: 0px;
                 height: 0px;
                 width: 100%;
-                order: 1;
             }
-            .active-speaker {
-                box-shadow: 0 0 0 3px $videoThumbnailSelected;
-                margin: 3px;
-                order: 5;
-            }
-            .no-video {
+            .hide-participant {
                 display: none;
             }
+            // .audio-only {
+            //     order: 8;
+            // }
+            // .has-video {
+            //     order: 10;
+            // }
+            .active-speaker {
+               box-shadow: 0 0 0 3px $videoThumbnailSelected;
+                margin: 3px;
+            //     order: 12;
+            }
+            // .trainer-participant {
+            //     order: 100 !important;
+            // }
 
         }
     }
