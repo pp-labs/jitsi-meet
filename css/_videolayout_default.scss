@@ -222,7 +222,8 @@
 #localVideoWrapper video,
 #localVideoWrapper object {
     border-radius: $borderRadius !important;
-    cursor: hand;
+    // gregor - remove hand cursor
+    //cursor: hand;
     object-fit: cover;
 }
 
@@ -445,10 +446,12 @@
     color: #FFF;
     font-size: 10pt;
     margin-right: $remoteVideoMenuIconMargin;
-
+    
+    // gregor - remove hand cursor
+    /*
     >i{
         cursor: hand;
-    }
+    }*/
 }
 .local-video-menu-trigger,
 .remote-video-menu-trigger {
