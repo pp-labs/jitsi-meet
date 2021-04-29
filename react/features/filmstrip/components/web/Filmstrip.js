@@ -184,28 +184,35 @@ class Filmstrip extends Component <Props> {
                 p.order = 10
                 return p
             }
-            if (!_isDominantSpeakerDisabled && p?.dominantSpeaker) {
-                p.order = 2
-                return p;
-            }
+           
             const isRemoteParticipant = !p?.isFakeParticipant && !p?.local;
             const participantID = p.id
             const _videoTrack = isLocal
                 ? getLocalVideoTrack(_tracks) : getTrackByMediaTypeAndParticipant(_tracks, MEDIA_TYPE.VIDEO, participantID);
             const videoStreamMuted = _videoTrack ? _videoTrack.muted : 'no stream'
+
+            const isScreenSharing = _videoTrack?.videoType === 'desktop'
+            if (isRemoteParticipant && isScreenSharing) {
+                p.order = 2;
+                return p;
+            }
+            if (!_isDominantSpeakerDisabled && p?.dominantSpeaker) {
+                p.order = 3
+                return p;
+            }
             if (isRemoteParticipant && !videoStreamMuted) {
-                p.order = 3;
+                p.order = 4;
                 return p
             }
             const _audioTrack = isLocal
                 ? getLocalAudioTrack(_tracks) : getTrackByMediaTypeAndParticipant(_tracks, MEDIA_TYPE.AUDIO, participantID);
 
             if (isRemoteParticipant && _audioTrack && !_audioTrack.muted) {
-                p.order = 4;
+                p.order = 5;
                 return p;
             }  
 
-            p.order = 5;
+            p.order = 6;
             return p;
             // const isRemoteParticipant: !participant?.isFakeParticipant && !participant?.local;
             // const { id } = participant;
@@ -218,10 +225,12 @@ class Filmstrip extends Component <Props> {
             // if (isRemoteParticipant && (dmInput.isVideoPlayable && !dmInput.videoStreamMuted)
 
         })
-        remoteParticipants.sort((a,b) => (a.order > b.order ? 1 : -1))
+        remoteParticipants.sort((a,b) => {
+            if (a.order === b.order) {return 0}
+            return a.order > b.order ? 1 : -1
+        })
 
-        console.log("BOOM")
-        console.log(remoteParticipants)
+        
 
                 // Sally -  Add additional classes for trainer
         // if (_participant.name.startsWith('Trainer')) {
@@ -287,22 +296,6 @@ class Filmstrip extends Component <Props> {
         if (!this.props._hideToolbar && this.props._isFilmstripButtonEnabled) {
             toolbar = this._renderToggleButton();
         }
-
-        // const test = remoteParticipants.map(
-        //                             p => (
-        //                                 <Thumbnail
-        //                                     key = { `remote_${p.id}` }
-        //                                     participantID = { p.id } />
-        //                             ))
-
-        console.log('HERE')
-        console.log(maxRemoteParticipants)
-        console.log(remoteParticipants)
-        // React.Children.forEach(test, (c) => {
-        //     console.log(c.state)
-        //     console.log(c)
-        // })
-
         return (
             <div
                 className = { `filmstrip ${this.props._className}` }

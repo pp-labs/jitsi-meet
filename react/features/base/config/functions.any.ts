@@ -18,7 +18,8 @@ import logger from './logger';
 // Sally - For local testing only  -- REMOVE 
 import interfaceConfigOverride from '../../../../interface_config'
 // import configOverride from '../../../../config'
-//     channelLastN: 3,
+//     channelLastN: 3
+
 var configOverride = {
     startWithAudioMuted: true,
     startWithVideoMuted: true,
