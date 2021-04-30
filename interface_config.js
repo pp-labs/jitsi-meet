@@ -10,8 +10,10 @@
 
 var interfaceConfig = {
     APP_NAME: 'Jitsi Meet',
-    AUDIO_LEVEL_PRIMARY_COLOR: 'rgba(255,255,255,0.4)',
-    AUDIO_LEVEL_SECONDARY_COLOR: 'rgba(255,255,255,0.2)',
+
+    //sally -aaudi red
+    AUDIO_LEVEL_PRIMARY_COLOR: 'rgba(245,5,55,0.4)',
+    AUDIO_LEVEL_SECONDARY_COLOR: 'rgba(245,5,55,0.2)',
 
     /**
      * A UX mode where the last screen share participant is automatically
