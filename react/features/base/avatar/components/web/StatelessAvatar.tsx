@@ -180,7 +180,7 @@ class StatelessAvatar extends AbstractStatelessAvatar<Props> {
                         xmlnsXlink = 'http://www.w3.org/1999/xlink'>
                         <text
                             dominantBaseline = 'central'
-                            fill = 'rgba(245,5,55)'
+                            fill = 'rgba(51,51,51)'
                             fontSize = '24pt'
                             textAnchor = 'middle'
                             x = '50'
