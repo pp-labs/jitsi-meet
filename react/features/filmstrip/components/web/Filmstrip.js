@@ -92,6 +92,7 @@ type Props = {
     _lastN: number,
 
     _tracks: Array<Object>,
+    _recentActiveParticipants: Array<Object>,
 
     /**
      * The redux {@code dispatch} function.
@@ -159,7 +160,7 @@ class Filmstrip extends Component <Props> {
         const filmstripStyle = { };
         const filmstripRemoteVideosContainerStyle = {};
         let remoteVideoContainerClassName = 'remote-videos-container';
-        const { _currentLayout, _participants, _isDominantSpeakerDisabled, _lastN, _tracks } = this.props;
+        const { _currentLayout, _participants, _isDominantSpeakerDisabled, _lastN, _tracks, _recentActiveParticipants } = this.props;
         let remoteParticipants = _participants.filter(p => !p.local);
         const localParticipant = getLocalParticipant(_participants);
         const tileViewActive = _currentLayout === LAYOUTS.TILE_VIEW;
@@ -172,6 +173,8 @@ class Filmstrip extends Component <Props> {
         } else {
             maxRemoteParticipants = _lastN < 1 ? -1 : _lastN
         }
+        console.log("BOOM")
+        console.log(_recentActiveParticipants)
 
         // sally order participants
         remoteParticipants = remoteParticipants.map((p) => {
@@ -181,23 +184,33 @@ class Filmstrip extends Component <Props> {
             }
             const isLocal = p?.local ?? true;
             if (isLocal) {
-                p.order = 10
+                p.order = 100
                 return p
             }
-           
             const isRemoteParticipant = !p?.isFakeParticipant && !p?.local;
             const participantID = p.id
             const _videoTrack = getTrackByMediaTypeAndParticipant(_tracks, MEDIA_TYPE.VIDEO, participantID);
             const videoStreamMuted = _videoTrack ? _videoTrack.muted : 'no stream'
-
             const isScreenSharing = _videoTrack?.videoType === 'desktop'
             if (isRemoteParticipant && isScreenSharing) {
                 p.order = 2;
                 return p;
             }
+
+            // sally - recent participants
+
+            const recentParticipantIndex =  _recentActiveParticipants.findIndex((part)=> (part.id === p.id ))
+            console.log(p.id)
+            console.log(recentParticipantIndex)
+
+            if (recentParticipantIndex > -1) {
+              p.order = (10+recentParticipantIndex)
+              return p;
+            }
+           
             
             if (isRemoteParticipant && !videoStreamMuted) {
-                p.order = 4;
+                p.order = 20;
                 return p
             }
             const _audioTrack = isLocal
@@ -209,7 +222,7 @@ class Filmstrip extends Component <Props> {
             //     return p;
             // }  
 
-            p.order = 6;
+            p.order = 30;
             return p;
             // const isRemoteParticipant: !participant?.isFakeParticipant && !participant?.local;
             // const { id } = participant;
@@ -228,7 +241,7 @@ class Filmstrip extends Component <Props> {
         })
 
         // sally - order dominant speaker only if they are outside the box
-        try{
+        try {
             if (!_isDominantSpeakerDisabled && remoteParticipants.length > _lastN) {
                 
                 let i = remoteParticipants.findIndex((p) => p?.dominantSpeaker)
@@ -484,6 +497,7 @@ function _mapStateToProps(state) {
         _hideToolbar: Boolean(iAmSipGateway),
         _isFilmstripButtonEnabled: isButtonEnabled('filmstrip', state),
         _participants: state['features/base/participants'],
+        _recentActiveParticipants: state['features/base/participants/recentActive'],
         _rows: gridDimensions.rows,
         _videosClassName: videosClassName,
         _visible: visible,
