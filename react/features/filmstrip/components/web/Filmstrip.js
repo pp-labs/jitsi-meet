@@ -173,8 +173,6 @@ class Filmstrip extends Component <Props> {
         } else {
             maxRemoteParticipants = _lastN < 1 ? -1 : _lastN
         }
-        console.log("BOOM")
-        console.log(_recentActiveParticipants)
 
         // sally order participants
         remoteParticipants = remoteParticipants.map((p) => {
@@ -200,8 +198,6 @@ class Filmstrip extends Component <Props> {
             // sally - recent participants
 
             const recentParticipantIndex =  _recentActiveParticipants.findIndex((part)=> (part.id === p.id ))
-            console.log(p.id)
-            console.log(recentParticipantIndex)
 
             if (recentParticipantIndex > -1) {
               p.order = (10+recentParticipantIndex)

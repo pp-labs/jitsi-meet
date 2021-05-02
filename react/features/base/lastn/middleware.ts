@@ -195,8 +195,6 @@ function _updateLastN({ getState }) {
     logger.info(`Setting last N to: ${lastN}`);
 
     try {
-        console.log('SETTING LASTN');
-        console.log(lastN);
         conference.setLastN(lastN);
     } catch (err) {
         logger.error(`Failed to set lastN: ${err}`);
