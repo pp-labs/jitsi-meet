@@ -146,7 +146,7 @@ var interfaceConfig = {
     REMOTE_THUMBNAIL_RATIO: 16 / 9, // 1:1
 
     //SETTINGS_SECTIONS: [ 'devices', 'language', 'moderator', 'profile', 'calendar' ],
-    SETTINGS_SECTIONS: [ 'devices', 'language', 'profile'],
+    SETTINGS_SECTIONS: [ 'devices', 'language'],
     /**
      * Specify which sharing features should be displayed. If the value is not set
      * all sharing features will be shown. You can set [] to disable all.
