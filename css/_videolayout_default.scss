@@ -50,10 +50,20 @@
 
     &__background {
         @include topLeft();
-        background-color: black;
+        background-color: #1A1A1A;
         border-radius: $borderRadius;
         width: 100%;
         height: 100%;
+    }
+
+    /* Gregor */
+    &__notavailable {
+        position: absolute;
+        display: block;
+        top: 14%;
+        text-align: center;
+        width: 100%;
+        font-size: 10px;
     }
 
     /**
