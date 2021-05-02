@@ -73,8 +73,10 @@
         right: 0;
         z-index: $filmstripVideosZ;
 
-        &.no-vertical-padding {
-            padding: 0;
+        &.hidden {
+            bottom: auto;
+            /* Gregor, default -196px */
+            right: -230px;
         }
 
         /**
