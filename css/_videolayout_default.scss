@@ -41,6 +41,12 @@
     filter: blur(40px);
 }
 
+.video-unavailable {
+    .videocontainer__notavailable {
+        display: block;
+    }
+}
+
 .videocontainer {
     position: relative;
     text-align: center;
@@ -59,7 +65,7 @@
     /* Gregor */
     &__notavailable {
         position: absolute;
-        display: block;
+        display: none;
         top: 14%;
         text-align: center;
         width: 100%;

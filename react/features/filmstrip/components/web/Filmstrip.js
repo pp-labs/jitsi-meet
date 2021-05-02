@@ -204,13 +204,13 @@ class Filmstrip extends Component <Props> {
               return p;
             }
            
-            
+
             if (isRemoteParticipant && !videoStreamMuted) {
                 p.order = 20;
                 return p
             }
-            const _audioTrack = isLocal
-                ? getLocalAudioTrack(_tracks) : getTrackByMediaTypeAndParticipant(_tracks, MEDIA_TYPE.AUDIO, participantID);
+            // const _audioTrack = isLocal
+            //     ? getLocalAudioTrack(_tracks) : getTrackByMediaTypeAndParticipant(_tracks, MEDIA_TYPE.AUDIO, participantID);
 
             // sally - don't prioritize audio only to prevent jumping
             // if (isRemoteParticipant && _audioTrack && !_audioTrack.muted) {
