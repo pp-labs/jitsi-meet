@@ -95,6 +95,7 @@
         flex-wrap: wrap;
         flex-shrink: 0;
         margin-top: $newToolbarSize + 12px;
+        height: calc(100% -  (#{$newToolbarSize} + 12px));
         margin-bottom: 2px;
         justify-content: center;
 
