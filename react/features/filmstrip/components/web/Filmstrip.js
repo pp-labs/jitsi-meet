@@ -200,7 +200,6 @@ class Filmstrip extends Component<Props> {
                 (part) => part.id === p.id
             );
             if (p?.connectionStatus !== "active") {
-                console.log("inactive", p);
                 p.order = 100 + recentParticipantIndex;
                 return p;
             }
