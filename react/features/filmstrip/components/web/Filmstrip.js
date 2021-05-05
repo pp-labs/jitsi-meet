@@ -1,30 +1,30 @@
 /* @flow */
 
-import React, { Component } from 'react';
-import type { Dispatch } from 'redux';
+import React, { Component } from "react";
+import type { Dispatch } from "redux";
 
 import {
     createShortcutEvent,
     createToolbarEvent,
-    sendAnalytics
-} from '../../../analytics';
-import { MEDIA_TYPE, VideoTrack } from '../../../base/media';
-import { getToolbarButtons } from '../../../base/config';
-import { translate } from '../../../base/i18n';
-import { Icon, IconMenuDown, IconMenuUp } from '../../../base/icons';
-import { getLocalParticipant } from '../../../base/participants';
-import { connect } from '../../../base/redux';
-import { isButtonEnabled } from '../../../toolbox/functions.web';
-import { LAYOUTS, getCurrentLayout } from '../../../video-layout';
-import { setFilmstripVisible } from '../../actions';
-import { shouldRemoteVideosBeVisible } from '../../functions';
+    sendAnalytics,
+} from "../../../analytics";
+import { MEDIA_TYPE, VideoTrack } from "../../../base/media";
+import { getToolbarButtons } from "../../../base/config";
+import { translate } from "../../../base/i18n";
+import { Icon, IconMenuDown, IconMenuUp } from "../../../base/icons";
+import { getLocalParticipant } from "../../../base/participants";
+import { connect } from "../../../base/redux";
+import { isButtonEnabled } from "../../../toolbox/functions.web";
+import { LAYOUTS, getCurrentLayout } from "../../../video-layout";
+import { setFilmstripVisible } from "../../actions";
+import { shouldRemoteVideosBeVisible } from "../../functions";
 import {
     getLocalAudioTrack,
     getLocalVideoTrack,
     getTrackByMediaTypeAndParticipant,
-    updateLastTrackVideoMediaEvent
-} from '../../../base/tracks';
-import Thumbnail from './Thumbnail';
+    updateLastTrackVideoMediaEvent,
+} from "../../../base/tracks";
+import Thumbnail from "./Thumbnail";
 
 declare var APP: Object;
 declare var interfaceConfig: Object;
@@ -33,7 +33,6 @@ declare var interfaceConfig: Object;
  * The type of the React {@code Component} props of {@link Filmstrip}.
  */
 type Props = {
-
     /**
      * Additional CSS class names top add to the root.
      */
@@ -102,7 +101,7 @@ type Props = {
     /**
      * Invoked to obtain translated strings.
      */
-    t: Function
+    t: Function,
 };
 
 /**
@@ -111,8 +110,7 @@ type Props = {
  *
  * @extends Component
  */
-class Filmstrip extends Component <Props> {
-
+class Filmstrip extends Component<Props> {
     /**
      * Initializes a new {@code Filmstrip} instance.
      *
@@ -123,8 +121,12 @@ class Filmstrip extends Component <Props> {
         super(props);
 
         // Bind event handlers so they are only bound once for every instance.
-        this._onShortcutToggleFilmstrip = this._onShortcutToggleFilmstrip.bind(this);
-        this._onToolbarToggleFilmstrip = this._onToolbarToggleFilmstrip.bind(this);
+        this._onShortcutToggleFilmstrip = this._onShortcutToggleFilmstrip.bind(
+            this
+        );
+        this._onToolbarToggleFilmstrip = this._onToolbarToggleFilmstrip.bind(
+            this
+        );
     }
 
     /**
@@ -134,10 +136,10 @@ class Filmstrip extends Component <Props> {
      */
     componentDidMount() {
         APP.keyboardshortcut.registerShortcut(
-            'F',
-            'filmstripPopover',
+            "F",
+            "filmstripPopover",
             this._onShortcutToggleFilmstrip,
-            'keyboardShortcuts.toggleFilmstrip'
+            "keyboardShortcuts.toggleFilmstrip"
         );
     }
 
@@ -147,7 +149,7 @@ class Filmstrip extends Component <Props> {
      * @inheritdoc
      */
     componentWillUnmount() {
-        APP.keyboardshortcut.unregisterShortcut('F');
+        APP.keyboardshortcut.unregisterShortcut("F");
     }
 
     /**
@@ -157,39 +159,54 @@ class Filmstrip extends Component <Props> {
      * @returns {ReactElement}
      */
     render() {
-        const filmstripStyle = { };
+        const filmstripStyle = {};
         const filmstripRemoteVideosContainerStyle = {};
-        let remoteVideoContainerClassName = 'remote-videos-container';
-        const { _currentLayout, _participants, _isDominantSpeakerDisabled, _lastN, _tracks, _recentActiveParticipants } = this.props;
-        let remoteParticipants = _participants.filter(p => !p.local);
+        let remoteVideoContainerClassName = "remote-videos-container";
+        const {
+            _currentLayout,
+            _participants,
+            _isDominantSpeakerDisabled,
+            _lastN,
+            _tracks,
+            _recentActiveParticipants,
+        } = this.props;
+        let remoteParticipants = _participants.filter((p) => !p.local);
         const localParticipant = getLocalParticipant(_participants);
         const tileViewActive = _currentLayout === LAYOUTS.TILE_VIEW;
         let maxRemoteParticipants = -1;
 
         // sally - no trainer in left side
         if (!tileViewActive) {
-         remoteParticipants = _participants.filter(p => !p.name.startsWith('Trainer') && !p.local);
-         maxRemoteParticipants = _lastN < 1 ? -1 : _lastN - 1;
+            remoteParticipants = _participants.filter(
+                (p) => !p.name?.startsWith("Trainer") && !p.local
+            );
+            maxRemoteParticipants = _lastN < 1 ? -1 : _lastN - 1;
         } else {
-            maxRemoteParticipants = _lastN < 1 ? -1 : _lastN
+            maxRemoteParticipants = _lastN < 1 ? -1 : _lastN;
         }
 
         // sally order participants
         remoteParticipants = remoteParticipants.map((p) => {
-            if (p.name.startsWith('Trainer')){
-                p.order = 1
-                return p
+            if (p.name.startsWith("Trainer")) {
+                p.order = 1;
+                return p;
             }
             const isLocal = p?.local ?? true;
             if (isLocal) {
-                p.order = 100
-                return p
+                p.order = 100;
+                return p;
             }
             const isRemoteParticipant = !p?.isFakeParticipant && !p?.local;
-            const participantID = p.id
-            const _videoTrack = getTrackByMediaTypeAndParticipant(_tracks, MEDIA_TYPE.VIDEO, participantID);
-            const videoStreamMuted = _videoTrack ? _videoTrack.muted : 'no stream'
-            const isScreenSharing = _videoTrack?.videoType === 'desktop'
+            const participantID = p.id;
+            const _videoTrack = getTrackByMediaTypeAndParticipant(
+                _tracks,
+                MEDIA_TYPE.VIDEO,
+                participantID
+            );
+            const videoStreamMuted = _videoTrack
+                ? _videoTrack.muted
+                : "no stream";
+            const isScreenSharing = _videoTrack?.videoType === "desktop";
             if (isRemoteParticipant && isScreenSharing) {
                 p.order = 2;
                 return p;
@@ -197,17 +214,18 @@ class Filmstrip extends Component <Props> {
 
             // sally - recent participants
 
-            const recentParticipantIndex =  _recentActiveParticipants.findIndex((part)=> (part.id === p.id ))
+            const recentParticipantIndex = _recentActiveParticipants.findIndex(
+                (part) => part.id === p.id
+            );
 
             if (recentParticipantIndex > -1) {
-              p.order = (10+recentParticipantIndex)
-              return p;
+                p.order = 10 + recentParticipantIndex;
+                return p;
             }
-           
 
             if (isRemoteParticipant && !videoStreamMuted) {
                 p.order = 20;
-                return p
+                return p;
             }
             // const _audioTrack = isLocal
             //     ? getLocalAudioTrack(_tracks) : getTrackByMediaTypeAndParticipant(_tracks, MEDIA_TYPE.AUDIO, participantID);
@@ -216,7 +234,7 @@ class Filmstrip extends Component <Props> {
             // if (isRemoteParticipant && _audioTrack && !_audioTrack.muted) {
             //     p.order = 5;
             //     return p;
-            // }  
+            // }
 
             p.order = 30;
             return p;
@@ -229,37 +247,41 @@ class Filmstrip extends Component <Props> {
             // const _audioTrack = isLocal
             //     ? getLocalAudioTrack(tracks) : getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.AUDIO, participantID);
             // if (isRemoteParticipant && (dmInput.isVideoPlayable && !dmInput.videoStreamMuted)
-
-        })
-        remoteParticipants.sort((a,b) => {
-            if (a.order === b.order) {return 0}
-            return a.order > b.order ? 1 : -1
-        })
+        });
+        remoteParticipants.sort((a, b) => {
+            if (a.order === b.order) {
+                return 0;
+            }
+            return a.order > b.order ? 1 : -1;
+        });
 
         // sally - order dominant speaker only if they are outside the box
         try {
-            if (!_isDominantSpeakerDisabled && remoteParticipants.length > _lastN) {
-                
-                let i = remoteParticipants.findIndex((p) => p?.dominantSpeaker)
-                
+            if (
+                !_isDominantSpeakerDisabled &&
+                remoteParticipants.length > _lastN
+            ) {
+                let i = remoteParticipants.findIndex((p) => p?.dominantSpeaker);
+
                 if (i !== -1 && i >= _lastN) {
                     remoteParticipants[i].order = 3;
                 }
-                remoteParticipants.sort((a,b) => {
-                    if (a.order === b.order) {return 0}
-                    return a.order > b.order ? 1 : -1
-                })
-
+                remoteParticipants.sort((a, b) => {
+                    if (a.order === b.order) {
+                        return 0;
+                    }
+                    return a.order > b.order ? 1 : -1;
+                });
             }
-        } catch (e) {console.log(e)}
+        } catch (e) {
+            console.log(e);
+        }
         // if (!_isDominantSpeakerDisabled && p?.dominantSpeaker) {
         //         p.order = 3
         //         return p;
         //     }
 
-        
-
-                // Sally -  Add additional classes for trainer
+        // Sally -  Add additional classes for trainer
         // if (_participant.name.startsWith('Trainer')) {
         //     className += ` trainer-participant`
         // } else {
@@ -288,22 +310,23 @@ class Filmstrip extends Component <Props> {
         //         className += ' local-participant'
         //     }
 
-
-
-        const trainer = _participants.find(p => p.name.startsWith('Trainer'))
+        const trainer = _participants.find(
+            (p) => !p.name?.startsWith("Trainer")
+        );
         // const trainer = _participants.find(p => p.name.startsWith('Trainer'));
         switch (_currentLayout) {
-        case LAYOUTS.VERTICAL_FILMSTRIP_VIEW:
-            // Adding 18px for the 2px margins, 2px borders on the left and right and 5px padding on the left and right.
-            // Also adding 7px for the scrollbar.
-            filmstripStyle.maxWidth = (interfaceConfig.FILM_STRIP_MAX_HEIGHT || 120) + 25;
-            break;
+            case LAYOUTS.VERTICAL_FILMSTRIP_VIEW:
+                // Adding 18px for the 2px margins, 2px borders on the left and right and 5px padding on the left and right.
+                // Also adding 7px for the scrollbar.
+                filmstripStyle.maxWidth =
+                    (interfaceConfig.FILM_STRIP_MAX_HEIGHT || 120) + 25;
+                break;
             case LAYOUTS.TILE_VIEW: {
                 // The size of the side margins for each tile as set in CSS.
                 const { _columns, _rows, _filmstripWidth } = this.props;
 
                 if (_rows > _columns) {
-                    remoteVideoContainerClassName += ' has-overflow';
+                    remoteVideoContainerClassName += " has-overflow";
                 }
 
                 filmstripRemoteVideosContainerStyle.width = _filmstripWidth;
@@ -311,12 +334,12 @@ class Filmstrip extends Component <Props> {
             }
         }
 
-        let remoteVideosWrapperClassName = 'filmstrip__videos ';
+        let remoteVideosWrapperClassName = "filmstrip__videos ";
 
         if (this.props._hideScrollbar) {
-            remoteVideosWrapperClassName += ' hide-scrollbar';
+            remoteVideosWrapperClassName += " hide-scrollbar";
         }
-        remoteVideosWrapperClassName += ` lastN_${_lastN}`
+        remoteVideosWrapperClassName += ` lastN_${_lastN}`;
 
         let toolbar = null;
 
@@ -325,64 +348,70 @@ class Filmstrip extends Component <Props> {
         }
         return (
             <div
-                className = { `filmstrip ${this.props._className}` }
-                style = { filmstripStyle }>
+                className={`filmstrip ${this.props._className}`}
+                style={filmstripStyle}
+            >
                 {/*sally - move tooldbar button*/}
                 {/*{ toolbar }*/}
-                <div
-                    className = { this.props._videosClassName }
-                    id = 'remoteVideos'>
-                    <div
-                        className = 'filmstrip__videos'
-                        id = 'filmstripLocalVideo'>
-                         {/*sally- display trainer here when not in tile view */}
-                        <div id = 'filmstripLocalVideoThumbnail'>
-                            {
-                                !tileViewActive && <Thumbnail
-                                    key = 'local'
-                                    participantID = { localParticipant.id } />
-                            }
+                <div className={this.props._videosClassName} id="remoteVideos">
+                    <div className="filmstrip__videos" id="filmstripLocalVideo">
+                        {/*sally- display trainer here when not in tile view */}
+                        <div id="filmstripLocalVideoThumbnail">
+                            {!tileViewActive && (
+                                <Thumbnail
+                                    key="local"
+                                    participantID={localParticipant.id}
+                                />
+                            )}
                         </div>
                     </div>
                     <div
-                        className = { remoteVideosWrapperClassName }
-                        id = 'filmstripRemoteVideos'>
+                        className={remoteVideosWrapperClassName}
+                        id="filmstripRemoteVideos"
+                    >
                         {/*
-                          * XXX This extra video container is needed for
-                          * scrolling thumbnails in Firefox; otherwise, the flex
-                          * thumbnails resize instead of causing overflow.
-                          */}
+                         * XXX This extra video container is needed for
+                         * scrolling thumbnails in Firefox; otherwise, the flex
+                         * thumbnails resize instead of causing overflow.
+                         */}
                         <div
-                            className = { remoteVideoContainerClassName }
-                            id = 'filmstripRemoteVideosContainer'
-                            style = { filmstripRemoteVideosContainerStyle }>
-                            {
-                                remoteParticipants.map(
-                                    (p, i) => {
-                                        let isHidden = (maxRemoteParticipants !== -1 && (maxRemoteParticipants - 1) < i) ? true : false;
-                                        return <Thumbnail
-                                            key = { `remote_${p.id}` }
-                                            participantID = { p.id }
-                                            hidden = {isHidden} />
-                                    })
-                            }
-                            <div id = 'trainerVideoVerticalViewContainer'>
-                                {
-                                    !tileViewActive && trainer && <Thumbnail
-                                        key = { `remote_${trainer.id}` }
-                                        participantID = { trainer.id } />
-                                }
+                            className={remoteVideoContainerClassName}
+                            id="filmstripRemoteVideosContainer"
+                            style={filmstripRemoteVideosContainerStyle}
+                        >
+                            {remoteParticipants.map((p, i) => {
+                                let isHidden =
+                                    maxRemoteParticipants !== -1 &&
+                                    maxRemoteParticipants - 1 < i
+                                        ? true
+                                        : false;
+                                return (
+                                    <Thumbnail
+                                        key={`remote_${p.id}`}
+                                        participantID={p.id}
+                                        hidden={isHidden}
+                                    />
+                                );
+                            })}
+                            <div id="trainerVideoVerticalViewContainer">
+                                {!tileViewActive && trainer && (
+                                    <Thumbnail
+                                        key={`remote_${trainer.id}`}
+                                        participantID={trainer.id}
+                                    />
+                                )}
                             </div>
-                            <div id = 'localVideoTileViewContainer'>
-                                {
-                                    tileViewActive && <Thumbnail
-                                        key = 'local'
-                                        participantID = { localParticipant.id } />
-                                }
+                            <div id="localVideoTileViewContainer">
+                                {tileViewActive && (
+                                    <Thumbnail
+                                        key="local"
+                                        participantID={localParticipant.id}
+                                    />
+                                )}
                             </div>
                         </div>
                     </div>
-                     {/*{ moved toolbar button }*/}
+                    {/*{ moved toolbar button }*/}
                     {toolbar}
                 </div>
             </div>
@@ -409,11 +438,11 @@ class Filmstrip extends Component <Props> {
      * @returns {void}
      */
     _onShortcutToggleFilmstrip() {
-        sendAnalytics(createShortcutEvent(
-            'toggle.filmstrip',
-            {
-                enable: this.props._visible
-            }));
+        sendAnalytics(
+            createShortcutEvent("toggle.filmstrip", {
+                enable: this.props._visible,
+            })
+        );
 
         this._doToggleFilmstrip();
     }
@@ -428,11 +457,11 @@ class Filmstrip extends Component <Props> {
      * @returns {void}
      */
     _onToolbarToggleFilmstrip() {
-        sendAnalytics(createToolbarEvent(
-            'toggle.filmstrip.button',
-            {
-                enable: this.props._visible
-            }));
+        sendAnalytics(
+            createToolbarEvent("toggle.filmstrip.button", {
+                enable: this.props._visible,
+            })
+        );
 
         this._doToggleFilmstrip();
     }
@@ -449,12 +478,13 @@ class Filmstrip extends Component <Props> {
         const { t } = this.props;
 
         return (
-            <div className = 'filmstrip__toolbar'>
+            <div className="filmstrip__toolbar">
                 <button
-                    aria-label = { t('toolbar.accessibilityLabel.toggleFilmstrip') }
-                    id = 'toggleFilmstripButton'
-                    onClick = { this._onToolbarToggleFilmstrip }>
-                    <Icon src = { icon } />
+                    aria-label={t("toolbar.accessibilityLabel.toggleFilmstrip")}
+                    id="toggleFilmstripButton"
+                    onClick={this._onToolbarToggleFilmstrip}
+                >
+                    <Icon src={icon} />
                 </button>
             </div>
         );
@@ -469,20 +499,22 @@ class Filmstrip extends Component <Props> {
  * @returns {Props}
  */
 function _mapStateToProps(state) {
-    const { iAmSipGateway } = state['features/base/config'];
-    const { conference } = state['features/base/conference'];
+    const { iAmSipGateway } = state["features/base/config"];
+    const { conference } = state["features/base/conference"];
     const toolbarButtons = getToolbarButtons(state);
-    const { visible } = state['features/filmstrip'];
-    const tracks = state['features/base/tracks'];
-    const reduceHeight
-        = state['features/toolbox'].visible && toolbarButtons.length;
+    const { visible } = state["features/filmstrip"];
+    const tracks = state["features/base/tracks"];
+    const reduceHeight =
+        state["features/toolbox"].visible && toolbarButtons.length;
     const remoteVideosVisible = shouldRemoteVideosBeVisible(state);
-    const { isOpen: shiftRight } = state['features/chat'];
-    const className = `${remoteVideosVisible ? '' : 'hide-videos'} ${
-        reduceHeight ? 'reduce-height' : ''
-    } ${shiftRight ? 'shift-right' : ''}`.trim();
-    const videosClassName = `filmstrip__videos${visible ? '' : ' hidden'}`;
-    const { gridDimensions = {}, filmstripWidth } = state['features/filmstrip'].tileViewDimensions;
+    const { isOpen: shiftRight } = state["features/chat"];
+    const className = `${remoteVideosVisible ? "" : "hide-videos"} ${
+        reduceHeight ? "reduce-height" : ""
+    } ${shiftRight ? "shift-right" : ""}`.trim();
+    const videosClassName = `filmstrip__videos${visible ? "" : " hidden"}`;
+    const { gridDimensions = {}, filmstripWidth } = state[
+        "features/filmstrip"
+    ].tileViewDimensions;
 
     return {
         _className: className,
@@ -491,14 +523,16 @@ function _mapStateToProps(state) {
         _filmstripWidth: filmstripWidth,
         _hideScrollbar: Boolean(iAmSipGateway),
         _hideToolbar: Boolean(iAmSipGateway),
-        _isFilmstripButtonEnabled: isButtonEnabled('filmstrip', state),
-        _participants: state['features/base/participants'],
-        _recentActiveParticipants: state['features/base/participants/recentActive'],
+        _isFilmstripButtonEnabled: isButtonEnabled("filmstrip", state),
+        _participants: state["features/base/participants"],
+        _recentActiveParticipants:
+            state["features/base/participants/recentActive"],
         _rows: gridDimensions.rows,
         _videosClassName: videosClassName,
         _visible: visible,
         _lastN: conference ? conference.getLastN() : 3,
-        _isDominantSpeakerDisabled: interfaceConfig.DISABLE_DOMINANT_SPEAKER_INDICATOR,
+        _isDominantSpeakerDisabled:
+            interfaceConfig.DISABLE_DOMINANT_SPEAKER_INDICATOR,
         _tracks: tracks,
     };
 }
