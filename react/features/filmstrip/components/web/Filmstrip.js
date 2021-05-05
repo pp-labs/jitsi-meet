@@ -193,7 +193,15 @@ class Filmstrip extends Component<Props> {
             }
             const isLocal = p?.local ?? true;
             if (isLocal) {
-                p.order = 100;
+                p.order = 200;
+                return p;
+            }
+            const recentParticipantIndex = _recentActiveParticipants.findIndex(
+                (part) => part.id === p.id
+            );
+            if (p?.connectionStatus !== "active") {
+                console.log("inactive", p);
+                p.order = 100 + recentParticipantIndex;
                 return p;
             }
             const isRemoteParticipant = !p?.isFakeParticipant && !p?.local;
@@ -213,10 +221,6 @@ class Filmstrip extends Component<Props> {
             }
 
             // sally - recent participants
-
-            const recentParticipantIndex = _recentActiveParticipants.findIndex(
-                (part) => part.id === p.id
-            );
 
             if (recentParticipantIndex > -1) {
                 p.order = 10 + recentParticipantIndex;
