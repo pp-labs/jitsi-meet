@@ -48,6 +48,7 @@
     }
 }
 
+
 .videocontainer {
     position: relative;
     text-align: center;
@@ -70,7 +71,36 @@
         top: 14%;
         text-align: center;
         width: 100%;
-        font-size: 10px;
+        font-size: 20px;
+        // sally - display warning icon, resize when thumb gets smaller
+        div {
+            content: "";
+            display: inline-block;
+            vertical-align: middle;
+            height: 100%;
+
+        }
+        .notavailableIcon {
+            display: inline-block;
+            width: 65px;
+
+        }
+        .notavailableMessage{
+            display: inline-block;
+            width: calc(100% - 65px);
+        }
+        .small {
+            font-size: 10px;
+            .notavailableIcon {
+                display: inline-block;
+                width: 35px;
+
+            }
+            .notavailableMessage{
+                display: inline-block;
+                width: calc(100% - 35px);
+            }
+        }
     }
 
     /**

@@ -153,3 +153,4 @@ export { default as IconYahoo } from './yahoo.svg';
 export { default as IconSip } from './sip.svg';
 export { default as IconShowWhiteboard } from './whiteboard-show.svg';
 export { default as IconHideWhiteboard } from './whiteboard-hide.svg';
+export { default as IconVideoWarning } from './video-warning.svg';
