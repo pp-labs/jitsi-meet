@@ -331,10 +331,13 @@ class DisplayName extends Component<Props, State> {
 function _mapStateToProps(state: IState, ownProps: Partial<Props>) {
     const { participantID } = ownProps;
     const participant = getParticipantById(state, participantID ?? '');
+    let participantName = getParticipantDisplayName(state, participantID ?? '');
+
+    participantName = participantName.replace(/&#39;/g, '\'');
 
     return {
         _configuredDisplayName: participant?.name,
-        _nameToDisplay: getParticipantDisplayName(state, participantID ?? '')
+        _nameToDisplay: participantName
     };
 }
 
