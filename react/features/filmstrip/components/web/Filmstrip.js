@@ -313,9 +313,11 @@ class Filmstrip extends Component<Props> {
         //         className += ' local-participant'
         //     }
 
-        const trainer = _participants.find(
-            (p) => !p.name?.startsWith("Trainer")
+        const trainers = _participants.filter(
+            (p) => p.name?.startsWith("Trainer")
         );
+
+
         // const trainer = _participants.find(p => p.name.startsWith('Trainer'));
         switch (_currentLayout) {
             case LAYOUTS.VERTICAL_FILMSTRIP_VIEW:
@@ -358,7 +360,6 @@ class Filmstrip extends Component<Props> {
                 {/*{ toolbar }*/}
                 <div className={this.props._videosClassName} id="remoteVideos">
                     <div className="filmstrip__videos" id="filmstripLocalVideo">
-                        {/*sally- display trainer here when not in tile view */}
                         <div id="filmstripLocalVideoThumbnail">
                             {!tileViewActive && (
                                 <Thumbnail
@@ -397,12 +398,12 @@ class Filmstrip extends Component<Props> {
                                 );
                             })}
                             <div id="trainerVideoVerticalViewContainer">
-                                {!tileViewActive && trainer && (
+                                {!tileViewActive && trainers.map(trainer => (
                                     <Thumbnail
                                         key={`remote_${trainer.id}`}
                                         participantID={trainer.id}
                                     />
-                                )}
+                                ))}
                             </div>
                             <div id="localVideoTileViewContainer">
                                 {tileViewActive && (
