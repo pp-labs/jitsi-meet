@@ -88,7 +88,7 @@ type Props = {
      */
     _visible: boolean,
 
-    _lastN: number,
+    _clientHeight: number,
 
     _tracks: Array<Object>,
     _recentActiveParticipants: Array<Object>,
@@ -166,24 +166,28 @@ class Filmstrip extends Component<Props> {
             _currentLayout,
             _participants,
             _isDominantSpeakerDisabled,
-            _lastN,
+            _clientHeight,
             _tracks,
             _recentActiveParticipants,
         } = this.props;
         let remoteParticipants = _participants.filter((p) => !p.local);
         const localParticipant = getLocalParticipant(_participants);
         const tileViewActive = _currentLayout === LAYOUTS.TILE_VIEW;
-        let maxRemoteParticipants = -1;
+        let maxVisableRemoteParticipants = 5;
 
         // sally - no trainer in left side
         if (!tileViewActive) {
             remoteParticipants = _participants.filter(
                 (p) => !p.name?.startsWith("Trainer") && !p.local
             );
-            maxRemoteParticipants = _lastN < 1 ? -1 : _lastN - 1;
+            console.log(_clientHeight)
+            // sally - height minus toolbar (80) minus local video (120), divide by thumb height
+            maxVisableRemoteParticipants = Math.floor(((_clientHeight - 200) / 120))
         } else {
-            maxRemoteParticipants = _lastN < 1 ? -1 : _lastN;
+            maxVisableRemoteParticipants = 5;
         }
+
+        console.log(maxVisableRemoteParticipants)
 
         // sally order participants
         remoteParticipants = remoteParticipants.map((p) => {
@@ -262,11 +266,11 @@ class Filmstrip extends Component<Props> {
         try {
             if (
                 !_isDominantSpeakerDisabled &&
-                remoteParticipants.length > _lastN
+                remoteParticipants.length > maxVisableRemoteParticipants
             ) {
                 let i = remoteParticipants.findIndex((p) => p?.dominantSpeaker);
 
-                if (i !== -1 && i >= _lastN) {
+                if (i !== -1 && i >= maxVisableRemoteParticipants) {
                     remoteParticipants[i].order = 3;
                 }
                 remoteParticipants.sort((a, b) => {
@@ -344,7 +348,6 @@ class Filmstrip extends Component<Props> {
         if (this.props._hideScrollbar) {
             remoteVideosWrapperClassName += " hide-scrollbar";
         }
-        remoteVideosWrapperClassName += ` lastN_${_lastN}`;
 
         let toolbar = null;
 
@@ -385,8 +388,8 @@ class Filmstrip extends Component<Props> {
                         >
                             {remoteParticipants.map((p, i) => {
                                 let isHidden =
-                                    maxRemoteParticipants !== -1 &&
-                                    maxRemoteParticipants - 1 < i
+                                    maxVisableRemoteParticipants !== -1 &&
+                                    maxVisableRemoteParticipants - 1 < i
                                         ? true
                                         : false;
                                 return (
@@ -519,6 +522,7 @@ function _mapStateToProps(state) {
     const { gridDimensions = {}, filmstripWidth } = state[
         "features/filmstrip"
     ].tileViewDimensions;
+    const { clientHeight } = state['features/base/responsive-ui'];
 
     return {
         _className: className,
@@ -534,7 +538,7 @@ function _mapStateToProps(state) {
         _rows: gridDimensions.rows,
         _videosClassName: videosClassName,
         _visible: visible,
-        _lastN: conference ? conference.getLastN() : 3,
+        _clientHeight: clientHeight,
         _isDominantSpeakerDisabled:
             interfaceConfig.DISABLE_DOMINANT_SPEAKER_INDICATOR,
         _tracks: tracks,
