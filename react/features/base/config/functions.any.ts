@@ -24,7 +24,7 @@ var configOverride = {
     startWithAudioMuted: true,
     startWithVideoMuted: true,
     toolbarButtons: [
-       'microphone', 'camera', 'desktop', 'profile', 'settings', 'filmstrip', 'tileview'
+       'microphone', 'camera', 'desktop', 'profile', 'settings', 'filmstrip'
     ]
 }
 // XXX The function getRoomName is split out of
