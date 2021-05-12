@@ -643,10 +643,10 @@ export class VideoContainer extends LargeContainer {
                 || browser.isWebKitBased()) {
             return;
         }
-
+        // sally - hide background if screenshare
         ReactDOM.render(
             <LargeVideoBackground
-                hidden = { this._hideBackground || this._isHidden }
+                hidden = { this.isScreenSharing() || this._hideBackground || this._isHidden }
                 mirror = {
                     this.stream
                     && this.stream.isLocal()
