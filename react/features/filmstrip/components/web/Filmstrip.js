@@ -180,14 +180,12 @@ class Filmstrip extends Component<Props> {
             remoteParticipants = _participants.filter(
                 (p) => !p.name?.startsWith("Trainer") && !p.local
             );
-            console.log(_clientHeight)
             // sally - height minus toolbar (80) minus local video (120), divide by thumb height
             maxVisableRemoteParticipants = Math.floor(((_clientHeight - 200) / 120))
         } else {
             maxVisableRemoteParticipants = 5;
         }
 
-        console.log(maxVisableRemoteParticipants)
 
         // sally order participants
         remoteParticipants = remoteParticipants.map((p) => {
