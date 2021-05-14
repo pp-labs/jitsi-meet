@@ -322,7 +322,7 @@ export class VideoContainer extends LargeContainer {
 
 
         // sally - minus 82 for the top toolbar
-        if (this.stream && this.isScreenSharing()) {
+        if (this.stream) {
             return computeDesktopVideoSize(width,
                 height,
                 containerWidth,
@@ -352,7 +352,7 @@ export class VideoContainer extends LargeContainer {
         let containerWidthToUse = containerWidth;
 
         /* eslint-enable max-params */
-        if (this.stream && this.isScreenSharing()) {
+        if (this.stream) {
             if (interfaceConfig.VERTICAL_FILMSTRIP && verticalFilmstripWidth < FILMSTRIP_BREAKPOINT) {
                 containerWidthToUse -= Filmstrip.getVerticalFilmstripWidth();
             }
@@ -439,6 +439,7 @@ export class VideoContainer extends LargeContainer {
             return;
         }
 
+
         if ((containerWidth > width) || (containerHeight > height)) {
             this._backgroundOrientation = containerWidth > width ? ORIENTATION.LANDSCAPE : ORIENTATION.PORTRAIT;
             this._hideBackground = false;
@@ -452,6 +453,9 @@ export class VideoContainer extends LargeContainer {
             = this.getVideoPosition(width, height, containerWidth, containerHeight, verticalFilmstripWidth);
 
         APP.store.dispatch(setLargeVideoDimensions(height, width));
+
+        
+        
 
         this.$wrapper.animate({
             width,
