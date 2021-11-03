@@ -68,9 +68,15 @@
         display: block;
     }
 
-    .filmstrip__videos.has-scroll {
-        padding-left: 7px;
-    }
+    .remote-videos {
+        box-sizing: border-box;
+
+        /**
+         * Allow vertical scrolling of the thumbnails.
+         */
+        overflow-x: hidden;
+        overflow-y: auto;
+   // }
 
     /**
      * The size of the thumbnails should be set with javascript, based on
