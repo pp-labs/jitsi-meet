@@ -7,8 +7,6 @@ import { Dialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { getFieldValue } from '../../../base/react';
 import { connect } from '../../../base/redux';
-import { defaultSharedVideoLink } from '../../constants';
-import { getYoutubeLink } from '../../functions';
 import AbstractSharedVideoDialog from '../AbstractSharedVideoDialog';
 
 /**
@@ -48,7 +46,7 @@ class SharedVideoDialog extends AbstractSharedVideoDialog<*> {
 
         this.setState({
             value: linkValue,
-            okDisabled: !getYoutubeLink(linkValue)
+            okDisabled: !linkValue
         });
     }
 
@@ -60,7 +58,7 @@ class SharedVideoDialog extends AbstractSharedVideoDialog<*> {
      * @returns {boolean}
      */
     _onSubmitValue() {
-        return this._onSetVideoLink(this.state.value);
+        return super._onSetVideoLink(this.state.value);
     }
 
     /**
@@ -86,15 +84,13 @@ class SharedVideoDialog extends AbstractSharedVideoDialog<*> {
                     label = { t('dialog.videoLink') }
                     name = 'sharedVideoUrl'
                     onChange = { this._onChange }
-                    placeholder = { defaultSharedVideoLink }
+                    placeholder = { t('dialog.sharedVideoLinkPlaceholder') }
                     shouldFitContainer = { true }
                     type = 'text'
                     value = { this.state.value } />
             </Dialog>
         );
     }
-
-    _onSetVideoLink: string => boolean;
 
     _onChange: Object => void;
 }

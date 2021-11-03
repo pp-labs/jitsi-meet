@@ -6,7 +6,7 @@ import { IconVirtualBackground } from '../../base/icons';
 import { connect } from '../../base/redux';
 import { AbstractButton } from '../../base/toolbox/components';
 import type { AbstractButtonProps } from '../../base/toolbox/components';
-import { isLocalCameraTrackMuted } from '../../base/tracks';
+import { checkBlurSupport } from '../functions';
 
 import { VirtualBackgroundDialog } from './index';
 
@@ -19,11 +19,6 @@ type Props = AbstractButtonProps & {
      * True if the video background is blurred or false if it is not.
      */
     _isBackgroundEnabled: boolean,
-
-    /**
-     * Whether video is currently muted or not.
-     */
-    _videoMuted: boolean,
 
     /**
      * The redux {@code dispatch} function.
@@ -48,7 +43,13 @@ class VideoBackgroundButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
-        const { dispatch } = this.props;
+        const { dispatch, handleClick } = this.props;
+
+        if (handleClick) {
+            handleClick();
+
+            return;
+        }
 
         dispatch(openDialog(VirtualBackgroundDialog));
     }
@@ -63,17 +64,6 @@ class VideoBackgroundButton extends AbstractButton<Props, *> {
     _isToggled() {
         return this.props._isBackgroundEnabled;
     }
-
-    /**
-     * Returns {@code boolean} value indicating if disabled state is
-     * enabled or not.
-     *
-     * @protected
-     * @returns {boolean}
-     */
-    _isDisabled() {
-        return this.props._videoMuted;
-    }
 }
 
 /**
@@ -87,11 +77,10 @@ class VideoBackgroundButton extends AbstractButton<Props, *> {
  * }}
  */
 function _mapStateToProps(state): Object {
-    const tracks = state['features/base/tracks'];
 
     return {
         _isBackgroundEnabled: Boolean(state['features/virtual-background'].backgroundEffectEnabled),
-        _videoMuted: isLocalCameraTrackMuted(tracks)
+        visible: checkBlurSupport()
     };
 }
 

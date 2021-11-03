@@ -6,6 +6,7 @@ import { Text, View } from 'react-native';
 import { getConferenceName } from '../../../base/conference';
 import { getFeatureFlag, CONFERENCE_TIMER_ENABLED, MEETING_NAME_ENABLED } from '../../../base/flags';
 import { connect } from '../../../base/redux';
+import InviteButton from '../../../invite/components/add-people-dialog/native/InviteButton';
 import { PictureInPictureButton } from '../../../mobile/picture-in-picture';
 import { isToolboxVisible } from '../../../toolbox/functions.native';
 import ConferenceTimer from '../ConferenceTimer';
@@ -53,8 +54,9 @@ const NavigationBar = (props: Props) => {
         <View
             pointerEvents = 'box-none'
             style = { styles.navBarWrapper }>
-            <PictureInPictureButton
-                styles = { styles.navBarButton } />
+            <View style = { styles.pipButtonContainer }>
+                <PictureInPictureButton styles = { styles.pipButton } />
+            </View>
             <View
                 pointerEvents = 'box-none'
                 style = { styles.roomNameWrapper }>
@@ -75,6 +77,9 @@ const NavigationBar = (props: Props) => {
                             </View>
                 }
                 <Labels />
+            </View>
+            <View style = { styles.inviteButtonContainer }>
+                <InviteButton styles = { styles.inviteButton } />
             </View>
         </View>
     );

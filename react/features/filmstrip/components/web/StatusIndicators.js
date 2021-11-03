@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 
 import { MEDIA_TYPE } from '../../../base/media';
-import { getLocalParticipant, getParticipantById, PARTICIPANT_ROLE } from '../../../base/participants';
+import { getParticipantByIdOrUndefined, PARTICIPANT_ROLE } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { getTrackByMediaTypeAndParticipant, isLocalTrackMuted, isRemoteTrackMuted } from '../../../base/tracks';
 import { getCurrentLayout, LAYOUTS } from '../../../video-layout';
@@ -111,7 +111,7 @@ function _mapStateToProps(state, ownProps) {
     const { participantID } = ownProps;
 
     // Only the local participant won't have id for the time when the conference is not yet joined.
-    const participant = participantID ? getParticipantById(state, participantID) : getLocalParticipant(state);
+    const participant = getParticipantByIdOrUndefined(state, participantID);
 
     const tracks = state['features/base/tracks'];
     let isVideoMuted = true;
@@ -130,10 +130,17 @@ function _mapStateToProps(state, ownProps) {
     }
     // sally 
 
+    const { disableModeratorIndicator } = state['features/base/config'];
+
     return {
         _currentLayout: getCurrentLayout(state),
         _showAudioMutedIndicator: isAudioMuted,
+<<<<<<< HEAD
         _showModeratorIndicator: false,
+=======
+        _showModeratorIndicator:
+            !disableModeratorIndicator && participant && participant.role === PARTICIPANT_ROLE.MODERATOR,
+>>>>>>> sally_stable_6433
         _showScreenShareIndicator: isScreenSharing,
         _showVideoMutedIndicator: isVideoMuted
     };

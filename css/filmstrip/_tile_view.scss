@@ -10,13 +10,11 @@
         box-shadow: 0 0 0 3px $videoThumbnailSelected
     }
 
-    #filmstripRemoteVideos {
+    .remote-videos {
         align-items: center;
         box-sizing: border-box;
         display: flex;
         flex-direction: column;
-        height: 100%;
-        width: 100vw;
     }
 
     .filmstrip__videos .videocontainer {
@@ -34,6 +32,10 @@
          */
         height: 100% !important;
         width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: margin-bottom .3s ease-in;
     }
 
     .filmstrip {
@@ -51,9 +53,21 @@
                 margin-left: $sidebarWidth;
                 width: calc(100% - #{$sidebarWidth});
 
-                #filmstripRemoteVideos {
+                .remote-videos {
                     width: calc(100vw - #{$sidebarWidth});
                 }
+            }
+        }
+
+        &.collapse {
+            #remoteVideos {
+                height: calc(100% - #{$newToolbarSizeMobile}) !important;
+                margin-bottom: $newToolbarSizeMobile;
+            }
+
+            .remote-videos {
+                // !important is needed here as overflow is set via element.style in a FixedSizeGrid.
+                overflow: hidden auto !important;
             }
         }
     }
@@ -66,7 +80,7 @@
         display: block;
     }
 
-    #filmstripRemoteVideos {
+    .remote-videos {
         box-sizing: border-box;
 
         /**
@@ -132,27 +146,48 @@
         video {
             object-fit: contain;
         }
+// =======
 
-        /**
-         * Max-width corresponding to the ASPECT_RATIO_BREAKPOINT from features/filmstrip/constants.
-         */
-        @media only screen and (max-width: 500px) {
+//         /**
+//         * The size of the thumbnails should be set with javascript, based on
+//         * desired column count and window width. The rows are created using flex
+//         * and allowing the thumbnails to wrap.
+//         */
+//         & > div {
+//             align-content: center;
+//             align-items: center;
+//             box-sizing: border-box;
+//             display: flex;
+//             margin-top: auto;
+//             margin-bottom: auto;
+//             justify-content: center;
+//             position: absolute;
+
+//             .videocontainer {
+//                 border: 0;
+//                 box-sizing: border-box;
+//                 display: block;
+//                 margin: 2px;
+//             }
+// >>>>>>> sally_stable_6433
+
             video {
-                object-fit: cover;
+                object-fit: contain;
+            }
+
+            /**
+            * Max-width corresponding to the ASPECT_RATIO_BREAKPOINT from features/filmstrip/constants.
+            */
+            @media only screen and (max-width: 500px) {
+                video {
+                    object-fit: cover;
+                }
             }
         }
     }
-
-    .has-overflow#filmstripRemoteVideosContainer {
-        align-content: baseline;
-    }
-
-    .has-overflow .videocontainer {
-        align-self: baseline;
-    }
 }
 
-.shift-right #filmstripRemoteVideosContainer {
+.shift-right .remote-videos > div {
     /**
      * Max-width corresponding to the ASPECT_RATIO_BREAKPOINT from features/filmstrip/constants,
      * from which we subtract the chat size.
@@ -162,4 +197,8 @@
             object-fit: cover;
         }
     }
+}
+
+.indicator-icon-container {
+    display: inline-block;
 }

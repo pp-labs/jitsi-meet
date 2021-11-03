@@ -27,31 +27,6 @@ var interfaceConfig = {
     BRAND_WATERMARK_LINK: '',
 
     CLOSE_PAGE_GUEST_HINT: false, // A html text to be shown to guests on the close page, false disables it
-    /**
-     * Whether the connection indicator icon should hide itself based on
-     * connection strength. If true, the connection indicator will remain
-     * displayed while the participant has a weak connection and will hide
-     * itself after the CONNECTION_INDICATOR_HIDE_TIMEOUT when the connection is
-     * strong.
-     *
-     * @type {boolean}
-     */
-    CONNECTION_INDICATOR_AUTO_HIDE_ENABLED: true,
-
-    /**
-     * How long the connection indicator should remain displayed before hiding.
-     * Used in conjunction with CONNECTION_INDICATOR_AUTOHIDE_ENABLED.
-     *
-     * @type {number}
-     */
-    CONNECTION_INDICATOR_AUTO_HIDE_TIMEOUT: 5000,
-
-    /**
-     * If true, hides the connection indicators completely.
-     *
-     * @type {boolean}
-     */
-    CONNECTION_INDICATOR_DISABLED: false,
 
     DEFAULT_BACKGROUND: '#474747',
     DEFAULT_LOCAL_DISPLAY_NAME: 'me',
@@ -60,8 +35,6 @@ var interfaceConfig = {
     DEFAULT_WELCOME_PAGE_LOGO_URL: 'images/watermark.svg',
 
     DISABLE_DOMINANT_SPEAKER_INDICATOR: false,
-
-    DISABLE_FOCUS_INDICATOR: false,
 
     /**
      * If true, notifications regarding joining/leaving are no longer displayed.
@@ -118,8 +91,10 @@ var interfaceConfig = {
      */
     HIDE_INVITE_MORE_HEADER: true,
 
-    INITIAL_TOOLBAR_TIMEOUT: 20000,
     JITSI_WATERMARK_LINK: '',
+
+    // JITSI_WATERMARK_LINK: 'https://jitsi.org',
+
 
     LANG_DETECTION: true, // Allow i18n to detect the system language
     LIVE_STREAMING_HELP_LINK: 'https://jitsi.org/live', // Documentation reference for the live streaming feature.
@@ -173,10 +148,13 @@ var interfaceConfig = {
      *
      * @type {boolean}
      */
+
     RECENT_LIST_ENABLED: false,
     REMOTE_THUMBNAIL_RATIO: 16 / 9, // 1:1
 
-    //SETTINGS_SECTIONS: [ 'devices', 'language', 'moderator', 'profile', 'calendar' ],
+
+    // SETTINGS_SECTIONS: [ 'devices', 'language', 'moderator', 'profile', 'calendar', 'sounds' ],
+
     SETTINGS_SECTIONS: [ 'devices', 'language'],
     /**
      * Specify which sharing features should be displayed. If the value is not set
@@ -187,10 +165,10 @@ var interfaceConfig = {
     SHOW_BRAND_WATERMARK: false,
 
     /**
-    * Decides whether the chrome extension banner should be rendered on the landing page and during the meeting.
-    * If this is set to false, the banner will not be rendered at all. If set to true, the check for extension(s)
-    * being already installed is done before rendering.
-    */
+     * Decides whether the chrome extension banner should be rendered on the landing page and during the meeting.
+     * If this is set to false, the banner will not be rendered at all. If set to true, the check for extension(s)
+     * being already installed is done before rendering.
+     */
     SHOW_CHROME_EXTENSION_BANNER: false,
 
     SHOW_DEEP_LINKING_IMAGE: false,
@@ -232,7 +210,8 @@ var interfaceConfig = {
     // Determines how the video would fit the screen. 'both' would fit the whole
     // screen, 'height' would fit the original video height to the height of the
     // screen, 'width' would fit the original video width to the width of the
-    // screen respecting ratio.
+    // screen respecting ratio, 'nocrop' would make the video as large as
+    // possible and preserve aspect ratio without cropping.
     VIDEO_LAYOUT_FIT: 'both',
 
     /**
@@ -282,6 +261,28 @@ var interfaceConfig = {
      INDICATOR_FONT_SIZES
      PHONE_NUMBER_REGEX
     */
+
+    // -----------------DEPRECATED CONFIGS BELOW THIS LINE-----------------------------
+
+    // Connection indicators (
+    // CONNECTION_INDICATOR_AUTO_HIDE_ENABLED,
+    // CONNECTION_INDICATOR_AUTO_HIDE_TIMEOUT,
+    // CONNECTION_INDICATOR_DISABLED) got moved to config.js.
+
+    // Please use disableModeratorIndicator from config.js
+    // DISABLE_FOCUS_INDICATOR: false,
+
+    // Moved to config.js as `toolbarConfig.initialTimeout`.
+    // INITIAL_TOOLBAR_TIMEOUT: 20000,
+
+    // Moved to config.js as `toolbarConfig.alwaysVisible`.
+    // TOOLBAR_ALWAYS_VISIBLE: false,
+
+    // This config was moved to config.js as `toolbarButtons`.
+    // TOOLBAR_BUTTONS: [],
+
+    // Moved to config.js as `toolbarConfig.timeout`.
+    // TOOLBAR_TIMEOUT: 4000,
 
     // Allow all above example options to include a trailing comma and
     // prevent fear when commenting out the last value.

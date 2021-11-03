@@ -697,6 +697,36 @@ export function createStartSilentEvent() {
 }
 
 /**
+ * Creates an event which indicates that HTMLAudioElement.play has failed.
+ *
+ * @param {sting} elementID - The ID of the HTMLAudioElement.
+ * @returns {Object} The event in a format suitable for sending via sendAnalytics.
+ */
+export function createAudioPlayErrorEvent(elementID) {
+    return {
+        action: 'audio.play.error',
+        attributes: {
+            elementID
+        }
+    };
+}
+
+/**
+ * Creates an event which indicates that HTMLAudioElement.play has succeded after a prior failure.
+ *
+ * @param {sting} elementID - The ID of the HTMLAudioElement.
+ * @returns {Object} The event in a format suitable for sending via sendAnalytics.
+ */
+export function createAudioPlaySuccessEvent(elementID) {
+    return {
+        action: 'audio.play.success',
+        attributes: {
+            elementID
+        }
+    };
+}
+
+/**
  * Creates an event which indicates the "start muted" configuration.
  *
  * @param {string} source - The source of the configuration, 'local' or
@@ -766,6 +796,23 @@ export function createToolbarEvent(buttonName, attributes = {}) {
 }
 
 /**
+ * Creates an event associated with a reaction button being clicked/pressed.
+ *
+ * @param {string} buttonName - The identifier of the reaction button which was
+ * clicked/pressed.
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
+ */
+export function createReactionMenuEvent(buttonName) {
+    return {
+        action: 'clicked',
+        actionSubject: buttonName,
+        source: 'reaction.button',
+        type: TYPE_UI
+    };
+}
+
+/**
  * Creates an event which indicates that a local track was muted.
  *
  * @param {string} mediaType - The track's media type ('audio' or 'video').
@@ -818,5 +865,17 @@ export function createWelcomePageEvent(action, actionSubject, attributes = {}) {
         actionSubject,
         attributes,
         source: 'welcomePage'
+    };
+}
+
+/**
+ * Creates an event which indicates a screenshot of the screensharing has been taken.
+ *
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
+ */
+export function createScreensharingCaptureTakenEvent() {
+    return {
+        action: 'screen.sharing.capture'
     };
 }

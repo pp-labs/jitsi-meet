@@ -31,6 +31,7 @@ class SettingsButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.Settings';
     icon = IconSettings;
     label = 'toolbar.Settings';
+    tooltip = 'toolbar.Settings';
 
     /**
      * Handles clicking / pressing the button, and opens the appropriate dialog.
@@ -41,7 +42,15 @@ class SettingsButton extends AbstractButton<Props, *> {
     _handleClick() {
         const {
             defaultTab = SETTINGS_TABS.DEVICES,
-            dispatch } = this.props;
+            dispatch,
+            handleClick
+        } = this.props;
+
+        if (handleClick) {
+            handleClick();
+
+            return;
+        }
 
         sendAnalytics(createToolbarEvent('settings'));
         dispatch(openSettingsDialog(defaultTab));

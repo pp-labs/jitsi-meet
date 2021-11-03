@@ -10,6 +10,8 @@ import {
     sendAnalytics,
     VIDEO_MUTE
 } from '../analytics';
+import { rejectParticipantAudio, rejectParticipantVideo, showModeratedNotification } from '../av-moderation/actions';
+import { shouldShowModeratedNotification } from '../av-moderation/functions';
 import {
     MEDIA_TYPE,
     setAudioMuted,
@@ -18,8 +20,11 @@ import {
 } from '../base/media';
 import {
     getLocalParticipant,
+    getRemoteParticipants,
     muteRemoteParticipant
 } from '../base/participants';
+import { toggleScreensharing } from '../base/tracks';
+import { isModerationNotificationDisplayed } from '../notifications';
 
 declare var APP: Object;
 
@@ -30,10 +35,11 @@ const logger = getLogger(__filename);
  *
  * @param {boolean} enable - Whether to mute or unmute.
  * @param {MEDIA_TYPE} mediaType - The type of the media channel to mute.
+ * @param {boolean} stopScreenSharing - Whether or not to stop the screensharing.
  * @returns {Function}
  */
-export function muteLocal(enable: boolean, mediaType: MEDIA_TYPE) {
-    return (dispatch: Dispatch<any>) => {
+export function muteLocal(enable: boolean, mediaType: MEDIA_TYPE, stopScreenSharing: boolean = false) {
+    return (dispatch: Dispatch<any>, getState: Function) => {
         const isAudio = mediaType === MEDIA_TYPE.AUDIO;
 
         if (!isAudio && mediaType !== MEDIA_TYPE.VIDEO) {
@@ -41,14 +47,27 @@ export function muteLocal(enable: boolean, mediaType: MEDIA_TYPE) {
 
             return;
         }
+
+        // check for A/V Moderation when trying to unmute
+        if (!enable && shouldShowModeratedNotification(MEDIA_TYPE.AUDIO, getState())) {
+            if (!isModerationNotificationDisplayed(MEDIA_TYPE.AUDIO, getState())) {
+                dispatch(showModeratedNotification(MEDIA_TYPE.AUDIO));
+            }
+
+            return;
+        }
+
+        if (enable && stopScreenSharing) {
+            dispatch(toggleScreensharing(false, false, true));
+        }
+
         sendAnalytics(createToolbarEvent(isAudio ? AUDIO_MUTE : VIDEO_MUTE, { enable }));
         dispatch(isAudio ? setAudioMuted(enable, /* ensureTrack */ true)
             : setVideoMuted(enable, mediaType, VIDEO_MUTISM_AUTHORITY.USER, /* ensureTrack */ true));
 
-        // FIXME: The old conference logic as well as the shared video feature
-        // still rely on this event being emitted.
+        // FIXME: The old conference logic still relies on this event being emitted.
         typeof APP === 'undefined'
-            || APP.UI.emitEvent(isAudio ? UIEvents.AUDIO_MUTED : UIEvents.VIDEO_MUTED, enable, true);
+            || APP.UI.emitEvent(isAudio ? UIEvents.AUDIO_MUTED : UIEvents.VIDEO_MUTED, enable);
     };
 }
 
@@ -82,14 +101,23 @@ export function muteAllParticipants(exclude: Array<string>, mediaType: MEDIA_TYP
     return (dispatch: Dispatch<any>, getState: Function) => {
         const state = getState();
         const localId = getLocalParticipant(state).id;
-        const participantIds = state['features/base/participants']
-            .map(p => p.id);
 
-        /* eslint-disable no-confusing-arrow */
-        participantIds
-            .filter(id => !exclude.includes(id))
-            .map(id => id === localId ? muteLocal(true, mediaType) : muteRemote(id, mediaType))
-            .map(dispatch);
-        /* eslint-enable no-confusing-arrow */
+        if (!exclude.includes(localId)) {
+            dispatch(muteLocal(true, mediaType, true));
+        }
+
+        getRemoteParticipants(state).forEach((p, id) => {
+            if (exclude.includes(id)) {
+                return;
+            }
+
+            dispatch(muteRemote(id, mediaType));
+            if (mediaType === MEDIA_TYPE.AUDIO) {
+                dispatch(rejectParticipantAudio(id));
+            } else {
+                dispatch(rejectParticipantVideo(id));
+            }
+        });
     };
 }
+

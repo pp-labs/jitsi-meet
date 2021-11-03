@@ -10,8 +10,10 @@ import { Dialog } from '../../../base/dialog';
 import { translate, translateToHTML } from '../../../base/i18n';
 import { JitsiConnectionErrors } from '../../../base/lib-jitsi-meet';
 import { connect as reduxConnect } from '../../../base/redux';
-import { authenticateAndUpgradeRole } from '../../actions.native';
-import { cancelLogin } from '../../actions.web';
+import {
+    authenticateAndUpgradeRole,
+    cancelLogin
+} from '../../actions.web';
 
 /**
  * The type of the React {@code Component} props of {@link LoginDialog}.
@@ -197,7 +199,7 @@ class LoginDialog extends Component<Props, State> {
         const messageOptions = {};
         let messageKey;
 
-        if (progress && progress >= 0.5) {
+        if (progress && progress < 1) {
             messageKey = t('connection.FETCH_SESSION_ID');
         } else if (error) {
             const { name } = error;
@@ -243,6 +245,8 @@ class LoginDialog extends Component<Props, State> {
 
         return (
             <Dialog
+                disableBlanketClickDismiss = { true }
+                hideCloseIconButton = { true }
                 okDisabled = {
                     connecting
                     || loginStarted
@@ -271,6 +275,7 @@ class LoginDialog extends Component<Props, State> {
                     label = { t('dialog.userPassword') }
                     name = 'password'
                     onChange = { this._onChange }
+                    placeholder = { t('dialog.password') }
                     shouldFitContainer = { true }
                     type = 'password'
                     value = { password } />

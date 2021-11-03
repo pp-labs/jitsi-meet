@@ -6,14 +6,13 @@ import {
     createStartMutedConfigurationEvent,
     sendAnalytics
 } from '../../analytics';
-import { getName } from '../../app/functions';
 import { endpointMessageReceived } from '../../subtitles';
+import { getReplaceParticipant } from '../config/functions';
 import { JITSI_CONNECTION_CONFERENCE_KEY } from '../connection';
 import { JitsiConferenceEvents } from '../lib-jitsi-meet';
 import { MEDIA_TYPE, setAudioMuted, setVideoMuted } from '../media';
 import {
     dominantSpeakerChanged,
-    getLocalParticipant,
     getNormalizedDisplayName,
     participantConnectionStatusChanged,
     participantKicked,
@@ -23,11 +22,7 @@ import {
     participantUpdated
 } from '../participants';
 import { getLocalTracks, replaceLocalTrack, trackAdded, trackRemoved } from '../tracks';
-import {
-    getBackendSafePath,
-    getBackendSafeRoomName,
-    getJitsiMeetGlobalNS
-} from '../util';
+import { getBackendSafeRoomName } from '../util';
 
 import {
     AUTH_STATUS_CHANGED,
@@ -60,6 +55,7 @@ import {
     _addLocalTracksToConference,
     commonUserJoinedHandling,
     commonUserLeftHandling,
+    getConferenceOptions,
     getCurrentConference,
     sendLocalParticipant
 } from './functions';
@@ -139,8 +135,11 @@ function _addConferenceListeners(conference, dispatch, state) {
 
             // Remove the tracks from peerconnection as well.
             for (const track of localTracks) {
-                if ((audioMuted && track.jitsiTrack.getType() === MEDIA_TYPE.AUDIO)
-                    || (videoMuted && track.jitsiTrack.getType() === MEDIA_TYPE.VIDEO)) {
+                const trackType = track.jitsiTrack.getType();
+
+                // Do not remove the audio track on RN. Starting with iOS 15 it will fail to unmute otherwise.
+                if ((audioMuted && trackType === MEDIA_TYPE.AUDIO && navigator.product !== 'ReactNative')
+                        || (videoMuted && trackType === MEDIA_TYPE.VIDEO)) {
                     dispatch(replaceLocalTrack(track.jitsiTrack, null, conference));
                 }
             }
@@ -174,7 +173,7 @@ function _addConferenceListeners(conference, dispatch, state) {
 
     conference.on(
         JitsiConferenceEvents.DOMINANT_SPEAKER_CHANGED,
-        id => dispatch(dominantSpeakerChanged(id, conference)));
+        (dominant, previous) => dispatch(dominantSpeakerChanged(dominant, previous, conference)));
 
     conference.on(
         JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
@@ -361,7 +360,7 @@ export function conferenceUniqueIdSet(conference: Object) {
  * the local participant will (try to) join.
  * @returns {Function}
  */
-function _conferenceWillJoin(conference: Object) {
+export function _conferenceWillJoin(conference: Object) {
     return (dispatch: Dispatch<any>, getState: Function) => {
         const localTracks
             = getLocalTracks(getState()['features/base/tracks'])
@@ -433,22 +432,7 @@ export function createConference() {
             throw new Error('Cannot join a conference without a room name!');
         }
 
-        const config = state['features/base/config'];
-        const { tenant } = state['features/base/jwt'];
-        const { email, name: nick } = getLocalParticipant(state);
-
-        const conference
-            = connection.initJitsiConference(
-
-                getBackendSafeRoomName(room), {
-                    ...config,
-                    applicationName: getName(),
-                    getWiFiStatsMethod: getJitsiMeetGlobalNS().getWiFiStats,
-                    confID: `${locationURL.host}${getBackendSafePath(locationURL.pathname)}`,
-                    siteID: tenant,
-                    statisticsDisplayName: config.enableDisplayNameInStats ? nick : undefined,
-                    statisticsId: config.enableEmailInStats ? email : undefined
-                });
+        const conference = connection.initJitsiConference(getBackendSafeRoomName(room), getConferenceOptions(state));
 
         connection[JITSI_CONNECTION_CONFERENCE_KEY] = conference;
 
@@ -460,7 +444,9 @@ export function createConference() {
 
         sendLocalParticipant(state, conference);
 
-        conference.join(password);
+        const replaceParticipant = getReplaceParticipant(state);
+
+        conference.join(password, replaceParticipant);
     };
 }
 
@@ -477,8 +463,10 @@ export function checkIfCanJoin() {
         const { authRequired, password }
             = getState()['features/base/conference'];
 
+        const replaceParticipant = getReplaceParticipant(APP.store.getState());
+
         authRequired && dispatch(_conferenceWillJoin(authRequired));
-        authRequired && authRequired.join(password);
+        authRequired && authRequired.join(password, replaceParticipant);
     };
 }
 

@@ -2,6 +2,7 @@
 
 import { Component } from 'react';
 
+import { rejectParticipantVideo } from '../../av-moderation/actions';
 import { MEDIA_TYPE } from '../../base/media';
 import { muteRemote } from '../actions';
 
@@ -32,8 +33,8 @@ export type Props = {
  *
  * @extends Component
  */
-export default class AbstractMuteRemoteParticipantsVideoDialog<P:Props = Props>
-    extends Component<P> {
+export default class AbstractMuteRemoteParticipantsVideoDialog<P:Props = Props, State=void>
+    extends Component<P, State> {
     /**
      * Initializes a new {@code AbstractMuteRemoteParticipantsVideoDialog} instance.
      *
@@ -59,6 +60,7 @@ export default class AbstractMuteRemoteParticipantsVideoDialog<P:Props = Props>
         const { dispatch, participantID } = this.props;
 
         dispatch(muteRemote(participantID, MEDIA_TYPE.VIDEO));
+        dispatch(rejectParticipantVideo(participantID));
 
         return true;
     }
