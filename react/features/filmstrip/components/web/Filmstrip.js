@@ -1,38 +1,32 @@
 /* @flow */
 
-<<<<<<< HEAD
-import React, { Component } from "react";
-import type { Dispatch } from "redux";
-=======
 import React, { PureComponent } from 'react';
 import { FixedSizeList, FixedSizeGrid } from 'react-window';
 import type { Dispatch } from 'redux';
->>>>>>> sally_stable_6433
+
+
+
+// import { MEDIA_TYPE, VideoTrack } from "../../../base/media";
+// import { getToolbarButtons } from "../../../base/config";
+// import { translate } from "../../../base/i18n";
+// import { Icon, IconMenuDown, IconMenuUp } from "../../../base/icons";
+// import { getLocalParticipant } from "../../../base/participants";
+// import { connect } from "../../../base/redux";
+// import { isButtonEnabled } from "../../../toolbox/functions.web";
+// import { LAYOUTS, getCurrentLayout } from "../../../video-layout";
+// import { setFilmstripVisible } from "../../actions";
+// import { shouldRemoteVideosBeVisible } from "../../functions";
+// import {
+//     getLocalAudioTrack,
+//     getLocalVideoTrack,
+//     getTrackByMediaTypeAndParticipant,
+//     updateLastTrackVideoMediaEvent,
+// } from "../../../base/tracks";
+// import Thumbnail from "./Thumbnail";
 
 import {
     createShortcutEvent,
     createToolbarEvent,
-<<<<<<< HEAD
-    sendAnalytics,
-} from "../../../analytics";
-import { MEDIA_TYPE, VideoTrack } from "../../../base/media";
-import { getToolbarButtons } from "../../../base/config";
-import { translate } from "../../../base/i18n";
-import { Icon, IconMenuDown, IconMenuUp } from "../../../base/icons";
-import { getLocalParticipant } from "../../../base/participants";
-import { connect } from "../../../base/redux";
-import { isButtonEnabled } from "../../../toolbox/functions.web";
-import { LAYOUTS, getCurrentLayout } from "../../../video-layout";
-import { setFilmstripVisible } from "../../actions";
-import { shouldRemoteVideosBeVisible } from "../../functions";
-import {
-    getLocalAudioTrack,
-    getLocalVideoTrack,
-    getTrackByMediaTypeAndParticipant,
-    updateLastTrackVideoMediaEvent,
-} from "../../../base/tracks";
-import Thumbnail from "./Thumbnail";
-=======
     sendAnalytics
 } from '../../../analytics';
 import { getToolbarButtons } from '../../../base/config';
@@ -56,7 +50,7 @@ import { shouldRemoteVideosBeVisible } from '../../functions';
 import AudioTracksContainer from './AudioTracksContainer';
 import Thumbnail from './Thumbnail';
 import ThumbnailWrapper from './ThumbnailWrapper';
->>>>>>> sally_stable_6433
+
 
 declare var APP: Object;
 declare var interfaceConfig: Object;
@@ -167,12 +161,9 @@ type Props = {
  *
  * @extends Component
  */
-<<<<<<< HEAD
-class Filmstrip extends Component<Props> {
-=======
+
 class Filmstrip extends PureComponent <Props> {
 
->>>>>>> sally_stable_6433
     /**
      * Initializes a new {@code Filmstrip} instance.
      *
@@ -183,14 +174,7 @@ class Filmstrip extends PureComponent <Props> {
         super(props);
 
         // Bind event handlers so they are only bound once for every instance.
-<<<<<<< HEAD
-        this._onShortcutToggleFilmstrip = this._onShortcutToggleFilmstrip.bind(
-            this
-        );
-        this._onToolbarToggleFilmstrip = this._onToolbarToggleFilmstrip.bind(
-            this
-        );
-=======
+
         this._onShortcutToggleFilmstrip = this._onShortcutToggleFilmstrip.bind(this);
         this._onToolbarToggleFilmstrip = this._onToolbarToggleFilmstrip.bind(this);
         this._onTabIn = this._onTabIn.bind(this);
@@ -198,7 +182,6 @@ class Filmstrip extends PureComponent <Props> {
         this._listItemKey = this._listItemKey.bind(this);
         this._onGridItemsRendered = this._onGridItemsRendered.bind(this);
         this._onListItemsRendered = this._onListItemsRendered.bind(this);
->>>>>>> sally_stable_6433
     }
 
     /**
@@ -231,10 +214,9 @@ class Filmstrip extends PureComponent <Props> {
      * @returns {ReactElement}
      */
     render() {
-<<<<<<< HEAD
-        const filmstripStyle = {};
+
+
         const filmstripRemoteVideosContainerStyle = {};
-        let remoteVideoContainerClassName = "remote-videos-container";
         const {
             _currentLayout,
             _participants,
@@ -245,10 +227,7 @@ class Filmstrip extends PureComponent <Props> {
         } = this.props;
         let remoteParticipants = _participants.filter((p) => !p.local);
         const localParticipant = getLocalParticipant(_participants);
-=======
-        const filmstripStyle = { };
-        const { _currentLayout } = this.props;
->>>>>>> sally_stable_6433
+
         const tileViewActive = _currentLayout === LAYOUTS.TILE_VIEW;
         let maxVisableRemoteParticipants = 5;
 
@@ -262,8 +241,6 @@ class Filmstrip extends PureComponent <Props> {
         } else {
             maxVisableRemoteParticipants = 5;
         }
-
-<<<<<<< HEAD
 
         // sally order participants
         remoteParticipants = remoteParticipants.map((p) => {
@@ -423,14 +400,14 @@ class Filmstrip extends PureComponent <Props> {
 
         if (this.props._hideScrollbar) {
             remoteVideosWrapperClassName += " hide-scrollbar";
-=======
-        switch (_currentLayout) {
-        case LAYOUTS.VERTICAL_FILMSTRIP_VIEW:
-            // Adding 18px for the 2px margins, 2px borders on the left and right and 5px padding on the left and right.
-            // Also adding 7px for the scrollbar.
-            filmstripStyle.maxWidth = (interfaceConfig.FILM_STRIP_MAX_HEIGHT || 120) + 25;
-            break;
->>>>>>> sally_stable_6433
+
+        // switch (_currentLayout) {
+        // case LAYOUTS.VERTICAL_FILMSTRIP_VIEW:
+        //     // Adding 18px for the 2px margins, 2px borders on the left and right and 5px padding on the left and right.
+        //     // Also adding 7px for the scrollbar.
+        //     filmstripStyle.maxWidth = (interfaceConfig.FILM_STRIP_MAX_HEIGHT || 120) + 25;
+        //     break;
+
         }
 
         let toolbar = null;
@@ -934,16 +911,8 @@ function _mapStateToProps(state) {
     return {
         _className: className,
         _columns: gridDimensions.columns,
-<<<<<<< HEAD
-        _currentLayout: getCurrentLayout(state),
-        _filmstripWidth: filmstripWidth,
-        _hideScrollbar: Boolean(iAmSipGateway),
-        _hideToolbar: Boolean(iAmSipGateway),
-        _isFilmstripButtonEnabled: isButtonEnabled("filmstrip", state),
-        _participants: state["features/base/participants"],
         _recentActiveParticipants:
             state["features/base/participants/recentActive"],
-=======
         _currentLayout,
         _filmstripHeight: remoteFilmstripHeight,
         _filmstripWidth: remoteFilmstripWidth,
@@ -951,21 +920,14 @@ function _mapStateToProps(state) {
         _isFilmstripButtonEnabled: isButtonEnabled('filmstrip', state),
         _remoteParticipantsLength: remoteParticipants.length,
         _remoteParticipants: remoteParticipants,
->>>>>>> sally_stable_6433
         _rows: gridDimensions.rows,
         _thumbnailWidth: _thumbnailSize?.width,
         _thumbnailHeight: _thumbnailSize?.height,
         _thumbnailsReordered: enableThumbnailReordering,
         _videosClassName: videosClassName,
         _visible: visible,
-<<<<<<< HEAD
         _clientHeight: clientHeight,
-        _isDominantSpeakerDisabled:
-            interfaceConfig.DISABLE_DOMINANT_SPEAKER_INDICATOR,
-        _tracks: tracks,
-=======
         _isToolboxVisible: isToolboxVisible(state)
->>>>>>> sally_stable_6433
     };
 }
 
