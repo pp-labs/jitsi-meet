@@ -117,7 +117,7 @@ function _electParticipantInLargeVideo(state) {
 
     // sally
     // next pick the trainer
-    const participants = state['features/base/participants'];
+    const participants = [ ...getRemoteParticipants(state).values() ];
     let participant = participants.find(p => p.name.startsWith('Trainer'));
 
     if (participant) {
@@ -144,7 +144,7 @@ function _electParticipantInLargeVideo(state) {
     // 5. As a last resort, select the participant that joined last (other than poltergist or other bot type
     // participants).
 
-    const participants = [ ...getRemoteParticipants(state).values() ];
+    
 
     for (let i = participants.length; i > 0 && !participant; i--) {
         const p = participants[i - 1];

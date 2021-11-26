@@ -216,190 +216,190 @@ class Filmstrip extends PureComponent <Props> {
     render() {
 
 
-        const filmstripRemoteVideosContainerStyle = {};
-        const {
-            _currentLayout,
-            _participants,
-            _isDominantSpeakerDisabled,
-            _clientHeight,
-            _tracks,
-            _recentActiveParticipants,
-        } = this.props;
-        let remoteParticipants = _participants.filter((p) => !p.local);
-        const localParticipant = getLocalParticipant(_participants);
+        // const filmstripRemoteVideosContainerStyle = {};
+        // const {
+        //     _currentLayout,
+        //     _participants,
+        //     _isDominantSpeakerDisabled,
+        //     _clientHeight,
+        //     _tracks,
+        //     _recentActiveParticipants,
+        // } = this.props;
+        // let remoteParticipants = _participants.filter((p) => !p.local);
+        // const localParticipant = getLocalParticipant(_participants);
 
-        const tileViewActive = _currentLayout === LAYOUTS.TILE_VIEW;
-        let maxVisableRemoteParticipants = 5;
+        // const tileViewActive = _currentLayout === LAYOUTS.TILE_VIEW;
+        // let maxVisableRemoteParticipants = 5;
 
-        // sally - no trainer in left side
-        if (!tileViewActive) {
-            remoteParticipants = _participants.filter(
-                (p) => !p.name?.startsWith("Trainer") && !p.local
-            );
-            // sally - height minus toolbar (80) minus local video (120), divide by thumb height
-            maxVisableRemoteParticipants = Math.floor(((_clientHeight - 200) / 120))
-        } else {
-            maxVisableRemoteParticipants = 5;
-        }
+        // // sally - no trainer in left side
+        // if (!tileViewActive) {
+        //     remoteParticipants = _participants.filter(
+        //         (p) => !p.name?.startsWith("Trainer") && !p.local
+        //     );
+        //     // sally - height minus toolbar (80) minus local video (120), divide by thumb height
+        //     maxVisableRemoteParticipants = Math.floor(((_clientHeight - 200) / 120))
+        // } else {
+        //     maxVisableRemoteParticipants = 5;
+        // }
 
-        // sally order participants
-        remoteParticipants = remoteParticipants.map((p) => {
-            if (p.name.startsWith("Trainer")) {
-                p.order = 1;
-                return p;
-            }
-            const isLocal = p?.local ?? true;
-            if (isLocal) {
-                p.order = 200;
-                return p;
-            }
-            const recentParticipantIndex = _recentActiveParticipants.findIndex(
-                (part) => part.id === p.id
-            );
-            if (p?.connectionStatus !== "active") {
-                p.order = 100 + recentParticipantIndex;
-                return p;
-            }
-            const isRemoteParticipant = !p?.isFakeParticipant && !p?.local;
-            const participantID = p.id;
-            const _videoTrack = getTrackByMediaTypeAndParticipant(
-                _tracks,
-                MEDIA_TYPE.VIDEO,
-                participantID
-            );
-            const videoStreamMuted = _videoTrack
-                ? _videoTrack.muted
-                : "no stream";
-            const isScreenSharing = _videoTrack?.videoType === "desktop";
-            if (isRemoteParticipant && isScreenSharing) {
-                p.order = 2;
-                return p;
-            }
-
-            // sally - recent participants
-
-            if (recentParticipantIndex > -1) {
-                p.order = 10 + recentParticipantIndex;
-                return p;
-            }
-
-            if (isRemoteParticipant && !videoStreamMuted) {
-                p.order = 20;
-                return p;
-            }
-            // const _audioTrack = isLocal
-            //     ? getLocalAudioTrack(_tracks) : getTrackByMediaTypeAndParticipant(_tracks, MEDIA_TYPE.AUDIO, participantID);
-
-            // sally - don't prioritize audio only to prevent jumping
-            // if (isRemoteParticipant && _audioTrack && !_audioTrack.muted) {
-            //     p.order = 5;
-            //     return p;
-            // }
-
-            p.order = 30;
-            return p;
-            // const isRemoteParticipant: !participant?.isFakeParticipant && !participant?.local;
-            // const { id } = participant;
-            // const isLocal = participant?.local ?? true;
-            // const tracks = state['features/base/tracks'];
-            // const _videoTrack = isLocal
-            //     ? getLocalVideoTrack(tracks) : getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, participantID);
-            // const _audioTrack = isLocal
-            //     ? getLocalAudioTrack(tracks) : getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.AUDIO, participantID);
-            // if (isRemoteParticipant && (dmInput.isVideoPlayable && !dmInput.videoStreamMuted)
-        });
-        remoteParticipants.sort((a, b) => {
-            if (a.order === b.order) {
-                return 0;
-            }
-            return a.order > b.order ? 1 : -1;
-        });
-
-        // sally - order dominant speaker only if they are outside the box
-        try {
-            if (
-                !_isDominantSpeakerDisabled &&
-                remoteParticipants.length > maxVisableRemoteParticipants
-            ) {
-                let i = remoteParticipants.findIndex((p) => p?.dominantSpeaker);
-
-                if (i !== -1 && i >= maxVisableRemoteParticipants) {
-                    remoteParticipants[i].order = 3;
-                }
-                remoteParticipants.sort((a, b) => {
-                    if (a.order === b.order) {
-                        return 0;
-                    }
-                    return a.order > b.order ? 1 : -1;
-                });
-            }
-        } catch (e) {
-            console.log(e);
-        }
-        // if (!_isDominantSpeakerDisabled && p?.dominantSpeaker) {
-        //         p.order = 3
+        // // sally order participants
+        // remoteParticipants = remoteParticipants.map((p) => {
+        //     if (p.name.startsWith("Trainer")) {
+        //         p.order = 1;
+        //         return p;
+        //     }
+        //     const isLocal = p?.local ?? true;
+        //     if (isLocal) {
+        //         p.order = 200;
+        //         return p;
+        //     }
+        //     const recentParticipantIndex = _recentActiveParticipants.findIndex(
+        //         (part) => part.id === p.id
+        //     );
+        //     if (p?.connectionStatus !== "active") {
+        //         p.order = 100 + recentParticipantIndex;
+        //         return p;
+        //     }
+        //     const isRemoteParticipant = !p?.isFakeParticipant && !p?.local;
+        //     const participantID = p.id;
+        //     const _videoTrack = getTrackByMediaTypeAndParticipant(
+        //         _tracks,
+        //         MEDIA_TYPE.VIDEO,
+        //         participantID
+        //     );
+        //     const videoStreamMuted = _videoTrack
+        //         ? _videoTrack.muted
+        //         : "no stream";
+        //     const isScreenSharing = _videoTrack?.videoType === "desktop";
+        //     if (isRemoteParticipant && isScreenSharing) {
+        //         p.order = 2;
         //         return p;
         //     }
 
-        // Sally -  Add additional classes for trainer
-        // if (_participant.name.startsWith('Trainer')) {
-        //     className += ` trainer-participant`
-        // } else {
-        //     // add additional class for remote participants not sharing video
-        //     // isCurrentlyOnLargeVideo: _isCurrentlyOnLargeVideo,
-        //     // isHovered,
-        //     // isAudioOnly: _isAudioOnly,
-        //     // tileViewActive,
-        //     // isVideoPlayable: _isVideoPlayable,
-        //     // connectionStatus: _participant?.connectionStatus,
-        //     // canPlayEventReceived,
-        //     // videoStream: Boolean(_videoTrack),
-        //     // isRemoteParticipant: !_participant?.isFakeParticipant && !_participant?.local,
-        //     // isScreenSharing: _isScreenSharing,
-        //     // videoStreamMuted: _videoTrack ? _videoTrack.muted : 'no stream'
-        //     const dmInput = Thumbnail.getDisplayModeInput(this.props, this.state)
-        //     if (isRemoteParticipant && (dmInput.isVideoPlayable && !dmInput.videoStreamMuted)) {
-        //         className += ' has-video'
-        //     } else if (isRemoteParticipant && _audioTrack && !_audioTrack.muted) {
-        //         className += ' audio-only'
-        //     }
-        //     if ( isRemoteParticipant && dmInput.isScreenSharing) {
-        //         className += ' sharing-screen'
-        //     }
-        //     if (_participant?.local) {
-        //         className += ' local-participant'
+        //     // sally - recent participants
+
+        //     if (recentParticipantIndex > -1) {
+        //         p.order = 10 + recentParticipantIndex;
+        //         return p;
         //     }
 
-        const trainers = _participants.filter(
-            (p) => p.name?.startsWith("Trainer")
-        );
+        //     if (isRemoteParticipant && !videoStreamMuted) {
+        //         p.order = 20;
+        //         return p;
+        //     }
+        //     // const _audioTrack = isLocal
+        //     //     ? getLocalAudioTrack(_tracks) : getTrackByMediaTypeAndParticipant(_tracks, MEDIA_TYPE.AUDIO, participantID);
+
+        //     // sally - don't prioritize audio only to prevent jumping
+        //     // if (isRemoteParticipant && _audioTrack && !_audioTrack.muted) {
+        //     //     p.order = 5;
+        //     //     return p;
+        //     // }
+
+        //     p.order = 30;
+        //     return p;
+        //     // const isRemoteParticipant: !participant?.isFakeParticipant && !participant?.local;
+        //     // const { id } = participant;
+        //     // const isLocal = participant?.local ?? true;
+        //     // const tracks = state['features/base/tracks'];
+        //     // const _videoTrack = isLocal
+        //     //     ? getLocalVideoTrack(tracks) : getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, participantID);
+        //     // const _audioTrack = isLocal
+        //     //     ? getLocalAudioTrack(tracks) : getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.AUDIO, participantID);
+        //     // if (isRemoteParticipant && (dmInput.isVideoPlayable && !dmInput.videoStreamMuted)
+        // });
+        // remoteParticipants.sort((a, b) => {
+        //     if (a.order === b.order) {
+        //         return 0;
+        //     }
+        //     return a.order > b.order ? 1 : -1;
+        // });
+
+        // // sally - order dominant speaker only if they are outside the box
+        // try {
+        //     if (
+        //         !_isDominantSpeakerDisabled &&
+        //         remoteParticipants.length > maxVisableRemoteParticipants
+        //     ) {
+        //         let i = remoteParticipants.findIndex((p) => p?.dominantSpeaker);
+
+        //         if (i !== -1 && i >= maxVisableRemoteParticipants) {
+        //             remoteParticipants[i].order = 3;
+        //         }
+        //         remoteParticipants.sort((a, b) => {
+        //             if (a.order === b.order) {
+        //                 return 0;
+        //             }
+        //             return a.order > b.order ? 1 : -1;
+        //         });
+        //     }
+        // } catch (e) {
+        //     console.log(e);
+        // }
+        // // if (!_isDominantSpeakerDisabled && p?.dominantSpeaker) {
+        // //         p.order = 3
+        // //         return p;
+        // //     }
+
+        // // Sally -  Add additional classes for trainer
+        // // if (_participant.name.startsWith('Trainer')) {
+        // //     className += ` trainer-participant`
+        // // } else {
+        // //     // add additional class for remote participants not sharing video
+        // //     // isCurrentlyOnLargeVideo: _isCurrentlyOnLargeVideo,
+        // //     // isHovered,
+        // //     // isAudioOnly: _isAudioOnly,
+        // //     // tileViewActive,
+        // //     // isVideoPlayable: _isVideoPlayable,
+        // //     // connectionStatus: _participant?.connectionStatus,
+        // //     // canPlayEventReceived,
+        // //     // videoStream: Boolean(_videoTrack),
+        // //     // isRemoteParticipant: !_participant?.isFakeParticipant && !_participant?.local,
+        // //     // isScreenSharing: _isScreenSharing,
+        // //     // videoStreamMuted: _videoTrack ? _videoTrack.muted : 'no stream'
+        // //     const dmInput = Thumbnail.getDisplayModeInput(this.props, this.state)
+        // //     if (isRemoteParticipant && (dmInput.isVideoPlayable && !dmInput.videoStreamMuted)) {
+        // //         className += ' has-video'
+        // //     } else if (isRemoteParticipant && _audioTrack && !_audioTrack.muted) {
+        // //         className += ' audio-only'
+        // //     }
+        // //     if ( isRemoteParticipant && dmInput.isScreenSharing) {
+        // //         className += ' sharing-screen'
+        // //     }
+        // //     if (_participant?.local) {
+        // //         className += ' local-participant'
+        // //     }
+
+        // const trainers = _participants.filter(
+        //     (p) => p.name?.startsWith("Trainer")
+        // );
 
 
-        // const trainer = _participants.find(p => p.name.startsWith('Trainer'));
-        switch (_currentLayout) {
-            case LAYOUTS.VERTICAL_FILMSTRIP_VIEW:
-                // Adding 18px for the 2px margins, 2px borders on the left and right and 5px padding on the left and right.
-                // Also adding 7px for the scrollbar.
-                filmstripStyle.maxWidth =
-                    (interfaceConfig.FILM_STRIP_MAX_HEIGHT || 120) + 25;
-                break;
-            case LAYOUTS.TILE_VIEW: {
-                // The size of the side margins for each tile as set in CSS.
-                const { _columns, _rows, _filmstripWidth } = this.props;
+        // // const trainer = _participants.find(p => p.name.startsWith('Trainer'));
+        // switch (_currentLayout) {
+        //     case LAYOUTS.VERTICAL_FILMSTRIP_VIEW:
+        //         // Adding 18px for the 2px margins, 2px borders on the left and right and 5px padding on the left and right.
+        //         // Also adding 7px for the scrollbar.
+        //         filmstripStyle.maxWidth =
+        //             (interfaceConfig.FILM_STRIP_MAX_HEIGHT || 120) + 25;
+        //         break;
+        //     case LAYOUTS.TILE_VIEW: {
+        //         // The size of the side margins for each tile as set in CSS.
+        //         const { _columns, _rows, _filmstripWidth } = this.props;
 
-                if (_rows > _columns) {
-                    remoteVideoContainerClassName += " has-overflow";
-                }
+        //         if (_rows > _columns) {
+        //             remoteVideoContainerClassName += " has-overflow";
+        //         }
 
-                filmstripRemoteVideosContainerStyle.width = _filmstripWidth;
-                break;
-            }
-        }
+        //         filmstripRemoteVideosContainerStyle.width = _filmstripWidth;
+        //         break;
+        //     }
+        // }
 
-        let remoteVideosWrapperClassName = "filmstrip__videos ";
+        // let remoteVideosWrapperClassName = "filmstrip__videos ";
 
-        if (this.props._hideScrollbar) {
-            remoteVideosWrapperClassName += " hide-scrollbar";
+        // if (this.props._hideScrollbar) {
+        //     remoteVideosWrapperClassName += " hide-scrollbar";
 
         // switch (_currentLayout) {
         // case LAYOUTS.VERTICAL_FILMSTRIP_VIEW:
@@ -408,6 +408,18 @@ class Filmstrip extends PureComponent <Props> {
         //     filmstripStyle.maxWidth = (interfaceConfig.FILM_STRIP_MAX_HEIGHT || 120) + 25;
         //     break;
 
+       // }
+
+        const filmstripStyle = { };
+        const { _currentLayout } = this.props;
+        const tileViewActive = _currentLayout === LAYOUTS.TILE_VIEW;
+
+        switch (_currentLayout) {
+        case LAYOUTS.VERTICAL_FILMSTRIP_VIEW:
+            // Adding 18px for the 2px margins, 2px borders on the left and right and 5px padding on the left and right.
+            // Also adding 7px for the scrollbar.
+            filmstripStyle.maxWidth = (interfaceConfig.FILM_STRIP_MAX_HEIGHT || 120) + 25;
+            break;
         }
 
         let toolbar = null;
@@ -417,75 +429,10 @@ class Filmstrip extends PureComponent <Props> {
         }
         return (
             <div
-<<<<<<< HEAD
-                className={`filmstrip ${this.props._className}`}
-                style={filmstripStyle}
-            >
-                {/*sally - move tooldbar button*/}
-                {/*{ toolbar }*/}
-                <div className={this.props._videosClassName} id="remoteVideos">
-                    <div className="filmstrip__videos" id="filmstripLocalVideo">
-                        <div id="filmstripLocalVideoThumbnail">
-                            {!tileViewActive && (
-                                <Thumbnail
-                                    key="local"
-                                    participantID={localParticipant.id}
-                                />
-                            )}
-                        </div>
-                    </div>
-                    <div
-                        className={remoteVideosWrapperClassName}
-                        id="filmstripRemoteVideos"
-                    >
-                        {/*
-                         * XXX This extra video container is needed for
-                         * scrolling thumbnails in Firefox; otherwise, the flex
-                         * thumbnails resize instead of causing overflow.
-                         */}
-                        <div
-                            className={remoteVideoContainerClassName}
-                            id="filmstripRemoteVideosContainer"
-                            style={filmstripRemoteVideosContainerStyle}
-                        >
-                            {remoteParticipants.map((p, i) => {
-                                let isHidden =
-                                    maxVisableRemoteParticipants !== -1 &&
-                                    maxVisableRemoteParticipants - 1 < i
-                                        ? true
-                                        : false;
-                                return (
-                                    <Thumbnail
-                                        key={`remote_${p.id}`}
-                                        participantID={p.id}
-                                        hidden={isHidden}
-                                    />
-                                );
-                            })}
-                            <div id="trainerVideoVerticalViewContainer">
-                                {!tileViewActive && trainers.map(trainer => (
-                                    <Thumbnail
-                                        key={`remote_${trainer.id}`}
-                                        participantID={trainer.id}
-                                    />
-                                ))}
-                            </div>
-                            <div id="localVideoTileViewContainer">
-                                {tileViewActive && (
-                                    <Thumbnail
-                                        key="local"
-                                        participantID={localParticipant.id}
-                                    />
-                                )}
-                            </div>
-                        </div>
-                    </div>
-                    {/*{ moved toolbar button }*/}
-                    {toolbar}
-=======
                 className = { `filmstrip ${this.props._className}` }
                 style = { filmstripStyle }>
-                { toolbar }
+                {/*sally - move tooldbar button*/}
+                {/*{ toolbar }*/}
                 <div
                     className = { this.props._videosClassName }
                     id = 'remoteVideos'>
@@ -502,7 +449,8 @@ class Filmstrip extends PureComponent <Props> {
                     {
                         this._renderRemoteParticipants()
                     }
->>>>>>> sally_stable_6433
+                    {/*{ moved toolbar button }*/}
+                    {toolbar}
                 </div>
                 <AudioTracksContainer />
             </div>
@@ -789,15 +737,6 @@ class Filmstrip extends PureComponent <Props> {
         const { t } = this.props;
 
         return (
-<<<<<<< HEAD
-            <div className="filmstrip__toolbar">
-                <button
-                    aria-label={t("toolbar.accessibilityLabel.toggleFilmstrip")}
-                    id="toggleFilmstripButton"
-                    onClick={this._onToolbarToggleFilmstrip}
-                >
-                    <Icon src={icon} />
-=======
             <div
                 className = 'filmstrip__toolbar'>
                 <button
@@ -810,7 +749,6 @@ class Filmstrip extends PureComponent <Props> {
                     <Icon
                         aria-label = { t('toolbar.accessibilityLabel.toggleFilmstrip') }
                         src = { icon } />
->>>>>>> sally_stable_6433
                 </button>
             </div>
         );
@@ -823,9 +761,9 @@ class Filmstrip extends PureComponent <Props> {
  * @param {Object} state - The Redux state.
  * @private
  * @returns {Props}
- */
+*/
 function _mapStateToProps(state) {
-<<<<<<< HEAD
+/**
     const { iAmSipGateway } = state["features/base/config"];
     const { conference } = state["features/base/conference"];
     const toolbarButtons = getToolbarButtons(state);
@@ -843,7 +781,7 @@ function _mapStateToProps(state) {
         "features/filmstrip"
     ].tileViewDimensions;
     const { clientHeight } = state['features/base/responsive-ui'];
-=======
+*/
     const toolbarButtons = getToolbarButtons(state);
     const { testing = {}, iAmRecorder } = state['features/base/config'];
     const enableThumbnailReordering = testing.enableThumbnailReordering ?? true;
@@ -906,7 +844,6 @@ function _mapStateToProps(state) {
         break;
     }
     }
->>>>>>> sally_stable_6433
 
     return {
         _className: className,

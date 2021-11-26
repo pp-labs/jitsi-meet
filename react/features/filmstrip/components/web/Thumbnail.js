@@ -9,11 +9,8 @@ import { isNameReadOnly } from '../../../base/config';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import JitsiMeetJS from '../../../base/lib-jitsi-meet/_';
 import { MEDIA_TYPE, VideoTrack } from '../../../base/media';
-<<<<<<< HEAD
 import AudioTrack from '../../../base/media/components/web/AudioTrack';
 import { Icon, IconVideoWarning } from "../../../base/icons";
-=======
->>>>>>> sally_stable_6433
 import {
     getParticipantByIdOrUndefined,
     getParticipantCount,
@@ -507,7 +504,8 @@ class Thumbnail extends Component<Props, State> {
             avatar: {}
         };
 
-<<<<<<< HEAD
+  /**
+    sally conflict old
         switch (_currentLayout) {
         case LAYOUTS.TILE_VIEW:
         case LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW: {
@@ -539,13 +537,12 @@ class Thumbnail extends Component<Props, State> {
             };
             break;
         }
-=======
+  */
         const avatarSize = _height / 2;
         let { left } = style || {};
 
         if (typeof left === 'number' && horizontalOffset) {
             left += horizontalOffset;
->>>>>>> sally_stable_6433
         }
 
         styles = {
@@ -740,15 +737,15 @@ class Thumbnail extends Component<Props, State> {
                     iconSize = { iconSize }
                     participantId = { id }
                     tooltipPosition = { tooltipPosition } />
-<<<<<<< HEAD
+
                 {/* sally - remove domonant speaker indicator { showDominantSpeaker && _participantCount > 2
-=======
+
                 { showDominantSpeaker && _participantCountMoreThan2
->>>>>>> sally_stable_6433
                     && <DominantSpeakerIndicator
                         iconSize = { iconSize }
                         tooltipPosition = { tooltipPosition } />
                 }*/}
+
             </div>);
     }
 
@@ -990,11 +987,8 @@ class Thumbnail extends Component<Props, State> {
             _participant,
             _startSilent,
             _videoTrack,
-<<<<<<< HEAD
-            _width
-=======
+            _width,
             _volume = 1
->>>>>>> sally_stable_6433
         } = this.props;
         const { id } = _participant;
         const { audioLevel, canPlayEventReceived } = this.state;

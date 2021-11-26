@@ -190,14 +190,14 @@ export function calculateThumbnailSizeForTileView({
         aspectRatio = SQUARE_TILE_ASPECT_RATIO;
     }
 
-<<<<<<< HEAD
-    const viewWidth = clientWidth - TILE_VIEW_SIDE_MARGINS;
+// Sally - conflict
+  //  const viewWidth = clientWidth - TILE_VIEW_SIDE_MARGINS;
     // sally - adjust height for new toolbar size
-    const viewHeight = clientHeight - 90;
-=======
+    //const viewHeight = clientHeight - 90;
+
     const viewWidth = clientWidth - (columns * TILE_HORIZONTAL_MARGIN);
-    const viewHeight = clientHeight - (minVisibleRows * TILE_VERTICAL_MARGIN);
->>>>>>> sally_stable_6433
+    const viewHeight = clientHeight - (minVisibleRows * TILE_VERTICAL_MARGIN) - 90;
+
     const initialWidth = viewWidth / columns;
     const initialHeight = viewHeight / minVisibleRows;
     const aspectRatioHeight = initialWidth / aspectRatio;

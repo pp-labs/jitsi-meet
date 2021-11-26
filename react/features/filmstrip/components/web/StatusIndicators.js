@@ -135,12 +135,10 @@ function _mapStateToProps(state, ownProps) {
     return {
         _currentLayout: getCurrentLayout(state),
         _showAudioMutedIndicator: isAudioMuted,
-<<<<<<< HEAD
         _showModeratorIndicator: false,
-=======
-        _showModeratorIndicator:
-            !disableModeratorIndicator && participant && participant.role === PARTICIPANT_ROLE.MODERATOR,
->>>>>>> sally_stable_6433
+        // sally - never show moderator indicator
+ //       _showModeratorIndicator:
+ //           !disableModeratorIndicator && participant && participant.role === PARTICIPANT_ROLE.MODERATOR,
         _showScreenShareIndicator: isScreenSharing,
         _showVideoMutedIndicator: isVideoMuted
     };
