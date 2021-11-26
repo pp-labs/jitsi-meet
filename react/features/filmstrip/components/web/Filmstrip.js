@@ -331,33 +331,11 @@ class Filmstrip extends PureComponent <Props> {
         //         return p;
         //     }
 
-        // Sally -  Add additional classes for trainer
-        // if (_participant.name.startsWith('Trainer')) {
-        //     className += ` trainer-participant`
-        // } else {
-        //     // add additional class for remote participants not sharing video
-        //     // isCurrentlyOnLargeVideo: _isCurrentlyOnLargeVideo,
-        //     // isHovered,
-        //     // isAudioOnly: _isAudioOnly,
-        //     // tileViewActive,
-        //     // isVideoPlayable: _isVideoPlayable,
-        //     // connectionStatus: _participant?.connectionStatus,
-        //     // canPlayEventReceived,
-        //     // videoStream: Boolean(_videoTrack),
-        //     // isRemoteParticipant: !_participant?.isFakeParticipant && !_participant?.local,
-        //     // isScreenSharing: _isScreenSharing,
-        //     // videoStreamMuted: _videoTrack ? _videoTrack.muted : 'no stream'
-        //     const dmInput = Thumbnail.getDisplayModeInput(this.props, this.state)
-        //     if (isRemoteParticipant && (dmInput.isVideoPlayable && !dmInput.videoStreamMuted)) {
-        //         className += ' has-video'
-        //     } else if (isRemoteParticipant && _audioTrack && !_audioTrack.muted) {
-        //         className += ' audio-only'
-        //     }
-        //     if ( isRemoteParticipant && dmInput.isScreenSharing) {
-        //         className += ' sharing-screen'
-        //     }
-        //     if (_participant?.local) {
-        //         className += ' local-participant'
+        //     // sally - recent participants
+
+        //     if (recentParticipantIndex > -1) {
+        //         p.order = 10 + recentParticipantIndex;
+        //         return p;
         //     }
 
         const trainers = _participants.filter(
@@ -398,6 +376,18 @@ class Filmstrip extends PureComponent <Props> {
             //     filmstripStyle.maxWidth = (interfaceConfig.FILM_STRIP_MAX_HEIGHT || 120) + 25;
             //     break;
 
+       // }
+
+        const filmstripStyle = { };
+        const { _currentLayout } = this.props;
+        const tileViewActive = _currentLayout === LAYOUTS.TILE_VIEW;
+
+        switch (_currentLayout) {
+        case LAYOUTS.VERTICAL_FILMSTRIP_VIEW:
+            // Adding 18px for the 2px margins, 2px borders on the left and right and 5px padding on the left and right.
+            // Also adding 7px for the scrollbar.
+            filmstripStyle.maxWidth = (interfaceConfig.FILM_STRIP_MAX_HEIGHT || 120) + 25;
+            break;
         }
 
         let toolbar = null;
@@ -551,7 +541,7 @@ class Filmstrip extends PureComponent <Props> {
  * @param {Object} state - The Redux state.
  * @private
  * @returns {Props}
- */
+*/
 function _mapStateToProps(state) {
     const { iAmSipGateway } = state['features/base/config'];
     const { conference } = state['features/base/conference'];
