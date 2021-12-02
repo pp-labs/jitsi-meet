@@ -481,6 +481,7 @@ function _participantJoined({ participant }) {
     };
 }
 
+
 ReducerRegistry.register('features/base/participants/recentActive', (state = [], action) => {
     // sally  -add state to track last 5 most recent active speakers
     switch (action.type) {

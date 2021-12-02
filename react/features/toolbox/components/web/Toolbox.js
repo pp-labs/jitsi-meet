@@ -1190,7 +1190,9 @@ class Toolbox extends Component<Props> {
      * @returns {boolean}
      */
     _isProfileVisible() {
-        return !this.props._isProfileDisabled;
+        // sally = always disable profile button
+        return false;
+        //return !this.props._isProfileDisabled;
     }
 
     /**

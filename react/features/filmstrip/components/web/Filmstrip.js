@@ -845,11 +845,11 @@ function _mapStateToProps(state) {
     }
     }
 
+    
+
     return {
         _className: className,
         _columns: gridDimensions.columns,
-        _recentActiveParticipants:
-            state["features/base/participants/recentActive"],
         _currentLayout,
         _filmstripHeight: remoteFilmstripHeight,
         _filmstripWidth: remoteFilmstripWidth,
