@@ -561,6 +561,8 @@ function _mapStateToProps(state) {
     ].tileViewDimensions;
     const { clientHeight } = state['features/base/responsive-ui'];
 
+    
+
     return {
         _className: className,
         _columns: gridDimensions.columns,

@@ -559,6 +559,54 @@ function _participantJoined({ participant }: { participant: Participant; }) {
     };
 }
 
+
+ReducerRegistry.register('features/base/participants/recentActive', (state = [], action) => {
+    // sally  -add state to track last 5 most recent active speakers
+    switch (action.type) {
+    case DOMINANT_SPEAKER_CHANGED:
+        // sally keep state of last 5 active speakers
+        const NO_ACTIVE = 5;
+        const { conference, id } = action.participant;
+        const { participants } = conference;
+        const participant = participants[id];
+
+        if (participant?.local || participant?._displayName.startsWith('Trainer')) {
+            return state;
+        }
+        let newState = [ ...state ];
+        const index = state.findIndex(p => p.id === participant._id);
+
+        if (index === -1) {
+            newState.push({
+                id: participant._id,
+                timeStamp: Date.now()
+            });
+        } else {
+            newState[index] = {
+                id: participant._id,
+                timeStamp: Date.now()
+            };
+        }
+        // remove any inactive for more than 5 mins
+        const TIMEOUT_AFTER = 1 * 60 * 1000; // sally - 1min
+
+        newState = newState.filter(p => Date.now() - p.timeStamp <= TIMEOUT_AFTER);
+
+        // remove least active if there are too many
+        if (newState.length >= NO_ACTIVE) {
+            // remove the least most recent speaker
+            const toRemoveP = newState.reduce((minP, p) => (p.timeStamp < minP.timeStamp ? p : minP), newState[0]);
+
+            newState = newState.filter(p => p.id !== toRemoveP.id);
+        }
+
+        return newState;
+
+    }
+
+    return state;
+});
+
 /**
  * Updates a specific property for a participant.
  *
