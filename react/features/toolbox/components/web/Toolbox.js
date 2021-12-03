@@ -1224,8 +1224,8 @@ class Toolbox extends Component<Props> {
                         onMouseOut: this._onMouseOut,
                         onMouseOver: this._onMouseOver
                     }) }>
-
-                    { showDominantSpeakerName && <DominantSpeakerName /> }
+                {/*  sally = remove dominant speaker name */}
+                 {/*   { showDominantSpeakerName && <DominantSpeakerName /> }*/}
 
                     <div className = 'toolbox-content-items'>
                         {mainMenuButtons.map(({ Content, key, ...rest }) => Content !== Separator && (
