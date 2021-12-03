@@ -35,6 +35,8 @@
         justify-content: center;
         align-items: center;
         transition: margin-bottom .3s ease-in;
+        // sally add padding for toolbar
+        padding-top: $newToolbarSize + 10;
     }
 
     .filmstrip {
