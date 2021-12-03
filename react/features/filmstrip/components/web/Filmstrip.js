@@ -51,6 +51,9 @@ import AudioTracksContainer from './AudioTracksContainer';
 import Thumbnail from './Thumbnail';
 import ThumbnailWrapper from './ThumbnailWrapper';
 
+// sally
+import { getCustomOrderedRemoteParticipants } from "../../../base/participants"
+
 
 declare var APP: Object;
 declare var interfaceConfig: Object;
@@ -785,7 +788,13 @@ function _mapStateToProps(state) {
     const toolbarButtons = getToolbarButtons(state);
     const { testing = {}, iAmRecorder } = state['features/base/config'];
     const enableThumbnailReordering = testing.enableThumbnailReordering ?? true;
-    const { visible, remoteParticipants } = state['features/filmstrip'];
+
+    // sally = get custom remote participants ordering
+
+    const remoteParticipants = getCustomOrderedRemoteParticipants(state);
+    // const { visible, remoteParticipants } = state['features/filmstrip'];
+    const { visible } = state['features/filmstrip'];
+
     const reduceHeight = state['features/toolbox'].visible && toolbarButtons.length;
     const remoteVideosVisible = shouldRemoteVideosBeVisible(state);
     const { isOpen: shiftRight } = state['features/chat'];
@@ -845,7 +854,7 @@ function _mapStateToProps(state) {
     }
     }
 
-    
+
 
     return {
         _className: className,

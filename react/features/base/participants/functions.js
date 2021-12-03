@@ -16,6 +16,21 @@ import {
 } from './constants';
 import { preloadImage } from './preloadImage';
 
+
+/* sally addditional imports */
+
+import { getCurrentLayout, LAYOUTS } from '../../video-layout';
+
+import { VideoTrack } from "../media";
+
+import {
+    getLocalAudioTrack,
+    getLocalVideoTrack,
+    updateLastTrackVideoMediaEvent,
+} from "../tracks";
+
+// end sally additional imports
+
 declare var interfaceConfig: Object;
 
 /**
@@ -420,6 +435,180 @@ export function shouldRenderParticipantVideo(stateful: Object | Function, id: st
         = participant.id === largeVideoParticipantId && remoteScreenShares.includes(participant.id);
 
     return participantIsInLargeVideoWithScreen;
+}
+
+// sally = function to get ordere remote participants
+
+export function getCustomOrderedRemoteParticipants(stateful: Object | Function, id: string) {
+    const state = toState(stateful);
+    const _currentLayout = getCurrentLayout(state);
+   // let { remoteParticipants } = state['features/filmstrip'];
+
+    const { remote } = state["features/base/participants"];
+    const recentActiveParticipants =
+            state["features/base/participants/recentActive"];
+
+
+   console.log(Array.from(remote.values()))
+
+   console.log('here')
+   console.log(recentActiveParticipants)
+
+    let remoteParticipants = Array.from(remote.values()).filter((p) => !p.local);
+    console.log(remoteParticipants)
+
+       // const localParticipant = getLocalParticipant(_participants);
+
+        const tileViewActive = _currentLayout === LAYOUTS.TILE_VIEW;
+        let maxVisableRemoteParticipants = 5;
+
+        // sally - no trainer in left side
+        if (!tileViewActive) {
+            remoteParticipants = remoteParticipants.filter(
+                (p) => !p.name?.startsWith("Trainer") && !p.local
+            );
+            // sally - height minus toolbar (80) minus local video (120), divide by thumb height
+           // maxVisableRemoteParticipants = Math.floor(((_clientHeight - 200) / 120))
+        } else {
+            maxVisableRemoteParticipants = 5;
+        }
+
+
+        const tracks = state["features/base/tracks"];
+        //sally order participants
+        remoteParticipants = remoteParticipants.map((p) => {
+            if (p.name?.startsWith("Trainer")) {
+                p.order = 1;
+                return p;
+            }
+            const isLocal = p?.local ?? true;
+            if (isLocal) {
+                p.order = 200;
+                return p;
+            }
+            const recentParticipantIndex = recentActiveParticipants.findIndex(
+                (part) => part.id === p.id
+            );
+            if (p?.connectionStatus !== "active") {
+                p.order = 100 + recentParticipantIndex;
+                return p;
+            }
+            const isRemoteParticipant = !p?.isFakeParticipant && !p?.local;
+            const participantID = p.id;
+            const _videoTrack = getTrackByMediaTypeAndParticipant(
+                tracks,
+                MEDIA_TYPE.VIDEO,
+                participantID
+            );
+            const videoStreamMuted = _videoTrack
+                ? _videoTrack.muted
+                : "no stream";
+            const isScreenSharing = _videoTrack?.videoType === "desktop";
+            if (isRemoteParticipant && isScreenSharing) {
+                p.order = 2;
+                return p;
+            }
+
+            // sally - recent participants
+
+            if (recentParticipantIndex > -1) {
+                p.order = 10 + recentParticipantIndex;
+                return p;
+            }
+
+            if (isRemoteParticipant && !videoStreamMuted) {
+                p.order = 20;
+                return p;
+            }
+            // const _audioTrack = isLocal
+            //     ? getLocalAudioTrack(_tracks) : getTrackByMediaTypeAndParticipant(_tracks, MEDIA_TYPE.AUDIO, participantID);
+
+            // sally - don't prioritize audio only to prevent jumping
+            // if (isRemoteParticipant && _audioTrack && !_audioTrack.muted) {
+            //     p.order = 5;
+            //     return p;
+            // }
+
+            p.order = 30;
+            return p;
+            // const isRemoteParticipant: !participant?.isFakeParticipant && !participant?.local;
+            // const { id } = participant;
+            // const isLocal = participant?.local ?? true;
+            // const tracks = state['features/base/tracks'];
+            // const _videoTrack = isLocal
+            //     ? getLocalVideoTrack(tracks) : getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, participantID);
+            // const _audioTrack = isLocal
+            //     ? getLocalAudioTrack(tracks) : getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.AUDIO, participantID);
+            // if (isRemoteParticipant && (dmInput.isVideoPlayable && !dmInput.videoStreamMuted)
+        });
+        remoteParticipants.sort((a, b) => {
+            if (a.order === b.order) {
+                return 0;
+            }
+            return a.order > b.order ? 1 : -1;
+        });
+
+        // sally - order dominant speaker only if they are outside the box
+        try {
+            if (
+                remoteParticipants.length > maxVisableRemoteParticipants
+            ) {
+                let i = remoteParticipants.findIndex((p) => p?.dominantSpeaker);
+
+                if (i !== -1 && i >= maxVisableRemoteParticipants) {
+                    remoteParticipants[i].order = 3;
+                }
+                remoteParticipants.sort((a, b) => {
+                    if (a.order === b.order) {
+                        return 0;
+                    }
+                    return a.order > b.order ? 1 : -1;
+                });
+            }
+        } catch (e) {
+            console.log(e);
+        }
+        // if (!_isDominantSpeakerDisabled && p?.dominantSpeaker) {
+        //         p.order = 3
+        //         return p;
+        //     }
+
+        // Sally -  Add additional classes for trainer
+        // if (_participant.name.startsWith('Trainer')) {
+        //     className += ` trainer-participant`
+        // } else {
+        //     // add additional class for remote participants not sharing video
+        //     // isCurrentlyOnLargeVideo: _isCurrentlyOnLargeVideo,
+        //     // isHovered,
+        //     // isAudioOnly: _isAudioOnly,
+        //     // tileViewActive,
+        //     // isVideoPlayable: _isVideoPlayable,
+        //     // connectionStatus: _participant?.connectionStatus,
+        //     // canPlayEventReceived,
+        //     // videoStream: Boolean(_videoTrack),
+        //     // isRemoteParticipant: !_participant?.isFakeParticipant && !_participant?.local,
+        //     // isScreenSharing: _isScreenSharing,
+        //     // videoStreamMuted: _videoTrack ? _videoTrack.muted : 'no stream'
+        //     const dmInput = Thumbnail.getDisplayModeInput(this.props, this.state)
+        //     if (isRemoteParticipant && (dmInput.isVideoPlayable && !dmInput.videoStreamMuted)) {
+        //         className += ' has-video'
+        //     } else if (isRemoteParticipant && _audioTrack && !_audioTrack.muted) {
+        //         className += ' audio-only'
+        //     }
+        //     if ( isRemoteParticipant && dmInput.isScreenSharing) {
+        //         className += ' sharing-screen'
+        //     }
+        //     if (_participant?.local) {
+        //         className += ' local-participant'
+        //     }
+
+        const trainers = remoteParticipants.filter(
+            (p) => p.name?.startsWith("Trainer")
+        );
+
+
+    remoteParticipants = remoteParticipants.map((p) => p.id)
+    return remoteParticipants;
 }
 
 /**
