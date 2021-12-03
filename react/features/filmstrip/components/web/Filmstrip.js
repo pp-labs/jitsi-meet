@@ -50,6 +50,9 @@ import AudioTracksContainer from './AudioTracksContainer';
 import Thumbnail from './Thumbnail';
 import ThumbnailWrapper from './ThumbnailWrapper';
 
+// sally
+import { getCustomOrderedRemoteParticipants } from "../../../base/participants"
+
 
 declare var APP: Object;
 declare var interfaceConfig: Object;
@@ -561,7 +564,7 @@ function _mapStateToProps(state) {
     ].tileViewDimensions;
     const { clientHeight } = state['features/base/responsive-ui'];
 
-    
+
 
     return {
         _className: className,

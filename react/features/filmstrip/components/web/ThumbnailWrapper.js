@@ -14,12 +14,9 @@ import Thumbnail from './Thumbnail';
 
 import { MEDIA_TYPE, VideoTrack } from "../../../base/media";
 
-import {
-    getLocalAudioTrack,
-    getLocalVideoTrack,
-    getTrackByMediaTypeAndParticipant,
-    updateLastTrackVideoMediaEvent,
-} from "../../../base/tracks";
+// sally = custom remote participants ordering / filtering
+import { getCustomOrderedRemoteParticipants } from "../../../base/participants"
+
 
 /**
  * The type of the React {@code Component} props of {@link ThumbnailWrapper}.
