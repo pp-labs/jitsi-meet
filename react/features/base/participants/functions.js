@@ -611,6 +611,20 @@ export function getCustomOrderedRemoteParticipants(stateful: Object | Function, 
     return remoteParticipants;
 }
 
+// sally = function to get remote trainers
+
+export function getRemoteTrainers(stateful: Object | Function, id: string) {
+    const state = toState(stateful);
+    const _currentLayout = getCurrentLayout(state);
+   // let { remoteParticipants } = state['features/filmstrip'];
+
+    const { remote } = state["features/base/participants"];
+   
+    const trainers = Array.from(remote.values()).filter((p) => p.name?.startsWith("Trainer"));
+
+    return trainers.map((p) => p.id);
+}
+
 /**
  * Resolves the first loadable avatar URL for a participant.
  *
