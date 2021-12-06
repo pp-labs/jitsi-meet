@@ -6,7 +6,7 @@
      * Add a border around the active speaker to make the thumbnail easier to
      * see.
      */
-    .active-speaker {
+    .active-speaker > .videocontainer__background {
         box-shadow: 0 0 0 3px $videoThumbnailSelected
     }
 
@@ -120,18 +120,6 @@
         .hide-participant {
             display: none;
         }
-        // .audio-only {
-        //     order: 10;
-        // }
-        // .has-video {
-        //     order: 8;
-        // }
-        // .active-speaker {
-        //     order: 5;
-        // }
-        // .trainer-participant {
-        //     order: 1 !important;
-        // }
 
         video {
             object-fit: contain;
