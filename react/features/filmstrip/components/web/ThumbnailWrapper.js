@@ -10,7 +10,7 @@ import Thumbnail from './Thumbnail';
 import { MEDIA_TYPE, VideoTrack } from "../../../base/media";
 
 // sally = custom remote participants ordering / filtering
-import { getCustomOrderedRemoteParticipants } from "../../../base/participants"
+import { getCustomOrderedRemoteParticipants, getIsLocalTrainer } from "../../../base/participants"
 
 
 /**
@@ -115,12 +115,14 @@ function _mapStateToProps(state, ownProps) {
             state["features/base/participants/recentActive"];
 
     const { testing = {} } = state['features/base/config'];
-    const enableThumbnailReordering = testing.enableThumbnailReordering ?? true;
-
-    // sally = get custom ordered remote participants
+    //const enableThumbnailReordering = testing.enableThumbnailReordering ?? true;
+    // sally - ensure enabletumbnailreoderdering is false
+    const enableThumbnailReordering = false;
+    // sally = get custom ordered remote participants (visible)
 
     const remoteParticipants = getCustomOrderedRemoteParticipants(state);
     let remoteParticipantsLength = remoteParticipants.length;
+    const isLocalTrainer = getIsLocalTrainer(state);
 
     if (_currentLayout === LAYOUTS.TILE_VIEW) {
 
@@ -146,8 +148,12 @@ function _mapStateToProps(state, ownProps) {
         }
 
         // When the thumbnails are reordered, local participant is inserted at index 0.
-        const localIndex = enableThumbnailReordering ? 0 : remoteParticipantsLength;
-        const remoteIndex = enableThumbnailReordering && !iAmRecorder ? index - 1 : index;
+        // Sally = thumbnailreorder is disabled, but this is also true if the local participant is Trainer
+
+        //const localIndex = enableThumbnailReordering ? 0 : remoteParticipantsLength;
+       // const remoteIndex = enableThumbnailReordering && !iAmRecorder ? index - 1 : index;
+        const localIndex = enableThumbnailReordering || isLocalTrainer ? 0 : remoteParticipantsLength;
+        const remoteIndex = (enableThumbnailReordering && !iAmRecorder) || isLocalTrainer ? index - 1 : index;
 
         if (!iAmRecorder && index === localIndex) {
             return {
@@ -159,7 +165,7 @@ function _mapStateToProps(state, ownProps) {
 
 
         return {
-            _participantID: remoteParticipants[index],
+            _participantID: remoteParticipants[remoteIndex],
             _horizontalOffset: horizontalOffset
         };
     }

@@ -437,6 +437,8 @@ export function shouldRenderParticipantVideo(stateful: Object | Function, id: st
     return participantIsInLargeVideoWithScreen;
 }
 
+// BEGIN SALLY CUSTOM FUNCTIONS
+
 export function getCustomRemoteParticipants(stateful: Object | Function, id: string) {
     const state = toState(stateful);
     const _currentLayout = getCurrentLayout(state);
@@ -648,6 +650,14 @@ export function getHiddenRemoteParticipants(stateful: Object | Function, id: str
 
     return hiddenparticipants;
 }
+
+export function getIsLocalTrainer(stateful: Object | Function): boolean {
+    const { name } = getLocalParticipant(stateful);
+    return name?.startsWith("Trainer");
+}
+
+
+// END SALLY CUSTOM FUNCTIONS
 
 /**
  * Resolves the first loadable avatar URL for a participant.

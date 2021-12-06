@@ -52,7 +52,7 @@ import Thumbnail from './Thumbnail';
 import ThumbnailWrapper from './ThumbnailWrapper';
 
 // sally
-import { getCustomOrderedRemoteParticipants, getHiddenRemoteParticipants } from "../../../base/participants"
+import { getCustomOrderedRemoteParticipants, getHiddenRemoteParticipants, getIsLocalTrainer } from "../../../base/participants"
 
 
 declare var APP: Object;
@@ -111,6 +111,11 @@ type Props = {
      * Sally = The trainrs in the call (non tile view - hidden!)
      */
     _hiddenRemoteParticipants: Array<Object>,
+
+    /**
+     * Sally - Whether local participant is the traier
+     */
+    _isLocalTrainer: boolean,
 
     /**
      * The number of rows in tile view.
@@ -346,14 +351,16 @@ class Filmstrip extends PureComponent <Props> {
             _iAmRecorder,
             _remoteParticipants,
             _remoteParticipantsLength,
-            _thumbnailsReordered
+            _thumbnailsReordered,
+            _isLocalTrainer,
         } = this.props;
         const index = (rowIndex * _columns) + columnIndex;
 
-        // sally disable local video ordering
+        
         // When the thumbnails are reordered, local participant is inserted at index 0.
-        const localIndex = _thumbnailsReordered ? 0 : _remoteParticipantsLength;
-        const remoteIndex = _thumbnailsReordered && !_iAmRecorder ? index - 1 : index;
+        // Sally = thumbnailreorder is disabled, but this is also true if the local participant is Trainer
+        const localIndex = _thumbnailsReordered || _isLocalTrainer ? 0 : _remoteParticipantsLength;
+        const remoteIndex = (_thumbnailsReordered && !_iAmRecorder) || _isLocalTrainer ? index - 1 : index;
 
         if (index > _remoteParticipantsLength - (_iAmRecorder ? 1 : 0)) {
             return `empty-${index}`;
@@ -363,7 +370,7 @@ class Filmstrip extends PureComponent <Props> {
             return 'local';
         }
 
-        return _remoteParticipants[index];
+        return _remoteParticipants[remoteIndex];
     }
 
     _onListItemsRendered: Object => void;
@@ -631,11 +638,12 @@ function _mapStateToProps(state) {
     const { testing = {}, iAmRecorder } = state['features/base/config'];
     // sally disable thumbnail reodering
    // const enableThumbnailReordering = testing.enableThumbnailReordering ?? true;
-       const enableThumbnailReordering = false;
+    const enableThumbnailReordering = false;
     // sally = get custom remote participants ordering
 
     const remoteParticipants = getCustomOrderedRemoteParticipants(state);
     const hiddenRemoteParticipants = getHiddenRemoteParticipants(state);
+    const isLocalTrainer = getIsLocalTrainer(state);
     // const { visible, remoteParticipants } = state['features/filmstrip'];
     const { visible } = state['features/filmstrip'];
 
@@ -711,6 +719,7 @@ function _mapStateToProps(state) {
         _remoteParticipantsLength: remoteParticipants.length,
         _remoteParticipants: remoteParticipants,
         _hiddenRemoteParticipants: hiddenRemoteParticipants,
+        _isLocalTrainer: isLocalTrainer,
         _rows: gridDimensions.rows,
         _thumbnailWidth: _thumbnailSize?.width,
         _thumbnailHeight: _thumbnailSize?.height,
