@@ -57,6 +57,81 @@ export function getCurrentLayout(state: Object) {
 }
 
 /**
+ * Returns how many columns should be displayed in tile view. The number
+ * returned will be between 1 and 7, inclusive.
+ *
+ * @param {Object} state - The redux store state.
+ * @returns {number}
+ */
+export function getMaxColumnCount(state: Object) {
+    const configuredMax = (typeof interfaceConfig === 'undefined'
+        ? DEFAULT_MAX_COLUMNS
+        : interfaceConfig.TILE_VIEW_MAX_COLUMNS) || DEFAULT_MAX_COLUMNS;
+    const { disableResponsiveTiles } = state['features/base/config'];
+
+    if (!disableResponsiveTiles) {
+        const { clientWidth } = state['features/base/responsive-ui'];
+        let participantCount = getParticipantCount(state);
+
+        // sally max partipant count 6
+        participantCount = Math.min(participantCount, 6);
+
+        // If there are just two participants in a conference, enforce single-column view for mobile size.
+        if (participantCount === 2 && clientWidth < ASPECT_RATIO_BREAKPOINT) {
+            return Math.min(1, Math.max(configuredMax, 1));
+        }
+
+        // Enforce single column view at very small screen widths.
+        if (clientWidth < SINGLE_COLUMN_BREAKPOINT) {
+            return Math.min(1, Math.max(configuredMax, 1));
+        }
+
+        // Enforce two column view below breakpoint.
+        if (clientWidth < TWO_COLUMN_BREAKPOINT) {
+            return Math.min(2, Math.max(configuredMax, 1));
+        }
+    }
+
+    return Math.min(Math.max(configuredMax, 1), ABSOLUTE_MAX_COLUMNS);
+}
+
+/**
+ * Returns the cell count dimensions for tile view. Tile view tries to uphold
+ * equal count of tiles for height and width, until maxColumn is reached in
+ * which rows will be added but no more columns.
+ *
+ * @param {Object} state - The redux store state.
+ * @returns {Object} An object is return with the desired number of columns,
+ * rows, and visible rows (the rest should overflow) for the tile view layout.
+ */
+export function getTileViewGridDimensions(state: Object) {
+    const maxColumns = getMaxColumnCount(state);
+
+    // When in tile view mode, we must discount ourselves (the local participant) because our
+    // tile is not visible.
+    const { iAmRecorder } = state['features/base/config'];
+
+    // const numberOfParticipants = getParticipantCountWithFake(state) - (iAmRecorder ? 1 : 0);
+    // sally - include local in count as we show local
+    let numberOfParticipants = getParticipantCount(state);
+
+    // sally base calc on max number of participants to be 6 in tile view
+
+    numberOfParticipants = Math.min(numberOfParticipants, 6);
+
+    const columnsToMaintainASquare = Math.ceil(Math.sqrt(numberOfParticipants));
+    const columns = Math.min(columnsToMaintainASquare, maxColumns);
+    const rows = Math.ceil(numberOfParticipants / columns);
+    const minVisibleRows = Math.min(maxColumns, rows);
+
+    return {
+        columns,
+        minVisibleRows,
+        rows
+    };
+}
+
+/**
  * Selector for determining if the UI layout should be in tile view. Tile view
  * is determined by more than just having the tile view setting enabled, as
  * one-on-one calls should not be in tile view, as well as etherpad editing.
