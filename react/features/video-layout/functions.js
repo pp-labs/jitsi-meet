@@ -68,7 +68,10 @@ export function getMaxColumnCount(state: Object) {
 
     if (!disableResponsiveTiles) {
         const { clientWidth } = state['features/base/responsive-ui'];
-        const participantCount = getParticipantCount(state);
+        let participantCount = getParticipantCount(state);
+        
+        // sally max partipant count 6
+        participantCount = Math.min(participantCount, 6);
 
         // If there are just two participants in a conference, enforce single-column view for mobile size.
         if (participantCount === 2 && clientWidth < ASPECT_RATIO_BREAKPOINT) {
@@ -100,14 +103,18 @@ export function getMaxColumnCount(state: Object) {
  */
 export function getTileViewGridDimensions(state: Object) {
     const maxColumns = getMaxColumnCount(state);
-
     // When in tile view mode, we must discount ourselves (the local participant) because our
     // tile is not visible.
     const { iAmRecorder } = state['features/base/config'];
-    const numberOfParticipants = getParticipantCountWithFake(state) - (iAmRecorder ? 1 : 0);
+    //const numberOfParticipants = getParticipantCountWithFake(state) - (iAmRecorder ? 1 : 0);
+    // sally - include local in count as we show local
+    let numberOfParticipants = getParticipantCount(state) ;
+    // sally base calc on max number of participants to be 6 in tile view
+
+    numberOfParticipants = Math.min(numberOfParticipants, 6);
 
     const columnsToMaintainASquare = Math.ceil(Math.sqrt(numberOfParticipants));
-    const columns = Math.min(columnsToMaintainASquare, maxColumns);
+    let columns = Math.min(columnsToMaintainASquare, maxColumns);
     const rows = Math.ceil(numberOfParticipants / columns);
     const minVisibleRows = Math.min(maxColumns, rows);
 
