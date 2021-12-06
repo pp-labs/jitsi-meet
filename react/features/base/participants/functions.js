@@ -437,7 +437,53 @@ export function shouldRenderParticipantVideo(stateful: Object | Function, id: st
     return participantIsInLargeVideoWithScreen;
 }
 
-// sally = function to get ordere remote participants
+export function getCustomRemoteParticipants(stateful: Object | Function, id: string) {
+    const state = toState(stateful);
+    const _currentLayout = getCurrentLayout(state);
+   // let { remoteParticipants } = state['features/filmstrip'];
+
+    const { remote } = state["features/base/participants"];
+
+    let remoteParticipants = Array.from(remote.values()).filter((p) => !p.local);
+
+
+       // const localParticipant = getLocalParticipant(_participants);
+
+        const tileViewActive = _currentLayout === LAYOUTS.TILE_VIEW;
+
+
+        // sally - no trainer in left side
+        if (!tileViewActive) {
+            remoteParticipants = remoteParticipants.filter(
+                (p) => !p.name?.startsWith("Trainer") && !p.local
+            );
+            // sally - height minus toolbar (80) minus local video (120), divide by thumb height
+           // maxVisableRemoteParticipants = Math.floor(((_clientHeight - 200) / 120))
+        }
+
+    return remoteParticipants;
+}
+
+// sally - custom functiont to get max remtoe participants based on tile/vertical view and client height
+export function getMaxVisibleRemoteParticipants(stateful: Object | Function, id: string) {
+    const state = toState(stateful);
+    const _currentLayout = getCurrentLayout(state);
+    const { clientHeight } = state['features/base/responsive-ui'];
+
+        const tileViewActive = _currentLayout === LAYOUTS.TILE_VIEW;
+        // tile view - max videos = 6 (icluding one local video)
+        let maxVisableRemoteParticipants = 5;
+
+        // sally - set max viewable participants without srollbar
+        if (!tileViewActive) {
+            // sally - height minus toolbar (80) minus local video (120), divide by thumb height
+           maxVisableRemoteParticipants = Math.floor(((clientHeight - 200) / 120))
+        };
+
+    return maxVisableRemoteParticipants;
+}
+
+// sally = function to get order remote participants
 
 export function getCustomOrderedRemoteParticipants(stateful: Object | Function, id: string) {
     const state = toState(stateful);
@@ -448,30 +494,12 @@ export function getCustomOrderedRemoteParticipants(stateful: Object | Function, 
     const recentActiveParticipants =
             state["features/base/participants/recentActive"];
 
-
-   console.log(Array.from(remote.values()))
-
-   console.log('here')
-   console.log(recentActiveParticipants)
-
-    let remoteParticipants = Array.from(remote.values()).filter((p) => !p.local);
-    console.log(remoteParticipants)
+    let remoteParticipants = getCustomRemoteParticipants(state);
+    const maxVisableRemoteParticipants = getMaxVisibleRemoteParticipants(state);
 
        // const localParticipant = getLocalParticipant(_participants);
 
         const tileViewActive = _currentLayout === LAYOUTS.TILE_VIEW;
-        let maxVisableRemoteParticipants = 5;
-
-        // sally - no trainer in left side
-        if (!tileViewActive) {
-            remoteParticipants = remoteParticipants.filter(
-                (p) => !p.name?.startsWith("Trainer") && !p.local
-            );
-            // sally - height minus toolbar (80) minus local video (120), divide by thumb height
-           // maxVisableRemoteParticipants = Math.floor(((_clientHeight - 200) / 120))
-        } else {
-            maxVisableRemoteParticipants = 5;
-        }
 
 
         const tracks = state["features/base/tracks"];
