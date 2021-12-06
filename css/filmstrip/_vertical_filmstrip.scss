@@ -179,5 +179,8 @@
         &.is-not-overflowing > div {
             bottom: 0px;
         }
+        .active-speaker > .videocontainer__background {
+            box-shadow: 0 0 0 3px $videoThumbnailSelected
+        }
     }
 }
