@@ -1207,7 +1207,8 @@ function _mapStateToProps(state, ownProps): Object {
         _currentLayout,
         _defaultLocalDisplayName: interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME,
         _disableLocalVideoFlip: Boolean(disableLocalVideoFlip),
-        _isHidden: isLocal && iAmRecorder && !iAmSipGateway,
+        //_isHidden: isLocal && iAmRecorder && !iAmSipGateway, //sally - always show local
+        _isHidden: false,
         _isAudioOnly: Boolean(state['features/base/audio-only'].enabled),
         _isCurrentlyOnLargeVideo: state['features/large-video']?.participantId === id,
         _isDominantSpeakerDisabled: interfaceConfig.DISABLE_DOMINANT_SPEAKER_INDICATOR,

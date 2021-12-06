@@ -6,7 +6,8 @@ import {
     getPinnedParticipant,
     getParticipantCount,
     pinParticipant,
-    getParticipantCountWithFake
+    getParticipantCountWithFake,
+    getCustomOrderedRemoteParticipants,
 } from '../base/participants';
 import {
     ASPECT_RATIO_BREAKPOINT,
@@ -68,10 +69,13 @@ export function getMaxColumnCount(state: Object) {
 
     if (!disableResponsiveTiles) {
         const { clientWidth } = state['features/base/responsive-ui'];
-        let participantCount = getParticipantCount(state);
-        
+        //const participantCount = getParticipantCount(state);
+
         // sally max partipant count 6
-        participantCount = Math.min(participantCount, 6);
+        const participants = getCustomOrderedRemoteParticipants(state);
+        // include local in count
+        let participantCount = participants.length + 1
+
 
         // If there are just two participants in a conference, enforce single-column view for mobile size.
         if (participantCount === 2 && clientWidth < ASPECT_RATIO_BREAKPOINT) {
@@ -106,12 +110,14 @@ export function getTileViewGridDimensions(state: Object) {
     // When in tile view mode, we must discount ourselves (the local participant) because our
     // tile is not visible.
     const { iAmRecorder } = state['features/base/config'];
+
+    // sally use custom remote participants function
+    const participants = getCustomOrderedRemoteParticipants(state);
+    // include local in count
+    let numberOfParticipants = participants.length + 1
     //const numberOfParticipants = getParticipantCountWithFake(state) - (iAmRecorder ? 1 : 0);
     // sally - include local in count as we show local
-    let numberOfParticipants = getParticipantCount(state) ;
-    // sally base calc on max number of participants to be 6 in tile view
-
-    numberOfParticipants = Math.min(numberOfParticipants, 6);
+    //let numberOfParticipants = getParticipantCountWithFake(state) ;
 
     const columnsToMaintainASquare = Math.ceil(Math.sqrt(numberOfParticipants));
     let columns = Math.min(columnsToMaintainASquare, maxColumns);

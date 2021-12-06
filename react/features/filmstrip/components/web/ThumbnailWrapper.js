@@ -120,9 +120,10 @@ function _mapStateToProps(state, ownProps) {
     // sally = get custom ordered remote participants
 
     const remoteParticipants = getCustomOrderedRemoteParticipants(state);
-    const remoteParticipantsLength = remoteParticipants.length;
+    let remoteParticipantsLength = remoteParticipants.length;
 
     if (_currentLayout === LAYOUTS.TILE_VIEW) {
+
         const { columnIndex, rowIndex } = ownProps;
         const { gridDimensions = {}, thumbnailSize } = state['features/filmstrip'].tileViewDimensions;
         const { columns, rows } = gridDimensions;
@@ -155,8 +156,10 @@ function _mapStateToProps(state, ownProps) {
             };
         }
 
+
+
         return {
-            _participantID: remoteParticipants[remoteIndex],
+            _participantID: remoteParticipants[index],
             _horizontalOffset: horizontalOffset
         };
     }

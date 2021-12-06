@@ -21,8 +21,12 @@ var configOverride = {
     startWithVideoMuted: true,
     toolbarButtons: [
        'microphone', 'camera', 'desktop', 'profile', 'settings', 'filmstrip', 'tileview'
-    ]
+    ],
+     testing: {
+        enableThumbnailReordering: false,
+    },
 }
+
 // XXX The function getRoomName is split out of
 // functions.js because it is bundled in both app.bundle and
 // do_external_connect, webpack 1 does not support tree shaking, and we don't

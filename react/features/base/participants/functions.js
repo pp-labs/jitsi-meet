@@ -458,7 +458,7 @@ export function getCustomRemoteParticipants(stateful: Object | Function, id: str
                 (p) => !p.name?.startsWith("Trainer") && !p.local
             );
             // sally - height minus toolbar (80) minus local video (120), divide by thumb height
-           // maxVisableRemoteParticipants = Math.floor(((_clientHeight - 200) / 120))
+           // maxVisibleRemoteParticipants = Math.floor(((_clientHeight - 200) / 120))
         }
 
     return remoteParticipants;
@@ -472,15 +472,15 @@ export function getMaxVisibleRemoteParticipants(stateful: Object | Function, id:
 
         const tileViewActive = _currentLayout === LAYOUTS.TILE_VIEW;
         // tile view - max videos = 6 (icluding one local video)
-        let maxVisableRemoteParticipants = 5;
+        let maxVisibleRemoteParticipants = 5;
 
         // sally - set max viewable participants without srollbar
         if (!tileViewActive) {
             // sally - height minus toolbar (80) minus local video (120), divide by thumb height
-           maxVisableRemoteParticipants = Math.floor(((clientHeight - 200) / 120))
+           maxVisibleRemoteParticipants = Math.floor(((clientHeight - 200) / 120))
         };
 
-    return maxVisableRemoteParticipants;
+    return maxVisibleRemoteParticipants;
 }
 
 // sally = function to get order remote participants
@@ -490,12 +490,12 @@ export function getCustomOrderedRemoteParticipants(stateful: Object | Function, 
     const _currentLayout = getCurrentLayout(state);
    // let { remoteParticipants } = state['features/filmstrip'];
 
-    const { remote } = state["features/base/participants"];
+    //const { remote } = state["features/base/participants"];
     const recentActiveParticipants =
             state["features/base/participants/recentActive"];
 
     let remoteParticipants = getCustomRemoteParticipants(state);
-    const maxVisableRemoteParticipants = getMaxVisibleRemoteParticipants(state);
+    const maxVisibleRemoteParticipants = getMaxVisibleRemoteParticipants(state);
 
        // const localParticipant = getLocalParticipant(_participants);
 
@@ -509,11 +509,11 @@ export function getCustomOrderedRemoteParticipants(stateful: Object | Function, 
                 p.order = 1;
                 return p;
             }
-            const isLocal = p?.local ?? true;
-            if (isLocal) {
-                p.order = 200;
-                return p;
-            }
+            // const isLocal = p?.local ?? true;
+            // if (isLocal) {
+            //     p.order = 200;
+            //     return p;
+            // }
             const recentParticipantIndex = recentActiveParticipants.findIndex(
                 (part) => part.id === p.id
             );
@@ -579,11 +579,11 @@ export function getCustomOrderedRemoteParticipants(stateful: Object | Function, 
         // sally - order dominant speaker only if they are outside the box
         try {
             if (
-                remoteParticipants.length > maxVisableRemoteParticipants
+                remoteParticipants.length > maxVisibleRemoteParticipants
             ) {
                 let i = remoteParticipants.findIndex((p) => p?.dominantSpeaker);
 
-                if (i !== -1 && i >= maxVisableRemoteParticipants) {
+                if (i !== -1 && i >= maxVisibleRemoteParticipants) {
                     remoteParticipants[i].order = 3;
                 }
                 remoteParticipants.sort((a, b) => {
@@ -630,27 +630,23 @@ export function getCustomOrderedRemoteParticipants(stateful: Object | Function, 
         //         className += ' local-participant'
         //     }
 
-        const trainers = remoteParticipants.filter(
-            (p) => p.name?.startsWith("Trainer")
-        );
 
-
-    remoteParticipants = remoteParticipants.map((p) => p.id)
+    remoteParticipants = remoteParticipants.map((p) => p.id).slice(0, maxVisibleRemoteParticipants)
     return remoteParticipants;
 }
 
-// sally = function to get remote trainers
+// sally = function to get all hidden remote participants
 
-export function getRemoteTrainers(stateful: Object | Function, id: string) {
+export function getHiddenRemoteParticipants(stateful: Object | Function, id: string) {
     const state = toState(stateful);
     const _currentLayout = getCurrentLayout(state);
-   // let { remoteParticipants } = state['features/filmstrip'];
+   const remoteParticipants = getCustomRemoteParticipants(state);
+   const orderedVisibleParticipants = getCustomOrderedRemoteParticipants(state);
 
-    const { remote } = state["features/base/participants"];
    
-    const trainers = Array.from(remote.values()).filter((p) => p.name?.startsWith("Trainer"));
+   const hiddenparticipants = remoteParticipants.filter((p) => !orderedVisibleParticipants.includes(p.id)).map((p)=> p.id);
 
-    return trainers.map((p) => p.id);
+    return hiddenparticipants;
 }
 
 /**

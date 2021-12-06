@@ -52,7 +52,7 @@ import Thumbnail from './Thumbnail';
 import ThumbnailWrapper from './ThumbnailWrapper';
 
 // sally
-import { getCustomOrderedRemoteParticipants, getRemoteTrainers } from "../../../base/participants"
+import { getCustomOrderedRemoteParticipants, getHiddenRemoteParticipants } from "../../../base/participants"
 
 
 declare var APP: Object;
@@ -110,7 +110,7 @@ type Props = {
     /**
      * Sally = The trainrs in the call (non tile view - hidden!)
      */
-    _remoteTrainers: Array<Object>,
+    _hiddenRemoteParticipants: Array<Object>,
 
     /**
      * The number of rows in tile view.
@@ -262,9 +262,9 @@ class Filmstrip extends PureComponent <Props> {
                     {
                         this._renderRemoteParticipants()
                     }
-                    {/*{ render hidden trainers audio tracks }*/}
+                    {/*{ render hidden remote participants audio tracks }*/}
                     {
-                        this._renderRemoteTrainers()
+                        this._renderHiddenRemoteParticipants()
                     }
                     {/*{ moved toolbar button }*/}
                     {toolbar}
@@ -350,6 +350,7 @@ class Filmstrip extends PureComponent <Props> {
         } = this.props;
         const index = (rowIndex * _columns) + columnIndex;
 
+        // sally disable local video ordering
         // When the thumbnails are reordered, local participant is inserted at index 0.
         const localIndex = _thumbnailsReordered ? 0 : _remoteParticipantsLength;
         const remoteIndex = _thumbnailsReordered && !_iAmRecorder ? index - 1 : index;
@@ -362,7 +363,7 @@ class Filmstrip extends PureComponent <Props> {
             return 'local';
         }
 
-        return _remoteParticipants[remoteIndex];
+        return _remoteParticipants[index];
     }
 
     _onListItemsRendered: Object => void;
@@ -407,24 +408,18 @@ class Filmstrip extends PureComponent <Props> {
      *
      * @returns {ReactElement}
      */
-    _renderRemoteTrainers() {
+    _renderHiddenRemoteParticipants() {
         const {
             _currentLayout,
-            _remoteTrainers
+            _hiddenRemoteParticipants
         } = this.props;
 
-        const tileViewActive = _currentLayout === LAYOUTS.TILE_VIEW;
-
-        if (tileViewActive) {
-            return null;
-        }
-
         return (
-            <div id="trainerVideoVerticalViewContainer">
-                {_remoteTrainers.map(trainer => (
+            <div id="hiddenRemoteVideos">
+                {_hiddenRemoteParticipants.map(p => (
                     <Thumbnail
-                        key={`remote_${trainer}`}
-                        participantID={trainer}
+                        key={`remote_${p}`}
+                        participantID={p}
                     />
                 ))}
              </div>
@@ -634,12 +629,13 @@ function _mapStateToProps(state) {
 */
     const toolbarButtons = getToolbarButtons(state);
     const { testing = {}, iAmRecorder } = state['features/base/config'];
-    const enableThumbnailReordering = testing.enableThumbnailReordering ?? true;
-
+    // sally disable thumbnail reodering
+   // const enableThumbnailReordering = testing.enableThumbnailReordering ?? true;
+       const enableThumbnailReordering = false;
     // sally = get custom remote participants ordering
 
     const remoteParticipants = getCustomOrderedRemoteParticipants(state);
-    const remoteTrainers = getRemoteTrainers(state);
+    const hiddenRemoteParticipants = getHiddenRemoteParticipants(state);
     // const { visible, remoteParticipants } = state['features/filmstrip'];
     const { visible } = state['features/filmstrip'];
 
@@ -714,7 +710,7 @@ function _mapStateToProps(state) {
         _isFilmstripButtonEnabled: isButtonEnabled('filmstrip', state),
         _remoteParticipantsLength: remoteParticipants.length,
         _remoteParticipants: remoteParticipants,
-        _remoteTrainers: remoteTrainers,
+        _hiddenRemoteParticipants: hiddenRemoteParticipants,
         _rows: gridDimensions.rows,
         _thumbnailWidth: _thumbnailSize?.width,
         _thumbnailHeight: _thumbnailSize?.height,
