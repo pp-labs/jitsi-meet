@@ -3,7 +3,8 @@ import React, { Component } from 'react';
 import { shouldComponentUpdate } from 'react-window';
 
 import { getSourceNameSignalingFeatureFlag } from '../../../base/config';
-import { getLocalParticipant } from '../../../base/participants';
+import { MEDIA_TYPE, VideoTrack } from '../../../base/media';
+import { getCustomOrderedRemoteParticipants, getIsLocalTrainer, getLocalParticipant } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { shouldHideSelfView } from '../../../base/settings/functions.any';
 import { LAYOUTS, getCurrentLayout } from '../../../video-layout';
@@ -12,10 +13,8 @@ import { getActiveParticipantsIds, showGridInVerticalView } from '../../function
 
 import Thumbnail from './Thumbnail';
 
-import { MEDIA_TYPE, VideoTrack } from "../../../base/media";
 
 // sally = custom remote participants ordering / filtering
-import { getCustomOrderedRemoteParticipants } from "../../../base/participants"
 
 
 /**
@@ -161,7 +160,7 @@ function _mapStateToProps(state, ownProps) {
     const activeParticipants = getActiveParticipantsIds(state);
     const { testing = {} } = state['features/base/config'];
     const disableSelfView = shouldHideSelfView(state);
-    const enableThumbnailReordering = testing.enableThumbnailReordering ?? true;
+    const enableThumbnailReordering = false; // testing.enableThumbnailReordering ?? true;
     const sourceNameSignalingEnabled = getSourceNameSignalingFeatureFlag(state);
     const _verticalViewGrid = showGridInVerticalView(state);
     const filmstripType = ownProps.data?.filmstripType;
@@ -250,7 +249,7 @@ function _mapStateToProps(state, ownProps) {
         }
 
         // When the thumbnails are reordered, local participant is inserted at index 0.
-        const localIndex = enableThumbnailReordering && !disableSelfView ? 0 : remoteParticipantsLength;
+        const localIndex = enableThumbnailReordering || isLocalTrainer ? 0 : remoteParticipantsLength; // TODO enableThumbnailReordering && !disableSelfView ? 0 : remoteParticipantsLength;
 
         // Local screen share is inserted at index 1 after the local camera.
         const localScreenShareIndex = enableThumbnailReordering && !disableSelfView ? 1 : remoteParticipantsLength;
@@ -261,7 +260,7 @@ function _mapStateToProps(state, ownProps) {
             remoteIndex = enableThumbnailReordering && !iAmRecorder && !disableSelfView
                 ? index - localParticipantsLength : index;
         } else {
-            remoteIndex = enableThumbnailReordering && !iAmRecorder && !disableSelfView ? index - 1 : index;
+            remoteIndex = (enableThumbnailReordering && !iAmRecorder) || isLocalTrainer ? index - 1 : index; // TODO remoteIndex = enableThumbnailReordering && !iAmRecorder && !disableSelfView ? index - 1 : index;
         }
 
         if (!iAmRecorder && index === localIndex) {
@@ -284,7 +283,6 @@ function _mapStateToProps(state, ownProps) {
                 _thumbnailWidth: thumbnailWidth
             };
         }
-
 
 
         return {
