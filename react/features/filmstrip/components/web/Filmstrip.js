@@ -51,7 +51,7 @@ import Thumbnail from './Thumbnail';
 import ThumbnailWrapper from './ThumbnailWrapper';
 
 // sally
-import { getCustomOrderedRemoteParticipants, getRemoteTrainers } from "../../../base/participants"
+import { getCustomOrderedRemoteParticipants, getHiddenRemoteParticipants } from "../../../base/participants"
 
 
 declare var APP: Object;
@@ -105,7 +105,7 @@ type Props = {
     /**
      * Sally = The trainrs in the call (non tile view - hidden!)
      */
-    _remoteTrainers: Array<Object>,
+    _hiddenRemoteParticipants: Array<Object>,
 
     /**
      * The number of rows in tile view.
@@ -583,7 +583,7 @@ function _mapStateToProps(state) {
         _isFilmstripButtonEnabled: isButtonEnabled('filmstrip', state),
         _remoteParticipantsLength: remoteParticipants.length,
         _remoteParticipants: remoteParticipants,
-        _remoteTrainers: remoteTrainers,
+        _hiddenRemoteParticipants: hiddenRemoteParticipants,
         _rows: gridDimensions.rows,
         _videosClassName: videosClassName,
         _visible: visible,

@@ -167,7 +167,7 @@ function _mapStateToProps(state, ownProps) {
     const filmstripType = ownProps.data?.filmstripType;
     const stageFilmstrip = filmstripType === FILMSTRIP_TYPE.STAGE;
     const sortedActiveParticipants = activeParticipants.sort();
-    const remoteParticipants = stageFilmstrip ? sortedActiveParticipants : remote;
+    const remoteParticipants = getCustomOrderedRemoteParticipants(state); // TODO stageFilmstrip ? sortedActiveParticipants : remote;
     const remoteParticipantsLength = remoteParticipants.length;
     const localId = getLocalParticipant(state).id;
 
@@ -284,6 +284,8 @@ function _mapStateToProps(state, ownProps) {
                 _thumbnailWidth: thumbnailWidth
             };
         }
+
+
 
         return {
             _filmstripType: filmstripType,
