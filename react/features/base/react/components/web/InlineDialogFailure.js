@@ -38,7 +38,9 @@ class InlineDialogFailure extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { t, showSupportLink } = this.props;
+        let { t, showSupportLink } = this.props;
+        // Sally - remove support button
+        showSupportLink = false;
 
         const supportLink = interfaceConfig.SUPPORT_URL;
         const supportString = t('inlineDialogFailure.supportMsg');
