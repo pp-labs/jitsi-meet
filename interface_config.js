@@ -115,7 +115,7 @@ var interfaceConfig = {
      *
      * @type {boolean}
      */
-    MOBILE_APP_PROMO: true,
+    MOBILE_APP_PROMO: false,
 
     /**
      * Specify custom URL for downloading android mobile app.
@@ -291,5 +291,5 @@ var interfaceConfig = {
 
     // No configuration value should follow this line.
 };
-export default interfaceConfig
+// export default interfaceConfig
 /* eslint-enable no-unused-vars, no-var, max-len */
