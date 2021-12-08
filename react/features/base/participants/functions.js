@@ -448,20 +448,15 @@ export function getCustomRemoteParticipants(stateful: Object | Function, id: str
 
     let remoteParticipants = Array.from(remote.values()).filter((p) => !p.local);
 
-
-       // const localParticipant = getLocalParticipant(_participants);
-
-        const tileViewActive = _currentLayout === LAYOUTS.TILE_VIEW;
+     //   const tileViewActive = _currentLayout === LAYOUTS.TILE_VIEW;
 
 
-        // sally - no trainer in left side
-        if (!tileViewActive) {
-            remoteParticipants = remoteParticipants.filter(
-                (p) => !p.name?.startsWith("Trainer") && !p.local
-            );
-            // sally - height minus toolbar (80) minus local video (120), divide by thumb height
-           // maxVisibleRemoteParticipants = Math.floor(((_clientHeight - 200) / 120))
-        }
+        // // sally - no trainer in left side
+        // if (!tileViewActive) {
+        //     remoteParticipants = remoteParticipants.filter(
+        //         (p) => !p.name?.startsWith("Trainer") && !p.local
+        //     );
+        // }
 
     return remoteParticipants;
 }
@@ -478,7 +473,7 @@ export function getMaxVisibleRemoteParticipants(stateful: Object | Function, id:
 
         // sally - set max viewable participants without srollbar
         if (!tileViewActive) {
-            // sally - height minus toolbar (80) minus local video (120), divide by thumb height
+        // sally - height minus toolbar (80) minus local video (120), divide by thumb height
            maxVisibleRemoteParticipants = Math.floor(((clientHeight - 200) / 120))
         };
 
@@ -498,10 +493,28 @@ export function getCustomOrderedRemoteParticipants(stateful: Object | Function, 
 
     let remoteParticipants = getCustomRemoteParticipants(state);
     const maxVisibleRemoteParticipants = getMaxVisibleRemoteParticipants(state);
+    // sally number of visible active speakers
+    let numVisibleRecentActiveSpeakers = maxVisibleRemoteParticipants;
 
        // const localParticipant = getLocalParticipant(_participants);
 
         const tileViewActive = _currentLayout === LAYOUTS.TILE_VIEW;
+
+        // sally - no trainer in left side
+        if (!tileViewActive) {
+            remoteParticipants = remoteParticipants.filter(
+                (p) => !p.name?.startsWith("Trainer") && !p.local
+            );
+        } else {
+            // sally - if trainer exisits in tile view.. numer of visable active speakers reduces by one
+            const trainerIndex = remoteParticipants.findIndex(
+                (p) => p.name.startsWith("Trainer")
+            );
+            if (trainerIndex > -1) {
+                numVisibleRecentActiveSpeakers = numVisibleRecentActiveSpeakers - 1;
+            }
+
+        }
 
 
         const tracks = state["features/base/tracks"];
@@ -579,6 +592,7 @@ export function getCustomOrderedRemoteParticipants(stateful: Object | Function, 
         });
 
         // sally - order dominant speaker only if they are outside the box
+
         try {
             if (
                 remoteParticipants.length > maxVisibleRemoteParticipants

@@ -122,7 +122,7 @@ function _mapStateToProps(state, ownProps) {
 
     const remoteParticipants = getCustomOrderedRemoteParticipants(state);
     let remoteParticipantsLength = remoteParticipants.length;
-    const isLocalTrainer = getIsLocalTrainer(state);
+    //const isLocalTrainer = getIsLocalTrainer(state);
 
     if (_currentLayout === LAYOUTS.TILE_VIEW) {
 
@@ -149,11 +149,13 @@ function _mapStateToProps(state, ownProps) {
 
         // When the thumbnails are reordered, local participant is inserted at index 0.
         // Sally = thumbnailreorder is disabled, but this is also true if the local participant is Trainer
+        //const localIndex = enableThumbnailReordering || isLocalTrainer ? 0 : remoteParticipantsLength;
+        //const remoteIndex = (enableThumbnailReordering && !iAmRecorder) || isLocalTrainer ? index - 1 : index;
 
-        //const localIndex = enableThumbnailReordering ? 0 : remoteParticipantsLength;
-       // const remoteIndex = enableThumbnailReordering && !iAmRecorder ? index - 1 : index;
-        const localIndex = enableThumbnailReordering || isLocalTrainer ? 0 : remoteParticipantsLength;
-        const remoteIndex = (enableThumbnailReordering && !iAmRecorder) || isLocalTrainer ? index - 1 : index;
+        // sally  - undo trianer local reorder
+        const localIndex = enableThumbnailReordering ? 0 : remoteParticipantsLength;
+        const remoteIndex = enableThumbnailReordering && !iAmRecorder ? index - 1 : index;
+
 
         if (!iAmRecorder && index === localIndex) {
             return {
