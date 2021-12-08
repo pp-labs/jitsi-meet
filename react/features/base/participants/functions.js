@@ -448,16 +448,6 @@ export function getCustomRemoteParticipants(stateful: Object | Function, id: str
 
     let remoteParticipants = Array.from(remote.values()).filter((p) => !p.local);
 
-     //   const tileViewActive = _currentLayout === LAYOUTS.TILE_VIEW;
-
-
-        // // sally - no trainer in left side
-        // if (!tileViewActive) {
-        //     remoteParticipants = remoteParticipants.filter(
-        //         (p) => !p.name?.startsWith("Trainer") && !p.local
-        //     );
-        // }
-
     return remoteParticipants;
 }
 
@@ -480,6 +470,24 @@ export function getMaxVisibleRemoteParticipants(stateful: Object | Function, id:
     return maxVisibleRemoteParticipants;
 }
 
+export function getCntVisibileActiveSpeakers(stateful: Object | Function, id: string) {
+    const state = toState(stateful);
+    const _currentLayout = getCurrentLayout(state);
+    let remoteParticipants = getCustomRemoteParticipants(state);
+    const maxVisibleRemoteParticipants = getMaxVisibleRemoteParticipants(state);
+    const tileViewActive = _currentLayout === LAYOUTS.TILE_VIEW;
+
+    const cntTrainers = remoteParticipants.filter(
+        (p) => p.name?.startsWith("Trainer")
+    ).length;
+
+    if (tileViewActive){
+        return Math.min(remoteParticipants.length, maxVisibleRemoteParticipants) - cntTrainers
+    } else {
+        return Math.min(remoteParticipants.length - cntTrainers, maxVisibleRemoteParticipants)
+    }
+}
+
 // sally = function to get order remote participants
 
 export function getCustomOrderedRemoteParticipants(stateful: Object | Function, id: string) {
@@ -493,8 +501,6 @@ export function getCustomOrderedRemoteParticipants(stateful: Object | Function, 
 
     let remoteParticipants = getCustomRemoteParticipants(state);
     const maxVisibleRemoteParticipants = getMaxVisibleRemoteParticipants(state);
-    // sally number of visible active speakers
-    let numVisibleRecentActiveSpeakers = maxVisibleRemoteParticipants;
 
        // const localParticipant = getLocalParticipant(_participants);
 
@@ -505,15 +511,6 @@ export function getCustomOrderedRemoteParticipants(stateful: Object | Function, 
             remoteParticipants = remoteParticipants.filter(
                 (p) => !p.name?.startsWith("Trainer") && !p.local
             );
-        } else {
-            // sally - if trainer exisits in tile view.. numer of visable active speakers reduces by one
-            const trainerIndex = remoteParticipants.findIndex(
-                (p) => p.name.startsWith("Trainer")
-            );
-            if (trainerIndex > -1) {
-                numVisibleRecentActiveSpeakers = numVisibleRecentActiveSpeakers - 1;
-            }
-
         }
 
 

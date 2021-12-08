@@ -486,10 +486,8 @@ ReducerRegistry.register('features/base/participants/recentActive', (state = [],
     // sally  -add state to track last 5 most recent active speakers
     switch (action.type) {
     case DOMINANT_SPEAKER_CHANGED:
-        console.log("HERE")
-        cnsole.log(action)
         // sally keep state of last 5 active speakers
-        const NO_ACTIVE = 5
+        const { countVisbleActiveSpeakers } = action
         let { conference, id } = action.participant;
         let { participants } = conference;
         let participant = participants[id];
@@ -515,12 +513,12 @@ ReducerRegistry.register('features/base/participants/recentActive', (state = [],
         const TIMEOUT_AFTER =1*60*1000;  // sally - 1min
          newState = newState.filter((p) =>  Date.now() - p.timeStamp <= TIMEOUT_AFTER);
 
-        // remove least active if there are too many
-        if (newState.length >= NO_ACTIVE) {
-            // remove the least most recent speaker
+        // remove least active if are to many based on number of visible activie speakers
+        while (newState.length >= countVisbleActiveSpeakers  && countVisbleActiveSpeakers > 0)  {
             const toRemoveP = newState.reduce((minP, p) => p.timeStamp < minP.timeStamp ? p : minP, newState[0]);
             newState = newState.filter((p) => p.id !== toRemoveP.id)
         }
+
         return newState;
 
     }

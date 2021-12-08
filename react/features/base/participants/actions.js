@@ -25,7 +25,8 @@ import {
     getLocalParticipant,
     getNormalizedDisplayName,
     getParticipantDisplayName,
-    getParticipantById
+    getParticipantById,
+    getCntVisibileActiveSpeakers
 } from './functions';
 import logger from './logger';
 
@@ -47,14 +48,38 @@ import logger from './logger';
  *     }
  * }}
  */
-export function dominantSpeakerChanged(dominantSpeaker, previousSpeakers, conference) {
+
+// export function dominantSpeakerChangedWithlocal(dominantSpeaker, previousSpeakers, conference) {
+//     return {
+//         type: DOMINANT_SPEAKER_CHANGED,
+//         participant: {
+//             conference,
+//             id: dominantSpeaker,
+//             previousSpeakers
+//         }
+//     };
+// }
+
+
+ // sally add countVisibeActiveSpeakers to action for sortiing active speakers
+function dominantSpeakerChangedWithlocal(dominantSpeaker, previousSpeakers, conference, countVisbleActiveSpeakers) {
     return {
         type: DOMINANT_SPEAKER_CHANGED,
         participant: {
             conference,
             id: dominantSpeaker,
             previousSpeakers
-        }
+        },
+        countVisbleActiveSpeakers
+    };
+}
+
+// sally pass count visible active speakers in with dominant speaker changed for sorting activeSpeakers
+
+export function dominantSpeakerChanged(dominantSpeaker, previousSpeakers, conference) {
+    return (dispatch, getState) => {
+        const countVisbleActiveSpeakers = getCntVisibileActiveSpeakers(getState);
+        return dispatch(dominantSpeakerChangedWithlocal(dominantSpeaker, previousSpeakers, conference, countVisbleActiveSpeakers));
     };
 }
 
