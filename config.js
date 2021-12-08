@@ -187,7 +187,7 @@ var config = {
     // },
 
     // Enable / disable simulcast support.
-    // disableSimulcast: false,
+    disableSimulcast: true,
 
     // Enable / disable layer suspension.  If enabled, endpoints whose HD layers are not in use will be suspended
     // (no longer sent) until they are requested again. This is enabled by default. This must be enabled for screen
@@ -216,10 +216,10 @@ var config = {
     // Desktop sharing
 
     // Optional desktop sharing frame rate options. Default value: min:5, max:5.
-    // desktopSharingFrameRate: {
-    //     min: 5,
-    //     max: 5
-    // },
+    desktopSharingFrameRate: {
+        min: 5,
+        max: 30
+    },
 
     // Try to start calls with screen-sharing instead of camera video.
     // startScreenSharing: false,
