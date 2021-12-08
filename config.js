@@ -272,7 +272,7 @@ var config = {
     // Misc
 
     // Default value for the channel "last N" attribute. -1 for unlimited.
-    channelLastN: -1,
+    channelLastN: 7,
 
     // Connection indicators
     // connectionIndicators: {
