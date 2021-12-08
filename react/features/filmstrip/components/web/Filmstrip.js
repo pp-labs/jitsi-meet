@@ -556,8 +556,12 @@ class Filmstrip extends PureComponent <Props> {
         
         // When the thumbnails are reordered, local participant is inserted at index 0.
         // Sally = thumbnailreorder is disabled, but this is also true if the local participant is Trainer
-        const localIndex = _thumbnailsReordered || _isLocalTrainer ? 0 : _remoteParticipantsLength;
-        const remoteIndex = (_thumbnailsReordered && !_iAmRecorder) || _isLocalTrainer ? index - 1 : index;
+        //const localIndex = _thumbnailsReordered || _isLocalTrainer ? 0 : _remoteParticipantsLength;
+        //const remoteIndex = (_thumbnailsReordered && !_iAmRecorder) || _isLocalTrainer ? index - 1 : index;
+
+        // undo local trainer reorder
+        const localIndex = _thumbnailsReordered ? 0 : _remoteParticipantsLength;
+        const remoteIndex = _thumbnailsReordered && !_iAmRecorder ? index - 1 : index;
 
         if (index > _remoteParticipantsLength - (_iAmRecorder ? 1 : 0)) {
             return `empty-${index}`;

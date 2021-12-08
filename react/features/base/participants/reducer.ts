@@ -564,6 +564,8 @@ ReducerRegistry.register('features/base/participants/recentActive', (state = [],
     // sally  -add state to track last 5 most recent active speakers
     switch (action.type) {
     case DOMINANT_SPEAKER_CHANGED:
+        console.log("HERE")
+        cnsole.log(action)
         // sally keep state of last 5 active speakers
         const NO_ACTIVE = 5;
         const { conference, id } = action.participant;
