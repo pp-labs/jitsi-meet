@@ -164,7 +164,7 @@ var config = {
     // Audio
 
     // Disable measuring of audio levels.
-    // disableAudioLevels: false,
+    disableAudioLevels: true,
 
     // audioLevelsInterval: 200,
 
