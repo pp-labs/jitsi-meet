@@ -451,6 +451,21 @@ export function getCustomRemoteParticipants(stateful: Object | Function, id: str
     return remoteParticipants;
 }
 
+export function getCustomTrainers(stateful: Object | Function, id: string) {
+    const state = toState(stateful);
+    const { remote } = state["features/base/participants"];
+
+    const trainers = Array.from(remote.values()).filter((p) => p?.name?.startsWith("Trainer"));
+    const localParticipant = getLocalParticipant(state);
+    if (localParticipant?.name.startsWith("Trainer")) {
+        trainers.unshift(localParticipant);
+
+    }
+
+    return trainers;
+}
+
+
 // sally - custom functiont to get max remtoe participants based on tile/vertical view and client height
 export function getMaxVisibleRemoteParticipants(stateful: Object | Function, id: string) {
     const state = toState(stateful);

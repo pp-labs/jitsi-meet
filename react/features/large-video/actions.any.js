@@ -7,7 +7,9 @@ import {
     getDominantSpeakerParticipant,
     getLocalParticipant,
     getPinnedParticipant,
-    getRemoteParticipants
+    getRemoteParticipants,
+    getCustomTrainers,
+    getParticipantById
 } from '../base/participants';
 
 import {
@@ -108,20 +110,22 @@ function _electParticipantInLargeVideo(state) {
     //     return participant.id;
     // }
 
+    //
+
+
+
     // 2. Next, pick the most recent remote screenshare that was added to the conference.
     const remoteScreenShares = state['features/video-layout'].remoteScreenShares;
 
-    if (remoteScreenShares?.length) {
+    if (remoteScreenShares?.length > 0) {
         return remoteScreenShares[remoteScreenShares.length - 1];
     }
-
-    // sally
+     // sally
     // next pick the trainer
-    const participants = [ ...getRemoteParticipants(state).values() ];
-    let participant = participants.find(p => p.name.startsWith('Trainer'));
+    const trainers = getCustomTrainers(state);
 
-    if (participant) {
-        return participant.id;
+    if (trainers.length > 0) {
+        return trainers[0].id;
     } else return null;
 
     // 3. Next, pick the dominant speaker (other than self).
