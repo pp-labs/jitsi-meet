@@ -5,6 +5,7 @@ import type { Dispatch } from 'redux';
 import { getMultipleVideoSupportFeatureFlag } from '../base/config';
 import { MEDIA_TYPE } from '../base/media';
 import {
+    getCustomTrainers,
     getDominantSpeakerParticipant,
     getLocalParticipant,
     getPinnedParticipant,
@@ -12,7 +13,6 @@ import {
     getVirtualScreenshareParticipantByOwnerId
 } from '../base/participants';
 import { isStageFilmstripAvailable } from '../filmstrip/functions';
-import { getAutoPinSetting } from '../video-layout';
 
 import {
     SELECT_LARGE_VIDEO_PARTICIPANT,
@@ -144,16 +144,25 @@ function _electParticipantInLargeVideo(state) {
     //     return participant.id;
     // }
 
-    if (getAutoPinSetting()) {
-        // Pick the most recent remote screenshare that was added to the conference.
-        const remoteScreenShares = state['features/video-layout'].remoteScreenShares;
+    //
 
-        if (remoteScreenShares?.length) {
-            return remoteScreenShares[remoteScreenShares.length - 1];
-        }
+
+    // 2. Next, pick the most recent remote screenshare that was added to the conference.
+    const remoteScreenShares = state['features/video-layout'].remoteScreenShares;
+
+    if (remoteScreenShares?.length > 0) {
+        return remoteScreenShares[remoteScreenShares.length - 1];
     }
 
-    // Next, pick the dominant speaker (other than self).
+    // sally
+    // next pick the trainer
+    const trainers = getCustomTrainers(state);
+
+    if (trainers.length > 0) {
+        return trainers[0].id;
+    }
+
+    // 3. Next, pick the dominant speaker (other than self).
     participant = getDominantSpeakerParticipant(state);
     if (participant && !participant.local) {
         // Return the screensharing participant id associated with this endpoint if multi-stream is enabled and
@@ -192,7 +201,7 @@ function _electParticipantInLargeVideo(state) {
         }
 
         // Last, select the participant that joined last (other than poltergist or other bot type participants).
-        const participants = [...getRemoteParticipants(state).values()];
+        const participants = [ ...getRemoteParticipants(state).values() ];
 
         for (let i = participants.length; i > 0 && !participant; i--) {
             const p = participants[i - 1];
