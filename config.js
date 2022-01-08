@@ -549,6 +549,11 @@ var config = {
     //    '__end'
     // ],
 
+    toolbarButtons: [
+       'microphone', 'camera', 'desktop', 'profile', 'settings', 'filmstrip'
+    ],
+
+
     // Holds values related to toolbar visibility control.
     // toolbarConfig: {
     //     // Moved from interfaceConfig.INITIAL_TOOLBAR_TIMEOUT
