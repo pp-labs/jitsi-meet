@@ -35,7 +35,10 @@ export const SINGLE_COLUMN_BREAKPOINT = 300;
 /**
  * Breakpoint past which a two column view is enforced in tile view.
  */
-export const TWO_COLUMN_BREAKPOINT = 1000;
+
+// reduce two column breakpoint to show 3 columns on mobiles
+// export const TWO_COLUMN_BREAKPOINT = 1000;
+export const TWO_COLUMN_BREAKPOINT = 700;
 
 /**
  * Breakpoint past which the aspect ratio is switched in tile view.
