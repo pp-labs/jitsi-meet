@@ -24,10 +24,10 @@ type Props = AbstractButtonProps & {
 
 /**
  * Implements a React {@link Component} which displays a button for disabling the camera of
- * every participant (except the local one)
+ * every participant (except the local one).
  */
 class MuteEveryonesVideoButton extends AbstractButton<Props, *> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.muteEveryonesVideo';
+    accessibilityLabel = 'toolbar.accessibilityLabel.muteEveryonesVideoStream';
     icon = IconMuteVideoEveryone;
     label = 'toolbar.muteEveryonesVideo';
     tooltip = 'toolbar.muteEveryonesVideo';
@@ -39,13 +39,7 @@ class MuteEveryonesVideoButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
-        const { dispatch, localParticipantId, handleClick } = this.props;
-
-        if (handleClick) {
-            handleClick();
-
-            return;
-        }
+        const { dispatch, localParticipantId } = this.props;
 
         sendAnalytics(createToolbarEvent('mute.everyone.pressed'));
         dispatch(openDialog(MuteEveryonesVideoDialog, {

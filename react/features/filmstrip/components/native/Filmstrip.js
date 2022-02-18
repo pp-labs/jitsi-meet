@@ -7,6 +7,7 @@ import { getLocalParticipant } from '../../../base/participants';
 import { Platform } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
+import { shouldHideSelfView } from '../../../base/settings/functions.any';
 import { setVisibleRemoteParticipants } from '../../actions';
 import { isFilmstripVisible, shouldRemoteVideosBeVisible } from '../../functions';
 
@@ -31,6 +32,11 @@ type Props = {
 
     _clientHeight: number,
 
+    /**
+     * Whether or not to hide the self view.
+     */
+    _disableSelfView: boolean,
+
     _localParticipantId: string,
 
     /**
@@ -53,12 +59,12 @@ type Props = {
  * Implements a React {@link Component} which represents the filmstrip on
  * mobile/React Native.
  *
- * @extends Component
+ * @augments Component
  */
 class Filmstrip extends PureComponent<Props> {
     /**
      * Whether the local participant should be rendered separately from the
-     * remote participants i.e. outside of their {@link ScrollView}.
+     * remote participants ie outside of their {@link ScrollView}.
      */
     _separateLocalThumbnail: boolean;
 
@@ -170,7 +176,9 @@ class Filmstrip extends PureComponent<Props> {
      * @returns {void}
      */
     _onViewableItemsChanged({ viewableItems = [] }) {
-        if (!this._separateLocalThumbnail && viewableItems[0]?.index === 0) {
+        const { _disableSelfView } = this.props;
+
+        if (!this._separateLocalThumbnail && !_disableSelfView && viewableItems[0]?.index === 0) {
             // Skip the local thumbnail.
             viewableItems.shift();
         }
@@ -183,7 +191,7 @@ class Filmstrip extends PureComponent<Props> {
         let startIndex = viewableItems[0].index;
         let endIndex = viewableItems[viewableItems.length - 1].index;
 
-        if (!this._separateLocalThumbnail) {
+        if (!this._separateLocalThumbnail && !_disableSelfView) {
             // We are off by one in the remote participants array.
             startIndex -= 1;
             endIndex -= 1;
@@ -215,7 +223,7 @@ class Filmstrip extends PureComponent<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { _aspectRatio, _localParticipantId, _participants, _visible } = this.props;
+        const { _aspectRatio, _localParticipantId, _participants, _visible, _disableSelfView } = this.props;
 
         if (!_visible) {
             return null;
@@ -229,13 +237,15 @@ class Filmstrip extends PureComponent<Props> {
             ? width / (thumbnailWidth + (2 * margin))
             : height / (thumbnailHeight + (2 * margin))
         );
-        const participants = this._separateLocalThumbnail ? _participants : [ _localParticipantId, ..._participants ];
+        const participants = this._separateLocalThumbnail || _disableSelfView
+            ? _participants : [ _localParticipantId, ..._participants ];
 
         return (
             <SafeAreaView style = { filmstripStyle }>
                 {
                     this._separateLocalThumbnail
                         && !isNarrowAspectRatio
+                        && !_disableSelfView
                         && <LocalThumbnail />
                 }
                 <FlatList
@@ -254,7 +264,9 @@ class Filmstrip extends PureComponent<Props> {
                     viewabilityConfig = { this._viewabilityConfig }
                     windowSize = { 2 } />
                 {
-                    this._separateLocalThumbnail && isNarrowAspectRatio
+                    this._separateLocalThumbnail
+                        && isNarrowAspectRatio
+                        && !_disableSelfView
                         && <LocalThumbnail />
                 }
             </SafeAreaView>
@@ -271,6 +283,7 @@ class Filmstrip extends PureComponent<Props> {
  */
 function _mapStateToProps(state) {
     const { enabled, remoteParticipants } = state['features/filmstrip'];
+    const disableSelfView = shouldHideSelfView(state);
     const showRemoteVideos = shouldRemoteVideosBeVisible(state);
     const responsiveUI = state['features/base/responsive-ui'];
 
@@ -278,6 +291,7 @@ function _mapStateToProps(state) {
         _aspectRatio: state['features/base/responsive-ui'].aspectRatio,
         _clientHeight: responsiveUI.clientHeight,
         _clientWidth: responsiveUI.clientWidth,
+        _disableSelfView: disableSelfView,
         _localParticipantId: getLocalParticipant(state)?.id,
         _participants: showRemoteVideos ? remoteParticipants : NO_REMOTE_VIDEOS,
         _visible: enabled && isFilmstripVisible(state)

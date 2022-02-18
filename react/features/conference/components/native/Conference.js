@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { NativeModules, SafeAreaView, StatusBar, View } from 'react-native';
+import { withSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { appNavigate } from '../../../app/actions';
 import { PIP_ENABLED, FULLSCREEN_ENABLED, getFeatureFlag } from '../../../base/flags';
@@ -10,22 +11,18 @@ import { connect } from '../../../base/redux';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
 import { TestConnectionInfo } from '../../../base/testing';
 import { ConferenceNotification, isCalendarEnabled } from '../../../calendar-sync';
-import { Chat } from '../../../chat';
 import { DisplayNameLabel } from '../../../display-name';
-import { SharedDocument } from '../../../etherpad';
 import {
     FILMSTRIP_SIZE,
     Filmstrip,
     isFilmstripVisible,
     TileView
 } from '../../../filmstrip';
-import { AddPeopleDialog, CalleeInfoContainer } from '../../../invite';
+import { CalleeInfoContainer } from '../../../invite';
 import { LargeVideo } from '../../../large-video';
-import { KnockingParticipantList } from '../../../lobby';
-import { LobbyScreen } from '../../../lobby/components/native';
+import { KnockingParticipantList } from '../../../lobby/components/native';
 import { getIsLobbyVisible } from '../../../lobby/functions';
 import { BackButtonRegistry } from '../../../mobile/back-button';
-import { ParticipantsPane } from '../../../participants-pane/components/native';
 import { Captions } from '../../../subtitles';
 import { setToolboxVisible } from '../../../toolbox/actions';
 import { Toolbox } from '../../../toolbox/components/native';
@@ -36,8 +33,13 @@ import {
 } from '../AbstractConference';
 import type { AbstractProps } from '../AbstractConference';
 
+import AlwaysOnLabels from './AlwaysOnLabels';
+import { navigate } from './ConferenceNavigationContainerRef';
+import ExpandedLabelPopup from './ExpandedLabelPopup';
 import LonelyMeetingExperience from './LonelyMeetingExperience';
-import NavigationBar from './NavigationBar';
+import TitleBar from './TitleBar';
+import { EXPANDED_LABEL_TIMEOUT } from './constants';
+import { screen } from './routes';
 import styles from './styles';
 
 
@@ -80,7 +82,7 @@ type Props = AbstractProps & {
     _isParticipantsPaneOpen: boolean,
 
     /**
-     * The ID of the participant currently on stage (if any)
+     * The ID of the participant currently on stage (if any).
      */
     _largeVideoParticipantId: string,
 
@@ -108,13 +110,31 @@ type Props = AbstractProps & {
     /**
      * The redux {@code dispatch} function.
      */
-    dispatch: Function
+    dispatch: Function,
+
+    /**
+    * Object containing the safe area insets.
+    */
+    insets: Object
 };
+
+type State = {
+
+    /**
+     * The label that is currently expanded.
+     */
+    visibleExpandedLabel: ?string
+}
 
 /**
  * The conference page of the mobile (i.e. React Native) application.
  */
-class Conference extends AbstractConference<Props, *> {
+class Conference extends AbstractConference<Props, State> {
+    /**
+     * Timeout ref.
+     */
+    _expandedLabelTimeout: Object;
+
     /**
      * Initializes a new Conference instance.
      *
@@ -124,10 +144,17 @@ class Conference extends AbstractConference<Props, *> {
     constructor(props) {
         super(props);
 
+        this.state = {
+            visibleExpandedLabel: undefined
+        };
+
+        this._expandedLabelTimeout = React.createRef();
+
         // Bind event handlers so they are only bound once per instance.
         this._onClick = this._onClick.bind(this);
         this._onHardwareBackPress = this._onHardwareBackPress.bind(this);
         this._setToolboxVisible = this._setToolboxVisible.bind(this);
+        this._createOnPress = this._createOnPress.bind(this);
     }
 
     /**
@@ -142,6 +169,23 @@ class Conference extends AbstractConference<Props, *> {
     }
 
     /**
+     * Implements {@code Component#componentDidUpdate}.
+     *
+     * @inheritdoc
+     */
+    componentDidUpdate(prevProps) {
+        const { _showLobby } = this.props;
+
+        if (!prevProps._showLobby && _showLobby) {
+            navigate(screen.lobby);
+        }
+
+        if (prevProps._showLobby && !_showLobby) {
+            navigate(screen.conference.main);
+        }
+    }
+
+    /**
      * Implements {@link Component#componentWillUnmount()}. Invoked immediately
      * before this component is unmounted and destroyed. Disconnects the
      * conference described by the redux store/state.
@@ -152,6 +196,8 @@ class Conference extends AbstractConference<Props, *> {
     componentWillUnmount() {
         // Tear handling any hardware button presses for back navigation down.
         BackButtonRegistry.removeListener(this._onHardwareBackPress);
+
+        clearTimeout(this._expandedLabelTimeout.current);
     }
 
     /**
@@ -161,11 +207,7 @@ class Conference extends AbstractConference<Props, *> {
      * @returns {ReactElement}
      */
     render() {
-        const { _fullscreenEnabled, _showLobby } = this.props;
-
-        if (_showLobby) {
-            return <LobbyScreen />;
-        }
+        const { _fullscreenEnabled } = this.props;
 
         return (
             <Container style = { styles.conference }>
@@ -218,19 +260,6 @@ class Conference extends AbstractConference<Props, *> {
     }
 
     /**
-     * Renders JitsiModals that are supposed to be on the conference screen.
-     *
-     * @returns {Array<ReactElement>}
-     */
-    _renderConferenceModals() {
-        return [
-            <AddPeopleDialog key = 'addPeopleDialog' />,
-            <Chat key = 'chat' />,
-            <SharedDocument key = 'sharedDocument' />
-        ];
-    }
-
-    /**
      * Renders the conference notification badge if the feature is enabled.
      *
      * @private
@@ -245,6 +274,38 @@ class Conference extends AbstractConference<Props, *> {
                 : undefined);
     }
 
+    _createOnPress: (string) => void;
+
+    /**
+     * Creates a function to be invoked when the onPress of the touchables are
+     * triggered.
+     *
+     * @param {string} label - The identifier of the label that's onLayout is
+     * triggered.
+     * @returns {Function}
+     */
+    _createOnPress(label) {
+        return () => {
+            const { visibleExpandedLabel } = this.state;
+
+            const newVisibleExpandedLabel
+                = visibleExpandedLabel === label ? undefined : label;
+
+            clearTimeout(this._expandedLabelTimeout.current);
+            this.setState({
+                visibleExpandedLabel: newVisibleExpandedLabel
+            });
+
+            if (newVisibleExpandedLabel) {
+                this._expandedLabelTimeout.current = setTimeout(() => {
+                    this.setState({
+                        visibleExpandedLabel: undefined
+                    });
+                }, EXPANDED_LABEL_TIMEOUT);
+            }
+        };
+    }
+
     /**
      * Renders the content for the Conference container.
      *
@@ -254,10 +315,10 @@ class Conference extends AbstractConference<Props, *> {
     _renderContent() {
         const {
             _connecting,
-            _isParticipantsPaneOpen,
             _largeVideoParticipantId,
             _reducedUI,
-            _shouldDisplayTileView
+            _shouldDisplayTileView,
+            _toolboxVisible
         } = this.props;
 
         if (_reducedUI) {
@@ -307,21 +368,38 @@ class Conference extends AbstractConference<Props, *> {
 
                 <SafeAreaView
                     pointerEvents = 'box-none'
-                    style = { styles.navBarSafeView }>
-                    <NavigationBar />
-                    { this._renderNotificationsContainer() }
+                    style = {
+                        _toolboxVisible
+                            ? styles.titleBarSafeViewColor
+                            : styles.titleBarSafeViewTransparent }>
+                    <TitleBar _createOnPress = { this._createOnPress } />
+                </SafeAreaView>
+                <SafeAreaView
+                    pointerEvents = 'box-none'
+                    style = {
+                        _toolboxVisible
+                            ? [ styles.titleBarSafeViewTransparent, { top: this.props.insets.top + 50 } ]
+                            : styles.titleBarSafeViewTransparent
+                    }>
+                    <View
+                        pointerEvents = 'box-none'
+                        style = { styles.expandedLabelWrapper }>
+                        <ExpandedLabelPopup visibleExpandedLabel = { this.state.visibleExpandedLabel } />
+                    </View>
+                    <View
+                        pointerEvents = 'box-none'
+                        style = { styles.alwaysOnTitleBar }>
+                        {/* eslint-disable-next-line react/jsx-no-bind */}
+                        <AlwaysOnLabels createOnPress = { this._createOnPress } />
+                    </View>
+                    {this._renderNotificationsContainer()}
                     <KnockingParticipantList />
                 </SafeAreaView>
 
                 <TestConnectionInfo />
                 { this._renderConferenceNotification() }
 
-                { this._renderConferenceModals() }
-
                 {_shouldDisplayTileView && <Toolbox />}
-
-                { _isParticipantsPaneOpen && <ParticipantsPane /> }
-
             </>
         );
     }
@@ -443,4 +521,4 @@ function _mapStateToProps(state) {
     };
 }
 
-export default connect(_mapStateToProps)(Conference);
+export default withSafeAreaInsets(connect(_mapStateToProps)(Conference));

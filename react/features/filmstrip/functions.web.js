@@ -15,21 +15,25 @@ import {
     isLocalTrackMuted,
     isRemoteTrackMuted
 } from '../base/tracks/functions';
+import { LAYOUTS } from '../video-layout';
 
 import {
     ASPECT_RATIO_BREAKPOINT,
     DISPLAY_AVATAR,
-    DISPLAY_AVATAR_WITH_NAME,
-    DISPLAY_BLACKNESS_WITH_NAME,
     DISPLAY_VIDEO,
-    DISPLAY_VIDEO_WITH_NAME,
+    INDICATORS_TOOLTIP_POSITION,
     SCROLL_SIZE,
     SQUARE_TILE_ASPECT_RATIO,
     STAGE_VIEW_THUMBNAIL_HORIZONTAL_BORDER,
     TILE_ASPECT_RATIO,
     TILE_HORIZONTAL_MARGIN,
     TILE_VERTICAL_MARGIN,
-    VERTICAL_FILMSTRIP_MIN_HORIZONTAL_MARGIN
+    TILE_VIEW_GRID_HORIZONTAL_MARGIN,
+    TILE_VIEW_GRID_VERTICAL_MARGIN,
+    VERTICAL_FILMSTRIP_MIN_HORIZONTAL_MARGIN,
+    TILE_MIN_HEIGHT_LARGE,
+    TILE_MIN_HEIGHT_SMALL,
+    TILE_PORTRAIT_ASPECT_RATIO
 } from './constants';
 
 export * from './functions.any';
@@ -182,7 +186,8 @@ export function calculateThumbnailSizeForTileView({
     rows,
     clientWidth,
     clientHeight,
-    disableResponsiveTiles
+    disableResponsiveTiles,
+    disableTileEnlargement
 }: Object) {
     let aspectRatio = TILE_ASPECT_RATIO;
 
@@ -190,13 +195,18 @@ export function calculateThumbnailSizeForTileView({
         aspectRatio = SQUARE_TILE_ASPECT_RATIO;
     }
 
-// Sally - conflict
-  //  const viewWidth = clientWidth - TILE_VIEW_SIDE_MARGINS;
+    // Sally - conflict
+    //  const viewWidth = clientWidth - TILE_VIEW_SIDE_MARGINS;
     // sally - adjust height for new toolbar size
     //const viewHeight = clientHeight - 90;
 
-    const viewWidth = clientWidth - (columns * TILE_HORIZONTAL_MARGIN);
-    const viewHeight = clientHeight - (minVisibleRows * TILE_VERTICAL_MARGIN) - 90;
+    // const viewWidth = clientWidth - (columns * TILE_HORIZONTAL_MARGIN);
+    // const viewHeight = clientHeight - (minVisibleRows * TILE_VERTICAL_MARGIN) - 90;
+
+
+    const minHeight = clientWidth < ASPECT_RATIO_BREAKPOINT ? TILE_MIN_HEIGHT_SMALL : TILE_MIN_HEIGHT_LARGE;
+    const viewWidth = clientWidth - (columns * TILE_HORIZONTAL_MARGIN) - TILE_VIEW_GRID_HORIZONTAL_MARGIN;
+    const viewHeight = clientHeight - (minVisibleRows * TILE_VERTICAL_MARGIN) - TILE_VIEW_GRID_VERTICAL_MARGIN - 90;
 
     const initialWidth = viewWidth / columns;
     const initialHeight = viewHeight / minVisibleRows;
@@ -217,13 +227,54 @@ export function calculateThumbnailSizeForTileView({
         // window.
         height = Math.floor(Math.max(Math.min(scrollAspectRatioHeight, initialHeight), noScrollHeight));
         width = Math.floor(aspectRatio * height);
+
+        return {
+            height,
+            width
+        };
     }
 
+    if (disableTileEnlargement) {
+        return {
+            height,
+            width
+        };
+    }
+
+    if (initialHeight > noScrollHeight) {
+        height = Math.max(height, viewHeight / rows, minHeight);
+        width = Math.max(width, initialWidth);
+    } else {
+        height = Math.max(initialHeight, minHeight);
+        width = initialWidth;
+    }
+
+    if (height > width) {
+        const heightFromWidth = TILE_PORTRAIT_ASPECT_RATIO * width;
+
+        if (height > heightFromWidth && heightFromWidth < minHeight) {
+            return {
+                height,
+                width: height / TILE_PORTRAIT_ASPECT_RATIO
+            };
+        }
+
+        return {
+            height: Math.min(height, heightFromWidth),
+            width
+        };
+    } else if (height < width) {
+        return {
+            height,
+            width: Math.min(width, aspectRatio * height)
+        };
+    }
 
     return {
         height,
         width
     };
+
 }
 
 /**
@@ -246,17 +297,16 @@ export function getVerticalFilmstripVisibleAreaWidth() {
 /**
  * Computes information that determine the display mode.
  *
- * @param {Object} input - Obejct containing all necessary information for determining the display mode for
+ * @param {Object} input - Object containing all necessary information for determining the display mode for
  * the thumbnail.
- * @returns {number} - One of <tt>DISPLAY_VIDEO</tt>, <tt>DISPLAY_AVATAR</tt> or <tt>DISPLAY_BLACKNESS_WITH_NAME</tt>.
+ * @returns {number} - One of <tt>DISPLAY_VIDEO</tt> or <tt>DISPLAY_AVATAR</tt>.
 */
-export function computeDisplayMode(input: Object) {
-   
+
+export function computeDisplayModeFromInput(input: Object) {
     const {
         isAudioOnly,
         isCurrentlyOnLargeVideo,
         isScreenSharing,
-        isHovered,
         canPlayEventReceived,
         isRemoteParticipant,
         tileViewActive
@@ -268,15 +318,55 @@ export function computeDisplayMode(input: Object) {
         //return isHovered ? DISPLAY_AVATAR_WITH_NAME : DISPLAY_AVATAR;
     } else if (isCurrentlyOnLargeVideo && !tileViewActive) {
         // Display name is always and only displayed when user is on the stage
-        return adjustedIsVideoPlayable && !isAudioOnly ? DISPLAY_BLACKNESS_WITH_NAME : DISPLAY_AVATAR_WITH_NAME;
+        return adjustedIsVideoPlayable && !isAudioOnly ? DISPLAY_VIDEO : DISPLAY_AVATAR;
     } else if (adjustedIsVideoPlayable && !isAudioOnly) {
-        // check hovering and change state to video with name
-        // sally no hover effect
         return DISPLAY_VIDEO;
-        //return isHovered ? DISPLAY_VIDEO_WITH_NAME : DISPLAY_VIDEO;
     }
 
     // check hovering and change state to avatar with name
     return DISPLAY_AVATAR;
-    //return isHovered ? DISPLAY_AVATAR_WITH_NAME : DISPLAY_AVATAR;
+}
+
+/**
+ * Extracts information for props and state needed to compute the display mode.
+ *
+ * @param {Object} props - The Thumbnail component's props.
+ * @param {Object} state - The Thumbnail component's state.
+ * @returns {Object}
+*/
+export function getDisplayModeInput(props: Object, state: Object) {
+    const {
+        _currentLayout,
+        _isAudioOnly,
+        _isCurrentlyOnLargeVideo,
+        _isScreenSharing,
+        _isVideoPlayable,
+        _participant,
+        _videoTrack
+    } = props;
+    const tileViewActive = _currentLayout === LAYOUTS.TILE_VIEW;
+    const { canPlayEventReceived } = state;
+
+    return {
+        isCurrentlyOnLargeVideo: _isCurrentlyOnLargeVideo,
+        isAudioOnly: _isAudioOnly,
+        tileViewActive,
+        isVideoPlayable: _isVideoPlayable,
+        connectionStatus: _participant?.connectionStatus,
+        canPlayEventReceived,
+        videoStream: Boolean(_videoTrack),
+        isRemoteParticipant: !_participant?.isFakeParticipant && !_participant?.local,
+        isScreenSharing: _isScreenSharing,
+        videoStreamMuted: _videoTrack ? _videoTrack.muted : 'no stream'
+    };
+}
+
+/**
+ * Gets the tooltip position for the thumbnail indicators.
+ *
+ * @param {string} currentLayout - The current layout of the app.
+ * @returns {string}
+ */
+export function getIndicatorsTooltipPosition(currentLayout: string) {
+    return INDICATORS_TOOLTIP_POSITION[currentLayout] || 'top';
 }

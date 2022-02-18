@@ -7,7 +7,8 @@ import { ReducerRegistry } from '../base/redux';
 import {
     INIT_SEARCH,
     UPDATE_STATS,
-    INIT_REORDER_STATS
+    INIT_REORDER_STATS,
+    RESET_SEARCH_CRITERIA
 } from './actionTypes';
 
 /**
@@ -17,6 +18,7 @@ import {
  */
 const INITIAL_STATE = {
     stats: {},
+    isOpen: false,
     pendingReorder: true,
     criteria: null
 };
@@ -29,6 +31,8 @@ ReducerRegistry.register('features/speaker-stats', (state = _getInitialState(), 
         return _updateStats(state, action);
     case INIT_REORDER_STATS:
         return _initReorderStats(state);
+    case RESET_SEARCH_CRITERIA:
+        return _updateCriteria(state, { criteria: null });
     }
 
     return state;
@@ -56,7 +60,7 @@ function _updateCriteria(state, { criteria }) {
     return _.assign(
         {},
         state,
-        { criteria },
+        { criteria }
     );
 }
 
@@ -98,7 +102,7 @@ function _updateStats(state, { stats }) {
         {
             stats: { ...finalStats },
             pendingReorder: false
-        },
+        }
     );
 }
 
@@ -114,6 +118,6 @@ function _initReorderStats(state) {
     return _.assign(
         {},
         state,
-        { pendingReorder: true },
+        { pendingReorder: true }
     );
 }

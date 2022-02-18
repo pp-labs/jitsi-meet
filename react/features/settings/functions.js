@@ -9,6 +9,7 @@ import {
     isLocalParticipantModerator
 } from '../base/participants';
 import { toState } from '../base/redux';
+import { getHideSelfView } from '../base/settings';
 import { parseStandardURIString } from '../base/util';
 import { isFollowMeActive } from '../follow-me';
 import { isReactionsEnabled } from '../reactions/functions.any';
@@ -79,14 +80,25 @@ export function normalizeUserInputURL(url: string) {
 }
 
 /**
- * Used for web. Returns whether or not only Device Selection is configured to
- * display as a setting.
+ * Returns the notification types and their user selected configuration.
  *
- * @returns {boolean}
+ * @param {(Function|Object)} stateful -The (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state.
+ * @returns {Object} - The section of notifications to be configured.
  */
-export function shouldShowOnlyDeviceSelection() {
-    return interfaceConfig.SETTINGS_SECTIONS.length === 1
-        && isSettingEnabled('devices');
+export function getNotificationsMap(stateful: Object | Function) {
+    const state = toState(stateful);
+    const { notifications } = state['features/base/config'];
+    const { userSelectedNotifications } = state['features/base/settings'];
+
+    return Object.keys(userSelectedNotifications)
+        .filter(key => !notifications || notifications.includes(key))
+        .reduce((notificationsMap, key) => {
+            return {
+                ...notificationsMap,
+                [key]: userSelectedNotifications[key]
+            };
+        }, {});
 }
 
 /**
@@ -101,32 +113,60 @@ export function getMoreTabProps(stateful: Object | Function) {
     const state = toState(stateful);
     const framerate = state['features/screen-share'].captureFrameRate ?? SS_DEFAULT_FRAME_RATE;
     const language = i18next.language || DEFAULT_LANGUAGE;
-    const {
-        conference,
-        followMeEnabled,
-        startAudioMutedPolicy,
-        startVideoMutedPolicy
-    } = state['features/base/conference'];
-    const followMeActive = isFollowMeActive(state);
     const configuredTabs = interfaceConfig.SETTINGS_SECTIONS || [];
+    const enabledNotifications = getNotificationsMap(stateful);
 
-    // The settings sections to display.
-    const showModeratorSettings = Boolean(
-        conference
-            && configuredTabs.includes('moderator')
-            && isLocalParticipantModerator(state));
+    // when self view is controlled by the config we hide the settings
+    const { disableSelfView, disableSelfViewSettings } = state['features/base/config'];
 
     return {
         currentFramerate: framerate,
         currentLanguage: language,
         desktopShareFramerates: SS_SUPPORTED_FRAMERATES,
-        followMeActive: Boolean(conference && followMeActive),
-        followMeEnabled: Boolean(conference && followMeEnabled),
+        disableHideSelfView: disableSelfViewSettings || disableSelfView,
+        hideSelfView: getHideSelfView(state),
         languages: LANGUAGES,
         showLanguageSettings: configuredTabs.includes('language'),
-        showModeratorSettings,
-        showPrejoinSettings: state['features/base/config'].prejoinPageEnabled,
+        enabledNotifications,
+        showNotificationsSettings: Object.keys(enabledNotifications).length > 0,
         showPrejoinPage: !state['features/base/settings'].userSelectedSkipPrejoin,
+        showPrejoinSettings: state['features/base/config'].prejoinConfig?.enabled
+    };
+}
+
+/**
+ * Returns the properties for the "More" tab from settings dialog from Redux
+ * state.
+ *
+ * @param {(Function|Object)} stateful -The (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state.
+ * @returns {Object} - The properties for the "More" tab from settings dialog.
+ */
+export function getModeratorTabProps(stateful: Object | Function) {
+    const state = toState(stateful);
+    const {
+        conference,
+        followMeEnabled,
+        startAudioMutedPolicy,
+        startVideoMutedPolicy,
+        startReactionsMuted
+    } = state['features/base/conference'];
+    const { disableReactionsModeration } = state['features/base/config'];
+    const followMeActive = isFollowMeActive(state);
+    const configuredTabs = interfaceConfig.SETTINGS_SECTIONS || [];
+
+    const showModeratorSettings = Boolean(
+        conference
+        && configuredTabs.includes('moderator')
+        && isLocalParticipantModerator(state));
+
+    // The settings sections to display.
+    return {
+        showModeratorSettings,
+        disableReactionsModeration: Boolean(disableReactionsModeration),
+        followMeActive: Boolean(conference && followMeActive),
+        followMeEnabled: Boolean(conference && followMeEnabled),
+        startReactionsMuted: Boolean(conference && startReactionsMuted),
         startAudioMuted: Boolean(conference && startAudioMutedPolicy),
         startVideoMuted: Boolean(conference && startVideoMutedPolicy)
     };
@@ -148,6 +188,7 @@ export function getProfileTabProps(stateful: Object | Function) {
         authLogin,
         conference
     } = state['features/base/conference'];
+    const { hideEmailInSettings } = state['features/base/config'];
     const localParticipant = getLocalParticipant(state);
 
     return {
@@ -155,7 +196,8 @@ export function getProfileTabProps(stateful: Object | Function) {
         authLogin,
         displayName: localParticipant.name,
         email: localParticipant.email,
-        readOnlyName: isNameReadOnly(state)
+        readOnlyName: isNameReadOnly(state),
+        hideEmailInSettings
     };
 }
 
@@ -178,6 +220,7 @@ export function getSoundsTabProps(stateful: Object | Function) {
         soundsReactions
     } = state['features/base/settings'];
     const enableReactions = isReactionsEnabled(state);
+    const moderatorMutedSoundsReactions = state['features/base/conference'].startReactionsMuted ?? false;
 
     return {
         soundsIncomingMessage,
@@ -185,7 +228,8 @@ export function getSoundsTabProps(stateful: Object | Function) {
         soundsParticipantLeft,
         soundsTalkWhileMuted,
         soundsReactions,
-        enableReactions
+        enableReactions,
+        moderatorMutedSoundsReactions
     };
 }
 

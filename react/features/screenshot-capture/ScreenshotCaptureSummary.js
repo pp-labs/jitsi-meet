@@ -6,6 +6,8 @@ import './createImageBitmap';
 
 import { createScreensharingCaptureTakenEvent, sendAnalytics } from '../analytics';
 import { getCurrentConference } from '../base/conference';
+import { getRemoteParticipants } from '../base/participants';
+import { extractFqnFromPath } from '../dynamic-branding';
 
 import {
     CLEAR_INTERVAL,
@@ -14,6 +16,7 @@ import {
     POLL_INTERVAL,
     SET_INTERVAL
 } from './constants';
+import { getParticipantJid } from './functions';
 import { processScreenshot } from './processScreenshot';
 import { timerWorkerScript } from './worker';
 
@@ -134,10 +137,17 @@ export default class ScreenshotCaptureSummary {
 
         const conference = getCurrentConference(this._state);
         const sessionId = conference.getMeetingUniqueId();
-        const { connection, timeEstablished } = this._state['features/base/connection'];
+        const { connection } = this._state['features/base/connection'];
         const jid = connection.getJid();
-        const timeLapseSeconds = timeEstablished && Math.floor((Date.now() - timeEstablished) / 1000);
+        const timestamp = Date.now();
         const { jwt } = this._state['features/base/jwt'];
+        const meetingFqn = extractFqnFromPath();
+        const remoteParticipants = getRemoteParticipants(this._state);
+        const participants = [];
+
+        remoteParticipants.forEach(p => participants.push(
+            getParticipantJid(this._state, p.id)
+        ));
 
         this._storedImageData = imageData;
 
@@ -145,7 +155,9 @@ export default class ScreenshotCaptureSummary {
             jid,
             jwt,
             sessionId,
-            timeLapseSeconds
+            timestamp,
+            meetingFqn,
+            participants
         });
     }
 

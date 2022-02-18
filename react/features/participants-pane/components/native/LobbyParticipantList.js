@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { admitMultiple } from '../../../lobby/actions.native';
 import { getKnockingParticipants, getLobbyEnabled } from '../../../lobby/functions';
 
+import CollapsibleList from './CollapsibleList';
 import { LobbyParticipantItem } from './LobbyParticipantItem';
 import styles from './styles';
 
@@ -34,27 +35,37 @@ const LobbyParticipantList = ({ theme }: Props) => {
     if (!lobbyEnabled || !participants.length) {
         return null;
     }
+    const title = (
+        <View style = { styles.lobbyListDetails } >
+            <Text style = { styles.lobbyListDescription }>
+                {t('participantsPane.headings.waitingLobby',
+                        { count: participants.length })}
+            </Text>
+            {
+                participants.length > 1 && (
+                    <Button
+                        color = { palette.action02 }
+                        labelStyle = { styles.admitAllParticipantsActionButtonLabel }
+                        mode = 'text'
+                        onPress = { admitAll }>
+                        {t('lobby.admitAll')}
+                    </Button>
+                )
+            }
+        </View>
+    );
+
+    // Regarding the fact that we have 3 sections, we apply
+    // a certain height percentage for every section in order for all to fit
+    // inside the participants pane container
+    const style = participants.length > 1 && styles.lobbyListContent;
 
     return (
-        <View style = { styles.lobbyList }>
-            <View style = { styles.lobbyListDetails } >
-                <Text style = { styles.lobbyListDescription }>
-                    {t('participantsPane.headings.waitingLobby',
-                        { count: participants.length })}
-                </Text>
-                {
-                    participants.length > 1 && (
-                        <Button
-                            color = { palette.action02 }
-                            labelStyle = { styles.admitAllParticipantsActionButtonLabel }
-                            mode = 'text'
-                            onPress = { admitAll }>
-                            {t('lobby.admitAll')}
-                        </Button>
-                    )
-                }
-            </View>
-            <ScrollView>
+        <CollapsibleList
+            title = { title }>
+            <ScrollView
+                bounces = { false }
+                style = { style } >
                 {
                     participants.map(p => (
                         <LobbyParticipantItem
@@ -63,7 +74,7 @@ const LobbyParticipantList = ({ theme }: Props) => {
                     )
                 }
             </ScrollView>
-        </View>
+        </CollapsibleList>
     );
 };
 

@@ -3,6 +3,8 @@
 import { ReducerRegistry } from '../base/redux';
 
 import {
+    CHANGE_VOTE,
+    CLEAR_POLLS,
     RECEIVE_POLL,
     RECEIVE_ANSWER,
     REGISTER_VOTE,
@@ -20,6 +22,29 @@ const INITIAL_STATE = {
 
 ReducerRegistry.register('features/polls', (state = INITIAL_STATE, action) => {
     switch (action.type) {
+
+    case CHANGE_VOTE: {
+        const { pollId, value } = action;
+
+        return {
+            ...state,
+            polls: {
+                ...state.polls,
+                [pollId]: {
+                    ...state.polls[pollId],
+                    changingVote: value,
+                    showResults: !value
+                }
+            }
+        };
+    }
+
+    case CLEAR_POLLS: {
+        return {
+            ...state,
+            ...INITIAL_STATE
+        };
+    }
 
     // Reducer triggered when a poll is received
     case RECEIVE_POLL: {
@@ -93,6 +118,7 @@ ReducerRegistry.register('features/polls', (state = INITIAL_STATE, action) => {
                 ...state.polls,
                 [pollId]: {
                     ...state.polls[pollId],
+                    changingVote: false,
                     lastVote: answers,
                     showResults: true
                 }

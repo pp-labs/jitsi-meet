@@ -10,9 +10,21 @@ import {
 } from './sounds';
 
 /**
- * The payload name for the datachannel/endpoint reaction event
+ * Reactions menu height on mobile web (px).
+ */
+export const REACTIONS_MENU_HEIGHT = 144;
+
+/**
+ * The payload name for the datachannel/endpoint reaction event.
  */
 export const ENDPOINT_REACTION_NAME = 'endpoint-reaction';
+
+/**
+ * The (name of the) command which transports the state (represented by
+ * {State} for the local state at the time of this writing) of a {MuteReactions}
+ * (instance) between moderator and participants.
+ */
+export const MUTE_REACTIONS_COMMAND = 'mute-reactions';
 
 /**
  * The prefix for all reaction sound IDs. Also the ID used in config to disable reaction sounds.

@@ -1,5 +1,8 @@
 // @flow
 
+/* eslint-disable react/jsx-no-bind */
+
+import { withStyles } from '@material-ui/styles';
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 
@@ -10,19 +13,19 @@ import {
 } from '../../../analytics';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n';
-import { getLocalParticipant, participantUpdated } from '../../../base/participants';
+import { getLocalParticipant, hasRaisedHand, raiseHand } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { dockToolbox } from '../../../toolbox/actions.web';
 import { addReactionToBuffer } from '../../actions.any';
 import { toggleReactionsMenuVisibility } from '../../actions.web';
-import { REACTIONS } from '../../constants';
+import { REACTIONS, REACTIONS_MENU_HEIGHT } from '../../constants';
 
 import ReactionButton from './ReactionButton';
 
 type Props = {
 
     /**
-     * Docks the toolbox
+     * Docks the toolbox.
      */
     _dockToolbox: Function,
 
@@ -42,6 +45,11 @@ type Props = {
     _raisedHand: boolean,
 
     /**
+     * An object containing the CSS classes.
+     */
+    classes: Object,
+
+    /**
      * The Redux Dispatch function.
      */
     dispatch: Function,
@@ -58,6 +66,21 @@ type Props = {
 };
 
 declare var APP: Object;
+
+const styles = theme => {
+    return {
+        overflow: {
+            width: 'auto',
+            paddingBottom: 'max(env(safe-area-inset-bottom, 0), 16px)',
+            backgroundColor: theme.palette.ui01,
+            boxShadow: 'none',
+            borderRadius: 0,
+            position: 'relative',
+            boxSizing: 'border-box',
+            height: `${REACTIONS_MENU_HEIGHT}px`
+        }
+    };
+};
 
 /**
  * Implements the reactions menu.
@@ -123,22 +146,9 @@ class ReactionsMenu extends Component<Props> {
      * @returns {void}
      */
     _doToggleRaiseHand() {
-        const { _localParticipantID, _raisedHand } = this.props;
-        const newRaisedStatus = !_raisedHand;
+        const { _raisedHand } = this.props;
 
-        this.props.dispatch(participantUpdated({
-            // XXX Only the local participant is allowed to update without
-            // stating the JitsiConference instance (i.e. participant property
-            // `conference` for a remote participant) because the local
-            // participant is uniquely identified by the very fact that there is
-            // only one local participant.
-
-            id: _localParticipantID,
-            local: true,
-            raisedHand: newRaisedStatus
-        }));
-
-        APP.API.notifyRaiseHandUpdated(_localParticipantID, newRaisedStatus);
+        this.props.dispatch(raiseHand(!_raisedHand));
     }
 
     /**
@@ -183,10 +193,10 @@ class ReactionsMenu extends Component<Props> {
      * @inheritdoc
      */
     render() {
-        const { _raisedHand, t, overflowMenu, _isMobile } = this.props;
+        const { _raisedHand, t, overflowMenu, _isMobile, classes } = this.props;
 
         return (
-            <div className = { `reactions-menu ${overflowMenu ? 'overflow' : ''}` }>
+            <div className = { `reactions-menu ${overflowMenu ? `overflow ${classes.overflow}` : ''}` }>
                 <div className = 'reactions-row'>
                     { this._getReactionButtons() }
                 </div>
@@ -221,7 +231,7 @@ function mapStateToProps(state) {
     return {
         _localParticipantID: localParticipant.id,
         _isMobile: isMobileBrowser(),
-        _raisedHand: localParticipant.raisedHand
+        _raisedHand: hasRaisedHand(localParticipant)
     };
 }
 
@@ -243,5 +253,5 @@ function mapDispatchToProps(dispatch) {
 
 export default translate(connect(
     mapStateToProps,
-    mapDispatchToProps,
-)(ReactionsMenu));
+    mapDispatchToProps
+)(withStyles(styles)(ReactionsMenu)));

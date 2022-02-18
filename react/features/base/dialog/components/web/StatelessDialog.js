@@ -3,6 +3,7 @@
 import ButtonGroup from '@atlaskit/button/button-group';
 import Button from '@atlaskit/button/standard-button';
 import Modal, { ModalFooter } from '@atlaskit/modal-dialog';
+import { withStyles } from '@material-ui/core/styles';
 import _ from 'lodash';
 import React, { Component } from 'react';
 
@@ -13,12 +14,14 @@ import ModalHeader from './ModalHeader';
 
 /**
  * The ID to be used for the cancel button if enabled.
+ *
  * @type {string}
  */
 const CANCEL_BUTTON_ID = 'modal-dialog-cancel-button';
 
 /**
  * The ID to be used for the ok button if enabled.
+ *
  * @type {string}
  */
 const OK_BUTTON_ID = 'modal-dialog-ok-button';
@@ -29,6 +32,11 @@ const OK_BUTTON_ID = 'modal-dialog-ok-button';
  * @static
  */
 type Props = DialogProps & {
+
+    /**
+     * An object containing the CSS classes.
+     */
+    classes: Object,
 
     /**
      * Custom dialog header that replaces the standard heading.
@@ -96,9 +104,22 @@ type Props = DialogProps & {
      * - 'small' (400px), 'medium' (600px), 'large' (800px),
      *   'x-large' (968px)
      * - integer value for pixel width
-     * - string value for percentage
+     * - string value for percentage.
      */
     width: string
+};
+
+/**
+ * Creates the styles for the component.
+ *
+ * @returns {Object}
+ */
+const styles = () => {
+    return {
+        footer: {
+            boxShadow: 'none'
+        }
+    };
 };
 
 /**
@@ -112,7 +133,7 @@ class StatelessDialog extends Component<Props> {
     /**
      * The functional component to be used for rendering the modal footer.
      */
-    _Footer: ?Function
+    _Footer: ?Function;
 
     _dialogElement: ?HTMLElement;
 
@@ -205,7 +226,9 @@ class StatelessDialog extends Component<Props> {
         }
 
         return (
-            <ModalFooter showKeyline = { propsFromModalFooter.showKeyline } >
+            <ModalFooter
+                className = { this.props.classes.footer }
+                showKeyline = { propsFromModalFooter.showKeyline } >
                 {
 
                     /**
@@ -367,4 +390,4 @@ class StatelessDialog extends Component<Props> {
     }
 }
 
-export default translate(StatelessDialog);
+export default translate(withStyles(styles)(StatelessDialog));

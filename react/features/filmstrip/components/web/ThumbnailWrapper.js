@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { shouldComponentUpdate } from 'react-window';
 
 import { connect } from '../../../base/redux';
+import { shouldHideSelfView } from '../../../base/settings/functions.any';
 import { getCurrentLayout, LAYOUTS } from '../../../video-layout';
 
 import Thumbnail from './Thumbnail';
@@ -19,9 +20,19 @@ import { getCustomOrderedRemoteParticipants, getIsLocalTrainer } from "../../../
 type Props = {
 
     /**
+     * Whether or not to hide the self view.
+     */
+    _disableSelfView: boolean,
+
+    /**
      * The horizontal offset in px for the thumbnail. Used to center the thumbnails in the last row in tile view.
      */
     _horizontalOffset: number,
+
+    /**
+     * Whether or not there is a pinned participant.
+     */
+    _isAnyParticipantPinned: boolean,
 
     /**
      * The ID of the participant associated with the Thumbnail.
@@ -75,14 +86,14 @@ class ThumbnailWrapper extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { _participantID, style, _horizontalOffset = 0 } = this.props;
+        const { _participantID, style, _horizontalOffset = 0, _isAnyParticipantPinned, _disableSelfView } = this.props;
 
         if (typeof _participantID !== 'string') {
             return null;
         }
 
         if (_participantID === 'local') {
-            return (
+            return _disableSelfView ? null : (
                 <Thumbnail
                     horizontalOffset = { _horizontalOffset }
                     key = 'local'
@@ -91,6 +102,7 @@ class ThumbnailWrapper extends Component<Props> {
 
         return (
             <Thumbnail
+                _isAnyParticipantPinned = { _isAnyParticipantPinned }
                 horizontalOffset = { _horizontalOffset }
                 key = { `remote_${_participantID}` }
                 participantID = { _participantID }
@@ -108,9 +120,10 @@ class ThumbnailWrapper extends Component<Props> {
  */
 function _mapStateToProps(state, ownProps) {
     const _currentLayout = getCurrentLayout(state);
+
    // let { remoteParticipants } = state['features/filmstrip'];
 
-    const { remote } = state["features/base/participants"];
+    const { remote, local } = state['features/base/participants'];
     const { recentActiveParticipants } =
             state["features/base/participants/recentActive"];
 
@@ -132,7 +145,7 @@ function _mapStateToProps(state, ownProps) {
         const index = (rowIndex * columns) + columnIndex;
         let horizontalOffset;
         const { iAmRecorder } = state['features/base/config'];
-        const participantsLenght = remoteParticipantsLength + (iAmRecorder ? 0 : 1);
+        const participantsLenght = remoteParticipantsLength + (iAmRecorder ? 0 : 1) - (disableSelfView ? 1 : 0);
 
         if (rowIndex === rows - 1) { // center the last row
             const { width: thumbnailWidth } = thumbnailSize;
@@ -148,17 +161,20 @@ function _mapStateToProps(state, ownProps) {
         }
 
         // When the thumbnails are reordered, local participant is inserted at index 0.
+
         // Sally = thumbnailreorder is disabled, but this is also true if the local participant is Trainer
-        //const localIndex = enableThumbnailReordering || isLocalTrainer ? 0 : remoteParticipantsLength;
-        //const remoteIndex = (enableThumbnailReordering && !iAmRecorder) || isLocalTrainer ? index - 1 : index;
+        //const localIndex = enableThumbnailReordering && !disableSelfView ? 0 : remoteParticipantsLength;
+        //const remoteIndex = enableThumbnailReordering && !iAmRecorder && !disableSelfView ? index - 1 : index;
 
         // sally  - undo trianer local reorder
         const localIndex = enableThumbnailReordering ? 0 : remoteParticipantsLength;
         const remoteIndex = enableThumbnailReordering && !iAmRecorder ? index - 1 : index;
 
 
+
         if (!iAmRecorder && index === localIndex) {
             return {
+                _disableSelfView: disableSelfView,
                 _participantID: 'local',
                 _horizontalOffset: horizontalOffset
             };
@@ -178,8 +194,11 @@ function _mapStateToProps(state, ownProps) {
         return {};
     }
 
+    const _isAnyParticipantPinned = Boolean([ ...remote ].find(([ , value ]) => value?.pinned) || local?.pinned);
+
     return {
-        _participantID: remoteParticipants[index]
+        _participantID: remoteParticipants[index],
+        _isAnyParticipantPinned
     };
 }
 

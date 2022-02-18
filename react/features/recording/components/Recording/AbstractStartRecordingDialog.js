@@ -13,7 +13,7 @@ import {
     getNewAccessToken,
     updateDropboxToken
 } from '../../../dropbox';
-import { showErrorNotification } from '../../../notifications';
+import { NOTIFICATION_TIMEOUT_TYPE, showErrorNotification } from '../../../notifications';
 import { toggleRequestingSubtitles } from '../../../subtitles';
 import { setSelectedRecordingService } from '../../actions';
 import { RECORDING_TYPES } from '../../constants';
@@ -42,7 +42,7 @@ type Props = {
     _fileRecordingsServiceEnabled: boolean,
 
     /**
-     * Whether to show the possibility to share file recording with other people (e.g. meeting participants), based on
+     * Whether to show the possibility to share file recording with other people (e.g. Meeting participants), based on
      * the actual implementation on the backend.
      */
     _fileRecordingsServiceSharingEnabled: boolean,
@@ -56,6 +56,16 @@ type Props = {
      * The dropbox refresh token.
      */
     _rToken: string,
+
+    /**
+     * Whether or not the local participant is screensharing.
+     */
+    _screensharing: boolean,
+
+    /**
+     * Whether or not the screenshot capture feature is enabled.
+     */
+    _screenshotCaptureEnabled: boolean,
 
     /**
      * Access token's expiration date as UNIX timestamp.
@@ -128,6 +138,7 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
         this._onSelectedRecordingServiceChanged
             = this._onSelectedRecordingServiceChanged.bind(this);
         this._onSharingSettingChanged = this._onSharingSettingChanged.bind(this);
+        this._toggleScreenshotCapture = this._toggleScreenshotCapture.bind(this);
 
         let selectedRecordingService;
 
@@ -298,7 +309,7 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
             } else {
                 dispatch(showErrorNotification({
                     titleKey: 'dialog.noDropboxToken'
-                }));
+                }, NOTIFICATION_TIMEOUT_TYPE.LONG));
 
                 return;
             }
@@ -315,6 +326,7 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
             createRecordingDialogEvent('start', 'confirm.button', attributes)
         );
 
+        this._toggleScreenshotCapture();
         _conference.startRecording({
             mode: JitsiRecordingConstants.mode.FILE,
             appData
@@ -327,13 +339,24 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
         return true;
     }
 
+    _toggleScreenshotCapture:() => void;
+
+    /**
+     * Toggles screenshot capture feature.
+     *
+     * @returns {void}
+     */
+    _toggleScreenshotCapture() {
+        // To be implemented by subclass.
+    }
+
     /**
      * Renders the platform specific dialog content.
      *
      * @protected
      * @returns {React$Component}
      */
-    _renderDialogContent: () => React$Component<*>
+    _renderDialogContent: () => React$Component<*>;
 }
 
 /**

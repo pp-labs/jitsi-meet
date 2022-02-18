@@ -5,8 +5,10 @@ import type { AbstractComponent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { sendAnalytics, createPollEvent } from '../../analytics';
 import { getLocalParticipant, getParticipantById } from '../../base/participants';
-import { registerVote } from '../actions';
+import { useBoundSelector } from '../../base/util/hooks';
+import { registerVote, setVoteChanging } from '../actions';
 import { COMMAND_ANSWER_POLL } from '../constants';
 import type { Poll } from '../types';
 
@@ -23,9 +25,11 @@ type InputProps = {
  **/
 export type AbstractProps = {
     checkBoxStates: Function,
+    creatorName: string,
     poll: Poll,
     setCheckbox: Function,
     skipAnswer: Function,
+    skipChangeVote: Function,
     submitAnswer: Function,
     t: Function,
 };
@@ -54,17 +58,19 @@ const AbstractPollAnswer = (Component: AbstractComponent<AbstractProps>) => (pro
 
         return new Array(poll.answers.length).fill(false);
     });
+    const participant = useBoundSelector(getParticipantById, poll.senderId);
 
     const setCheckbox = useCallback((index, state) => {
         const newCheckBoxStates = [ ...checkBoxStates ];
 
         newCheckBoxStates[index] = state;
         setCheckBoxState(newCheckBoxStates);
+        sendAnalytics(createPollEvent('vote.checked'));
     }, [ checkBoxStates ]);
 
     const dispatch = useDispatch();
 
-    const localParticipant = useSelector(state => getParticipantById(state, localId));
+    const localParticipant = useBoundSelector(getParticipantById, localId);
     const localName: string = localParticipant.name ? localParticipant.name : 'Fellow Jitster';
 
     const submitAnswer = useCallback(() => {
@@ -76,6 +82,7 @@ const AbstractPollAnswer = (Component: AbstractComponent<AbstractProps>) => (pro
             answers: checkBoxStates
         });
 
+        sendAnalytics(createPollEvent('vote.sent'));
         dispatch(registerVote(pollId, checkBoxStates));
 
         return false;
@@ -83,16 +90,23 @@ const AbstractPollAnswer = (Component: AbstractComponent<AbstractProps>) => (pro
 
     const skipAnswer = useCallback(() => {
         dispatch(registerVote(pollId, null));
+        sendAnalytics(createPollEvent('vote.skipped'));
 
     }, [ pollId ]);
+
+    const skipChangeVote = useCallback(() => {
+        dispatch(setVoteChanging(pollId, false));
+    }, [ dispatch, pollId ]);
 
     const { t } = useTranslation();
 
     return (<Component
         checkBoxStates = { checkBoxStates }
+        creatorName = { participant ? participant.name : '' }
         poll = { poll }
         setCheckbox = { setCheckbox }
         skipAnswer = { skipAnswer }
+        skipChangeVote = { skipChangeVote }
         submitAnswer = { submitAnswer }
         t = { t } />);
 

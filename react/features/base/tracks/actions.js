@@ -4,7 +4,7 @@ import {
     createTrackMutedEvent,
     sendAnalytics
 } from '../../analytics';
-import { showErrorNotification, showNotification } from '../../notifications';
+import { NOTIFICATION_TIMEOUT_TYPE, showErrorNotification, showNotification } from '../../notifications';
 import { JitsiTrackErrors, JitsiTrackEvents, createLocalTrack } from '../lib-jitsi-meet';
 import {
     CAMERA_FACING_MODE,
@@ -188,12 +188,19 @@ export function createLocalTracksA(options = {}) {
 }
 
 /**
- * Calls JitsiLocalTrack#dispose() on all local tracks ignoring errors when
+ * Calls JitsiLocalTrack#dispose() on the given track or on all local tracks (if none are passed) ignoring errors if
  * track is already disposed. After that signals tracks to be removed.
  *
+ * @param {JitsiLocalTrack|null} [track] - The local track that needs to be destroyed.
  * @returns {Function}
  */
-export function destroyLocalTracks() {
+export function destroyLocalTracks(track = null) {
+    if (track) {
+        return dispatch => {
+            dispatch(_disposeAndRemoveTracks([ track ]));
+        };
+    }
+
     return (dispatch, getState) => {
         // First wait until any getUserMedia in progress is settled and then get
         // rid of all local tracks.
@@ -245,7 +252,7 @@ export function showNoDataFromSourceVideoError(jitsiTrack) {
             const notificationAction = await dispatch(showErrorNotification({
                 descriptionKey: 'dialog.cameraNotSendingData',
                 titleKey: 'dialog.cameraNotSendingDataTitle'
-            }));
+            }, NOTIFICATION_TIMEOUT_TYPE.LONG));
 
             notificationInfo = {
                 uid: notificationAction.uid
@@ -397,7 +404,7 @@ export function trackAdded(track) {
                     const notificationAction = await dispatch(showNotification({
                         descriptionKey: 'dialog.micNotSendingData',
                         titleKey: 'dialog.micNotSendingDataTitle'
-                    }));
+                    }, NOTIFICATION_TIMEOUT_TYPE.LONG));
 
                     // Set the notification ID so that other parts of the application know that this was
                     // displayed in the context of the current device.
@@ -406,7 +413,9 @@ export function trackAdded(track) {
 
                     noDataFromSourceNotificationInfo = { uid: notificationAction.uid };
                 } else {
-                    const timeout = setTimeout(() => dispatch(showNoDataFromSourceVideoError(track)), 5000);
+                    const timeout = setTimeout(() => dispatch(
+                        showNoDataFromSourceVideoError(track)),
+                        NOTIFICATION_TIMEOUT_TYPE.MEDIUM);
 
                     noDataFromSourceNotificationInfo = { timeout };
                 }

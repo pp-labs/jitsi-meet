@@ -92,12 +92,17 @@ type Props = AbstractProps & {
     _onSaveLogs: Function,
 
     /**
+     * The region reported by the participant.
+     */
+    _region: String,
+
+    /**
      * The video SSRC of this client.
      */
     _videoSsrc: number,
 
     /**
-     * Css class to apply on container
+     * Css class to apply on container.
      */
     className: string,
 
@@ -107,7 +112,7 @@ type Props = AbstractProps & {
     dispatch: Dispatch<any>,
 
     /**
-     * Optional param for passing existing connection stats on component instantiation
+     * Optional param for passing existing connection stats on component instantiation.
      */
     inheritedStats: Object,
 
@@ -132,7 +137,7 @@ type State = AbstractState & {
  * Implements a React {@link Component} which displays the current connection
  * quality percentage and has a popover to show more detailed connection stats.
  *
- * @extends {Component}
+ * @augments {Component}
  */
 class ConnectionIndicatorContent extends AbstractConnectionIndicator<Props, State> {
     /**
@@ -171,7 +176,6 @@ class ConnectionIndicatorContent extends AbstractConnectionIndicator<Props, Stat
             framerate,
             maxEnabledResolution,
             packetLoss,
-            region,
             resolution,
             serverRegion,
             transport
@@ -195,7 +199,7 @@ class ConnectionIndicatorContent extends AbstractConnectionIndicator<Props, Stat
                 onShowMore = { this._onToggleShowMore }
                 packetLoss = { packetLoss }
                 participantId = { this.props.participantId }
-                region = { region }
+                region = { this.props._region }
                 resolution = { resolution }
                 serverRegion = { serverRegion }
                 shouldShowMore = { this.state.showMoreStats }
@@ -310,7 +314,8 @@ export function _mapStateToProps(state: Object, ownProps: Props) {
         _connectionStatus: participant?.connectionStatus,
         _enableSaveLogs: state['features/base/config'].enableSaveLogs,
         _disableShowMoreStats: state['features/base/config'].disableShowMoreStats,
-        _isLocalVideo: participant?.local
+        _isLocalVideo: participant?.local,
+        _region: participant?.region
     };
 
     if (conference) {

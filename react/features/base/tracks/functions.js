@@ -199,7 +199,7 @@ export function createLocalTracksF(options = {}, store) {
  *
  * @returns {Promise<JitsiLocalTrack>}
  *
- * @todo Refactor to not use APP
+ * @todo Refactor to not use APP.
  */
 export function createPrejoinTracks() {
     const errors = {};
@@ -397,6 +397,26 @@ export function getTrackByMediaTypeAndParticipant(
     return tracks.find(
         t => Boolean(t.jitsiTrack) && t.participantId === participantId && t.mediaType === mediaType
     );
+}
+
+/**
+ * Returns track source name of specified media type for specified participant id.
+ *
+ * @param {Track[]} tracks - List of all tracks.
+ * @param {MEDIA_TYPE} mediaType - Media type.
+ * @param {string} participantId - Participant ID.
+ * @returns {(string|undefined)}
+ */
+export function getTrackSourceNameByMediaTypeAndParticipant(
+        tracks,
+        mediaType,
+        participantId) {
+    const track = getTrackByMediaTypeAndParticipant(
+        tracks,
+        mediaType,
+        participantId);
+
+    return track?.jitsiTrack?.getSourceName();
 }
 
 /**

@@ -3,6 +3,7 @@
 import { getGravatarURL } from '@jitsi/js-utils/avatar';
 import type { Store } from 'redux';
 
+import { GRAVATAR_BASE_URL, isCORSAvatarURL } from '../avatar';
 import { JitsiParticipantConnectionStatus } from '../lib-jitsi-meet';
 import { MEDIA_TYPE, shouldRenderVideoTrack } from '../media';
 import { toState } from '../redux';
@@ -15,7 +16,6 @@ import {
     PARTICIPANT_ROLE
 } from './constants';
 import { preloadImage } from './preloadImage';
-
 
 /* sally addditional imports */
 
@@ -31,7 +31,6 @@ import {
 
 // end sally additional imports
 
-declare var interfaceConfig: Object;
 
 /**
  * Temp structures for avatar urls to be checked/preloaded.
@@ -50,7 +49,7 @@ const AVATAR_CHECKER_FUNCTIONS = [
         if (participant && participant.email) {
             // TODO: remove once libravatar has deployed their new scaled up infra. -saghul
             const gravatarBaseURL
-                = store.getState()['features/base/config'].gravatarBaseURL ?? 'https://www.gravatar.com/avatar/';
+                = store.getState()['features/base/config'].gravatarBaseURL ?? GRAVATAR_BASE_URL;
 
             return getGravatarURL(participant.email, gravatarBaseURL);
         }
@@ -71,7 +70,7 @@ export function getFirstLoadableAvatarUrl(participant: Object, store: Store<any,
     const deferred = createDeferred();
     const fullPromise = deferred.promise
         .then(() => _getFirstLoadableAvatarUrl(participant, store))
-        .then(src => {
+        .then(result => {
 
             if (AVATAR_QUEUE.length) {
                 const next = AVATAR_QUEUE.shift();
@@ -79,7 +78,7 @@ export function getFirstLoadableAvatarUrl(participant: Object, store: Store<any,
                 next.resolve();
             }
 
-            return src;
+            return result;
         });
 
     if (AVATAR_QUEUE.length) {
@@ -213,9 +212,6 @@ export function getParticipantCountWithFake(stateful: Object | Function) {
 /**
  * Returns participant's display name.
  *
- * FIXME: Remove the hardcoded strings once interfaceConfig is stored in redux
- * and merge with a similarly named method in {@code conference.js}.
- *
  * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
  * {@code getState} function to be used to retrieve the state.
  * @param {string} id - The ID of the participant's display name to retrieve.
@@ -225,6 +221,10 @@ export function getParticipantDisplayName(
         stateful: Object | Function,
         id: string) {
     const participant = getParticipantById(stateful, id);
+    const {
+        defaultLocalDisplayName,
+        defaultRemoteDisplayName
+    } = toState(stateful)['features/base/config'];
 
     if (participant) {
         if (participant.name) {
@@ -232,15 +232,11 @@ export function getParticipantDisplayName(
         }
 
         if (participant.local) {
-            return typeof interfaceConfig === 'object'
-                ? interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME
-                : 'me';
+            return defaultLocalDisplayName;
         }
     }
 
-    return typeof interfaceConfig === 'object'
-        ? interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME
-        : 'Fellow Jitster';
+    return defaultRemoteDisplayName;
 }
 
 /**
@@ -698,18 +694,33 @@ async function _getFirstLoadableAvatarUrl(participant, store) {
 
         if (url !== null) {
             if (AVATAR_CHECKED_URLS.has(url)) {
-                if (AVATAR_CHECKED_URLS.get(url)) {
-                    return url;
+                const { isLoadable, isUsingCORS } = AVATAR_CHECKED_URLS.get(url) || {};
+
+                if (isLoadable) {
+                    return {
+                        isUsingCORS,
+                        src: url
+                    };
                 }
             } else {
                 try {
-                    const finalUrl = await preloadImage(url);
+                    const { corsAvatarURLs } = store.getState()['features/base/config'];
+                    const { isUsingCORS, src } = await preloadImage(url, isCORSAvatarURL(url, corsAvatarURLs));
 
-                    AVATAR_CHECKED_URLS.set(finalUrl, true);
+                    AVATAR_CHECKED_URLS.set(src, {
+                        isLoadable: true,
+                        isUsingCORS
+                    });
 
-                    return finalUrl;
+                    return {
+                        isUsingCORS,
+                        src
+                    };
                 } catch (e) {
-                    AVATAR_CHECKED_URLS.set(url, false);
+                    AVATAR_CHECKED_URLS.set(url, {
+                        isLoadable: false,
+                        isUsingCORS: false
+                    });
                 }
             }
         }
@@ -719,56 +730,25 @@ async function _getFirstLoadableAvatarUrl(participant, store) {
 }
 
 /**
- * Selector for retrieving ids of participants in the order that they are displayed in the filmstrip (with the
- * exception of participants with raised hand). The participants are reordered as follows.
- * 1. Local participant.
- * 2. Participants with raised hand.
- * 3. Participants with screenshare sorted alphabetically by their display name.
- * 4. Shared video participants.
- * 5. Recent speakers sorted alphabetically by their display name.
- * 6. Rest of the participants sorted alphabetically by their display name.
- *
- * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
- * {@code getState} function to be used to retrieve the state features/base/participants.
- * @returns {Array<string>}
- */
-export function getSortedParticipantIds(stateful: Object | Function): Array<string> {
-    const { id } = getLocalParticipant(stateful);
-    const remoteParticipants = getRemoteParticipantsSorted(stateful);
-    const reorderedParticipants = new Set(remoteParticipants);
-    const raisedHandParticipants = getRaiseHandsQueue(stateful);
-    const remoteRaisedHandParticipants = new Set(raisedHandParticipants || []);
-
-    for (const participant of remoteRaisedHandParticipants.keys()) {
-        // Avoid duplicates.
-        if (reorderedParticipants.has(participant)) {
-            reorderedParticipants.delete(participant);
-        } else {
-            remoteRaisedHandParticipants.delete(participant);
-        }
-    }
-
-    // Remove self.
-    remoteRaisedHandParticipants.has(id) && remoteRaisedHandParticipants.delete(id);
-
-    // Move self and participants with raised hand to the top of the list.
-    return [
-        id,
-        ...Array.from(remoteRaisedHandParticipants.keys()),
-        ...Array.from(reorderedParticipants.keys())
-    ];
-}
-
-/**
  * Get the participants queue with raised hands.
  *
  * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
  * {@code getState} function to be used to retrieve the state
  * features/base/participants.
- * @returns {Array<string>}
+ * @returns {Array<Object>}
  */
-export function getRaiseHandsQueue(stateful: Object | Function): Array<string> {
+export function getRaiseHandsQueue(stateful: Object | Function): Array<Object> {
     const { raisedHandsQueue } = toState(stateful)['features/base/participants'];
 
     return raisedHandsQueue;
+}
+
+/**
+ * Returns whether the given participant has his hand raised or not.
+ *
+ * @param {Object} participant - The participant.
+ * @returns {boolean} - Whether participant has raise hand or not.
+ */
+export function hasRaisedHand(participant: Object): boolean {
+    return Boolean(participant && participant.raisedHandTimestamp);
 }

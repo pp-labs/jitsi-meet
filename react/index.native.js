@@ -1,7 +1,11 @@
 // @flow
 
+// https://github.com/software-mansion/react-native-gesture-handler/issues/320#issuecomment-443815828
+import 'react-native-gesture-handler';
+
 // Apply all necessary polyfills as early as possible to make sure anything imported henceforth
 // sees them.
+import 'react-native-get-random-values';
 import './features/mobile/polyfills';
 
 import React, { PureComponent } from 'react';
@@ -31,7 +35,7 @@ type Props = {
  * the JS/JSX source code). So create a wrapper React Component (class) around
  * features/app's App instead.
  *
- * @extends Component
+ * @augments Component
  */
 class Root extends PureComponent<Props> {
     /**

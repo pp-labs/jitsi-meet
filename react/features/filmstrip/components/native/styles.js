@@ -2,6 +2,7 @@
 
 import { ColorSchemeRegistry, schemeColor } from '../../../base/color-scheme';
 import { ColorPalette } from '../../../base/styles';
+import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 import { SMALL_THUMBNAIL_SIZE } from '../../constants';
 
 /**
@@ -15,7 +16,7 @@ export const AVATAR_SIZE = 50;
 export default {
 
     /**
-     * The FlatList content container styles
+     * The FlatList content container styles.
      */
     contentContainer: {
         alignItems: 'center',
@@ -147,6 +148,11 @@ export default {
 
     thumbnailTopRightIndicatorContainer: {
         right: 0
+    },
+
+    thumbnailRaisedHand: {
+        borderWidth: 2,
+        borderColor: BaseTheme.palette.warning02
     }
 };
 

@@ -5,7 +5,6 @@ import { View } from 'react-native';
 import type { Dispatch } from 'redux';
 
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
-import { openDialog } from '../../../base/dialog';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../../../base/media';
 import {
     PARTICIPANT_ROLE,
@@ -14,7 +13,8 @@ import {
     isEveryoneModerator,
     pinParticipant,
     getParticipantByIdOrUndefined,
-    getLocalParticipant
+    getLocalParticipant,
+    hasRaisedHand
 } from '../../../base/participants';
 import { Container } from '../../../base/react';
 import { connect } from '../../../base/redux';
@@ -22,10 +22,12 @@ import { StyleType } from '../../../base/styles';
 import { getTrackByMediaTypeAndParticipant } from '../../../base/tracks';
 import { ConnectionIndicator } from '../../../connection-indicator';
 import { DisplayNameLabel } from '../../../display-name';
+import {
+    showConnectionStatus,
+    showContextMenuDetails,
+    showSharedVideoMenu
+} from '../../../participants-pane/actions.native';
 import { toggleToolboxVisible } from '../../../toolbox/actions.native';
-import { RemoteVideoMenu } from '../../../video-menu';
-import ConnectionStatusComponent from '../../../video-menu/components/native/ConnectionStatusComponent';
-import SharedVideoMenu from '../../../video-menu/components/native/SharedVideoMenu';
 import { SQUARE_TILE_ASPECT_RATIO } from '../../constants';
 
 import AudioMutedIndicator from './AudioMutedIndicator';
@@ -85,6 +87,11 @@ type Props = {
     _pinned: boolean,
 
     /**
+     * Whether or not the participant has the hand raised.
+     */
+    _raisedHand: boolean,
+
+    /**
      * Whether to show the dominant speaker indicator or not.
      */
     _renderDominantSpeakerIndicator: boolean,
@@ -132,7 +139,7 @@ type Props = {
     renderDisplayName: ?boolean,
 
     /**
-     * If true, it tells the thumbnail that it needs to behave differently. E.g. react differently to a single tap.
+     * If true, it tells the thumbnail that it needs to behave differently. E.g. React differently to a single tap.
      */
     tileView?: boolean
 };
@@ -237,20 +244,16 @@ class Thumbnail extends PureComponent<Props> {
     _onThumbnailLongPress() {
         const { _participantId, _local, _isFakeParticipant, _localVideoOwner, dispatch } = this.props;
 
-        if (_local) {
-            dispatch(openDialog(ConnectionStatusComponent, {
-                participantID: _participantId
-            }));
-        } else if (_isFakeParticipant) {
-            if (_localVideoOwner) {
-                dispatch(openDialog(SharedVideoMenu, {
-                    _participantId
-                }));
+        if (_isFakeParticipant && _localVideoOwner) {
+            dispatch(showSharedVideoMenu(_participantId));
+        }
+
+        if (!_isFakeParticipant) {
+            if (_local) {
+                dispatch(showConnectionStatus(_participantId));
+            } else {
+                dispatch(showContextMenuDetails(_participantId));
             }
-        } else {
-            dispatch(openDialog(RemoteVideoMenu, {
-                participantId: _participantId
-            }));
         }
     }
 
@@ -323,6 +326,7 @@ class Thumbnail extends PureComponent<Props> {
             _participantId: participantId,
             _participantInLargeVideo: participantInLargeVideo,
             _pinned,
+            _raisedHand,
             _styles,
             disableTint,
             height,
@@ -345,7 +349,8 @@ class Thumbnail extends PureComponent<Props> {
                 style = { [
                     styles.thumbnail,
                     _pinned && !tileView ? _styles.thumbnailPinned : null,
-                    styleOverrides
+                    styleOverrides,
+                    _raisedHand ? styles.thumbnailRaisedHand : null
                 ] }
                 touchFeedback = { false }>
                 <ParticipantView
@@ -416,6 +421,7 @@ function _mapStateToProps(state, ownProps) {
         _participantInLargeVideo: participantInLargeVideo,
         _participantId: id,
         _pinned: participant?.pinned,
+        _raisedHand: hasRaisedHand(participant),
         _renderDominantSpeakerIndicator: renderDominantSpeakerIndicator,
         _renderModeratorIndicator: renderModeratorIndicator,
         _styles: ColorSchemeRegistry.get(state, 'Thumbnail'),

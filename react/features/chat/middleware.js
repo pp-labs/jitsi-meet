@@ -10,7 +10,6 @@ import {
     JitsiConferenceErrors,
     JitsiConferenceEvents
 } from '../base/lib-jitsi-meet';
-import { setActiveModalId } from '../base/modal';
 import {
     getLocalParticipant,
     getParticipantById,
@@ -18,7 +17,7 @@ import {
 } from '../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 import { playSound, registerSound, unregisterSound } from '../base/sounds';
-import { openDisplayNamePrompt } from '../display-name';
+import { NOTIFICATION_TIMEOUT_TYPE, showMessageNotification } from '../notifications';
 import { resetNbUnreadPollsMessages } from '../polls/actions';
 import { ADD_REACTION_MESSAGE } from '../reactions/actionTypes';
 import { pushReactions } from '../reactions/actions.any';
@@ -35,7 +34,6 @@ import { addMessage, clearMessages } from './actions';
 import { closeChat } from './actions.any';
 import { ChatPrivacyDialog } from './components';
 import {
-    CHAT_VIEW_MODAL_ID,
     INCOMING_MSG_SOUND_ID,
     MESSAGE_TYPE_ERROR,
     MESSAGE_TYPE_LOCAL,
@@ -50,7 +48,7 @@ declare var interfaceConfig : Object;
 /**
  * Timeout for when to show the privacy notice after a private message was received.
  *
- * E.g. if this value is 20 secs (20000ms), then we show the privacy notice when sending a non private
+ * E.g. If this value is 20 secs (20000ms), then we show the privacy notice when sending a non private
  * message after we have received a private message in the last 20 seconds.
  */
 const PRIVACY_NOTICE_TIMEOUT = 20 * 1000;
@@ -95,18 +93,6 @@ MiddlewareRegistry.register(store => next => action => {
         break;
 
     case OPEN_CHAT:
-        if (navigator.product === 'ReactNative') {
-            if (localParticipant.name) {
-                dispatch(setActiveModalId(CHAT_VIEW_MODAL_ID));
-            } else {
-                dispatch(openDisplayNamePrompt(() => {
-                    dispatch(setActiveModalId(CHAT_VIEW_MODAL_ID));
-                }));
-            }
-        } else {
-            dispatch(setActiveModalId(CHAT_VIEW_MODAL_ID));
-        }
-
         unreadCount = 0;
 
         if (typeof APP !== 'undefined') {
@@ -126,8 +112,6 @@ MiddlewareRegistry.register(store => next => action => {
         if (isPollTabOpen) {
             dispatch(resetNbUnreadPollsMessages());
         }
-
-        dispatch(setActiveModalId());
         break;
     }
 
@@ -185,7 +169,7 @@ MiddlewareRegistry.register(store => next => action => {
 
 /**
  * Set up state change listener to perform maintenance tasks when the conference
- * is left or failed, e.g. clear messages or close the chat modal if it's left
+ * is left or failed, e.g. Clear messages or close the chat modal if it's left
  * open.
  */
 StateListenerRegistry.register(
@@ -321,7 +305,7 @@ function _handleReceivedMessage({ dispatch, getState },
     const state = getState();
     const { isOpen: isChatOpen } = state['features/chat'];
     const { iAmRecorder } = state['features/base/config'];
-    const { soundsIncomingMessage: soundEnabled } = state['features/base/settings'];
+    const { soundsIncomingMessage: soundEnabled, userSelectedNotifications } = state['features/base/settings'];
 
     if (soundEnabled && shouldPlaySound && !isChatOpen) {
         dispatch(playSound(INCOMING_MSG_SOUND_ID));
@@ -330,11 +314,16 @@ function _handleReceivedMessage({ dispatch, getState },
     // Provide a default for for the case when a message is being
     // backfilled for a participant that has left the conference.
     const participant = getParticipantById(state, id) || {};
+
     const localParticipant = getLocalParticipant(getState);
     const displayName = getParticipantDisplayName(state, id);
     const hasRead = participant.local || isChatOpen;
     const timestampToDate = timestamp ? new Date(timestamp) : new Date();
     const millisecondsTimestamp = timestampToDate.getTime();
+
+    // skip message notifications on join (the messages having timestamp - coming from the history)
+    const shouldShowNotification = userSelectedNotifications['notify.chatMessages']
+        && !hasRead && !isReaction && !timestamp;
 
     dispatch(addMessage({
         displayName,
@@ -347,6 +336,13 @@ function _handleReceivedMessage({ dispatch, getState },
         timestamp: millisecondsTimestamp,
         isReaction
     }));
+
+    if (shouldShowNotification) {
+        dispatch(showMessageNotification({
+            title: displayName,
+            description: message
+        }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+    }
 
     if (typeof APP !== 'undefined') {
         // Logic for web only:
@@ -362,7 +358,6 @@ function _handleReceivedMessage({ dispatch, getState },
         if (!iAmRecorder) {
             dispatch(showToolbox(4000));
         }
-
     }
 }
 

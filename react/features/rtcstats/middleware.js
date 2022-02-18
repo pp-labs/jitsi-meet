@@ -1,10 +1,13 @@
 // @flow
 
+import { jitsiLocalStorage } from '@jitsi/js-utils';
+
 import { getAmplitudeIdentity } from '../analytics';
 import { CONFERENCE_UNIQUE_ID_SET, getConferenceOptions, getRoomName } from '../base/conference';
 import { LIB_WILL_INIT } from '../base/lib-jitsi-meet';
 import { DOMINANT_SPEAKER_CHANGED, getLocalParticipant } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
+import { ADD_FACIAL_EXPRESSION } from '../facial-recognition/actionTypes';
 
 import RTCStats from './RTCStats';
 import { canSendRtcstatsData, isRtcstatsEnabled } from './functions';
@@ -72,12 +75,18 @@ MiddlewareRegistry.register(store => next => action => {
                 // This is done in order to facilitate queries based on different conference configurations.
                 // e.g. Find all RTCPeerConnections that connect to a specific shard or were created in a
                 // conference with a specific version.
+                // XXX(george): we also want to be able to correlate between rtcstats and callstats, so we're
+                // appending the callstats user name (if it exists) to the display name.
+                const displayName = options.statisticsId
+                    || options.statisticsDisplayName
+                    || jitsiLocalStorage.getItem('callStatsUserName');
+
                 RTCStats.sendIdentityData({
                     ...getAmplitudeIdentity(),
                     ...options,
                     endpointId: localParticipant?.id,
                     confName: getRoomName(state),
-                    displayName: localParticipant?.name,
+                    displayName,
                     meetingUniqueId
                 });
             } catch (error) {
@@ -93,6 +102,17 @@ MiddlewareRegistry.register(store => next => action => {
 
             RTCStats.sendDominantSpeakerData({ dominantSpeakerEndpoint: id,
                 previousSpeakers });
+        }
+        break;
+    }
+    case ADD_FACIAL_EXPRESSION: {
+        if (canSendRtcstatsData(state)) {
+            const { duration, facialExpression } = action;
+
+            RTCStats.sendFacialExpressionData({
+                duration,
+                facialExpression
+            });
         }
         break;
     }

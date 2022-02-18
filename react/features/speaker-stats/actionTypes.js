@@ -37,3 +37,13 @@ export const UPDATE_STATS = 'UPDATE_STATS';
  * }
  */
 export const INIT_REORDER_STATS = 'INIT_REORDER_STATS';
+
+/**
+ * Action type to reset the search criteria.
+ *
+ * {
+ *     type: RESET_SEARCH_CRITERIA
+ * }
+ */
+export const RESET_SEARCH_CRITERIA = 'RESET_SEARCH_CRITERIA'
+

@@ -20,12 +20,12 @@ export type Props = {
     /**
      * Callback invoked when the custom button is clicked.
      */
-    customActionHandler: Function,
+    customActionHandler: Function[],
 
     /**
      * The text to display as button in the notification for the custom action.
      */
-    customActionNameKey: string,
+    customActionNameKey: string[],
 
     /**
      * The text to display in the body of the notification. If not passed
@@ -54,6 +54,12 @@ export type Props = {
      * message.
      */
     hideErrorSupportLink: boolean,
+
+    /**
+     * The type of icon to be displayed. If not passed in, the appearance
+     * type will be used.
+     */
+    icon?: String,
 
     /**
      * Whether or not the dismiss button should be displayed.
@@ -101,7 +107,7 @@ export type Props = {
 /**
  * Abstract class for {@code Notification} component.
  *
- * @extends Component
+ * @augments Component
  */
 export default class AbstractNotification<P: Props> extends Component<P> {
     /**
@@ -127,7 +133,7 @@ export default class AbstractNotification<P: Props> extends Component<P> {
         this._onDismissed = this._onDismissed.bind(this);
     }
 
-    _getDescription: () => Array<string>
+    _getDescription: () => Array<string>;
 
     /**
      * Returns the description array to be displayed.
@@ -153,7 +159,7 @@ export default class AbstractNotification<P: Props> extends Component<P> {
         return descriptionArray;
     }
 
-    _getDescriptionKey: () => string
+    _getDescriptionKey: () => string;
 
     /**
      * Returns the description key that was used if any.

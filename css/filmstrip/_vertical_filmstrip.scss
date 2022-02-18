@@ -74,7 +74,6 @@
         &#remoteVideos {
             border: $thumbnailsBorder solid transparent;
             padding-left: 0;
-            transition: right 2s;
             width: 100%;
         }
     }
@@ -170,6 +169,7 @@
     .remote-videos {
         display: flex;
         transition: height .3s ease-in;
+        overscroll-behavior: contain;
 
         & > div {
             position: absolute;

@@ -10,7 +10,7 @@ import { Icon, IconCheck, IconClose } from '../../../base/icons';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import { admitMultiple } from '../../../lobby/actions.web';
 import { getLobbyEnabled, getKnockingParticipants } from '../../../lobby/functions';
-import { Drawer, DrawerPortal } from '../../../toolbox/components/web';
+import { Drawer, JitsiPortal } from '../../../toolbox/components/web';
 import { showOverflowDrawer } from '../../../toolbox/functions';
 import { useLobbyActions, useParticipantDrawer } from '../../hooks';
 
@@ -83,52 +83,55 @@ export default function LobbyParticipants() {
     }
 
     return (
-    <>
-        <div className = { classes.headingContainer }>
-            <div className = { classes.heading }>
-                {t('participantsPane.headings.lobby', { count: participants.length })}
+        <>
+            <div className = { classes.headingContainer }>
+                <div className = { classes.heading }>
+                    {t('participantsPane.headings.lobby', { count: participants.length })}
+                </div>
+                {
+                    participants.length > 1
+                    && <div
+                        className = { classes.link }
+                        onClick = { admitAll }>{t('lobby.admitAll')}</div>
+                }
             </div>
-            <div
-                className = { classes.link }
-                onClick = { admitAll }>{t('lobby.admitAll')}</div>
-        </div>
-        <LobbyParticipantItems
-            openDrawerForParticipant = { openDrawerForParticipant }
-            overflowDrawer = { overflowDrawer }
-            participants = { participants } />
-        <DrawerPortal>
-            <Drawer
-                isOpen = { Boolean(drawerParticipant && overflowDrawer) }
-                onClose = { closeDrawer }>
-                <ul className = { classes.drawerActions }>
-                    <li className = { classes.drawerItem }>
-                        <Avatar
-                            className = { classes.icon }
-                            participantId = { drawerParticipant && drawerParticipant.participantID }
-                            size = { 20 } />
-                        <span>{ drawerParticipant && drawerParticipant.displayName }</span>
-                    </li>
-                    <li
-                        className = { classes.drawerItem }
-                        onClick = { admit }>
-                        <Icon
-                            className = { classes.icon }
-                            size = { 20 }
-                            src = { IconCheck } />
-                        <span>{ t('lobby.admit') }</span>
-                    </li>
-                    <li
-                        className = { classes.drawerItem }
-                        onClick = { reject }>
-                        <Icon
-                            className = { classes.icon }
-                            size = { 20 }
-                            src = { IconClose } />
-                        <span>{ t('lobby.reject')}</span>
-                    </li>
-                </ul>
-            </Drawer>
-        </DrawerPortal>
-    </>
+            <LobbyParticipantItems
+                openDrawerForParticipant = { openDrawerForParticipant }
+                overflowDrawer = { overflowDrawer }
+                participants = { participants } />
+            <JitsiPortal>
+                <Drawer
+                    isOpen = { Boolean(drawerParticipant && overflowDrawer) }
+                    onClose = { closeDrawer }>
+                    <ul className = { classes.drawerActions }>
+                        <li className = { classes.drawerItem }>
+                            <Avatar
+                                className = { classes.icon }
+                                participantId = { drawerParticipant && drawerParticipant.participantID }
+                                size = { 20 } />
+                            <span>{ drawerParticipant && drawerParticipant.displayName }</span>
+                        </li>
+                        <li
+                            className = { classes.drawerItem }
+                            onClick = { admit }>
+                            <Icon
+                                className = { classes.icon }
+                                size = { 20 }
+                                src = { IconCheck } />
+                            <span>{ t('lobby.admit') }</span>
+                        </li>
+                        <li
+                            className = { classes.drawerItem }
+                            onClick = { reject }>
+                            <Icon
+                                className = { classes.icon }
+                                size = { 20 }
+                                src = { IconClose } />
+                            <span>{ t('lobby.reject')}</span>
+                        </li>
+                    </ul>
+                </Drawer>
+            </JitsiPortal>
+        </>
     );
 }

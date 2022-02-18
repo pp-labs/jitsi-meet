@@ -1,6 +1,8 @@
 // @flow
 
 import {
+    CHANGE_VOTE,
+    CLEAR_POLLS,
     RESET_NB_UNREAD_POLLS,
     RECEIVE_ANSWER,
     RECEIVE_POLL,
@@ -8,6 +10,37 @@ import {
     RETRACT_VOTE
 } from './actionTypes';
 import type { Answer, Poll } from './types';
+
+/**
+ * Action to signal that existing polls needs to be cleared from state.
+ *
+ * @returns {{
+ *     type: CLEAR_POLLS
+ * }}
+ */
+export const clearPolls = () => {
+    return { type: CLEAR_POLLS };
+};
+
+/**
+ * Action to signal that a poll's vote will be changed.
+ *
+ * @param {string} pollId - The id of the incoming poll.
+ * @param {boolean} value - The value of the 'changing' state.
+
+ * @returns {{
+ *     type: CHANGE_VOTE,
+ *     pollId: string,
+ *     value: boolean
+ * }}
+ */
+export const setVoteChanging = (pollId: string, value: boolean) => {
+    return {
+        type: CHANGE_VOTE,
+        pollId,
+        value
+    };
+};
 
 /**
  * Action to signal that a new poll was received.

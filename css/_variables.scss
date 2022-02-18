@@ -18,13 +18,20 @@ $audiRed: #F50537;
  */
 
 // Video layout.
-$thumbnailToolbarHeight: 22px;
-$thumbnailIndicatorBorder: 2px;
-$thumbnailIndicatorSize: $thumbnailToolbarHeight;
+
+// $thumbnailToolbarHeight: 22px;
+// $thumbnailIndicatorBorder: 2px;
+// $thumbnailIndicatorSize: $thumbnailToolbarHeight;
 $thumbnailVideoMargin: 1px;
 $thumbnailsBorder: 1px;
 $thumbnailVideoBorder: 1px;
 $filmstripToggleButtonWidth: 10px;
+
+// $thumbnailVideoMargin: 2px;
+// $thumbnailsBorder: 2px;
+// $thumbnailVideoBorder: 2px;
+// $filmstripToggleButtonWidth: 17px;
+
 
 
 /**
@@ -64,19 +71,21 @@ $overflowMenuItemBackground: #36383C;
 /**
  * Video layout
  */
-$videoThumbnailHovered: rgba(22, 94, 204, .4);
+
+// $connectionIndicatorBg: #165ecc;
+// $videoThumbnailHovered: rgba(22, 94, 204, .4);
 $videoThumbnailSelected: $audiRed;
-$participantNameColor: #fff;
-$thumbnailPictogramColor: #fff;
-$dominantSpeakerBg: #165ecc;
-$raiseHandBg: #D6D61E;
+// $participantNameColor: #fff;
+// $thumbnailPictogramColor: #fff;
+// $dominantSpeakerBg: #165ecc;
+// $raiseHandBg: #D6D61E;
 $audioLevelBg: $audiRed;
-$connectionIndicatorBg: #165ecc;
+$participantNameColor: #fff;
+
 $audioLevelShadow: rgba(9, 36, 77, 0.9);
 $videoStateIndicatorColor: $defaultColor;
 $videoStateIndicatorBackground: $toolbarBackground;
 $videoStateIndicatorSize: 40px;
-$remoteVideoMenuIconMargin: initial;
 
 /**
  * Feedback Modal
@@ -109,8 +118,9 @@ $sidebarWidth: 315px;
  /**
  * Misc.
  */
+
 $borderRadius: 0px;
-$popoverMenuPadding: 13px;
+//$popoverMenuPadding: 13px;
 $happySoftwareBackground: transparent;
 $desktopAppDragBarHeight: 25px;
 $scrollHeight: 7px;
@@ -126,11 +136,10 @@ $toolbarBackgroundZ: 4;
 $labelsZ: 5;
 $subtitlesZ: 7;
 $popoverZ: 8;
-$zindex10: 10;
 $reloadZ: 20;
 $poweredByZ: 100;
 $ringingZ: 300;
-$sideToolbarContainerZ: 200;
+$sideToolbarContainerZ: 300;
 $toolbarZ: 250;
 $drawerZ: 351;
 $tooltipsZ: 401;

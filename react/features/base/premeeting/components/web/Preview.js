@@ -12,7 +12,7 @@ import { getLocalVideoTrack } from '../../../tracks';
 export type Props = {
 
     /**
-     * Local participant id
+     * Local participant id.
      */
     _participantId: string,
 
@@ -59,9 +59,8 @@ function Preview(props: Props) {
                     <Avatar
                         className = 'premeeting-screen-avatar'
                         displayName = { name }
-                        dynamicColor = { false }
                         participantId = { _participantId }
-                        size = { 180 } />
+                        size = { 200 } />
                 )}
         </div>
     );

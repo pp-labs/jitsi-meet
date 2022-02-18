@@ -3,7 +3,7 @@
 import type { Dispatch } from 'redux';
 
 import { overwriteConfig } from '../base/config';
-import { isLayoutTileView } from '../video-layout';
+import { isMobileBrowser } from '../base/environment/utils';
 
 import {
     CLEAR_TOOLBOX_TIMEOUT,
@@ -134,13 +134,10 @@ export function showToolbox(timeout: number = 0): Object {
 
         const {
             enabled,
-            visible,
-            overflowDrawer
+            visible
         } = state['features/toolbox'];
-        const { contextMenuOpened } = state['features/base/responsive-ui'];
-        const contextMenuOpenedInTileview = isLayoutTileView(state) && contextMenuOpened && !overflowDrawer;
 
-        if (enabled && !visible && !contextMenuOpenedInTileview) {
+        if (enabled && !visible) {
             dispatch(setToolboxVisible(true));
 
             // If the Toolbox is always visible, there's no need for a timeout
@@ -175,23 +172,6 @@ export function setOverflowDrawer(displayAsDrawer: boolean) {
     return {
         type: SET_OVERFLOW_DRAWER,
         displayAsDrawer
-    };
-}
-
-
-/**
- * Disables and hides the toolbox on demand when in tile view.
- *
- * @returns {void}
- */
-export function hideToolboxOnTileView() {
-    return (dispatch: Dispatch<any>, getState: Function) => {
-        const state = getState();
-        const { overflowDrawer } = state['features/toolbox'];
-
-        if (!overflowDrawer && isLayoutTileView(state)) {
-            dispatch(hideToolbox(true));
-        }
     };
 }
 
@@ -241,7 +221,8 @@ export function setToolbarHovered(hovered: boolean): Object {
 }
 
 /**
- * Dispatches an action which sets new timeout and clears the previous one.
+ * Dispatches an action which sets new timeout for the toolbox visibility and clears the previous one.
+ * On mobile browsers the toolbox does not hide on timeout. It is toggled on simple tap.
  *
  * @param {Function} handler - Function to be invoked after the timeout.
  * @param {number} timeoutMS - Delay.
@@ -252,10 +233,15 @@ export function setToolbarHovered(hovered: boolean): Object {
  * }}
  */
 export function setToolboxTimeout(handler: Function, timeoutMS: number): Object {
-    return {
-        type: SET_TOOLBOX_TIMEOUT,
-        handler,
-        timeoutMS
+    return function(dispatch) {
+        if (isMobileBrowser()) {
+            return;
+        }
+
+        dispatch({
+            type: SET_TOOLBOX_TIMEOUT,
+            handler,
+            timeoutMS
+        });
     };
 }
-

@@ -9,6 +9,7 @@ import {
     getParticipantCountWithFake,
     getCustomOrderedRemoteParticipants,
 } from '../base/participants';
+import { shouldHideSelfView } from '../base/settings/functions.any';
 import {
     ASPECT_RATIO_BREAKPOINT,
     DEFAULT_MAX_COLUMNS,
@@ -115,9 +116,13 @@ export function getTileViewGridDimensions(state: Object) {
     const participants = getCustomOrderedRemoteParticipants(state);
     // include local in count
     let numberOfParticipants = participants.length + 1
-    //const numberOfParticipants = getParticipantCountWithFake(state) - (iAmRecorder ? 1 : 0);
+    // const numberOfParticipants = getParticipantCountWithFake(state)
+    //     - (iAmRecorder ? 1 : 0)
+    //     - (disableSelfView ? 1 : 0);
     // sally - include local in count as we show local
     //let numberOfParticipants = getParticipantCountWithFake(state) ;
+    const disableSelfView = shouldHideSelfView(state);
+
 
     const columnsToMaintainASquare = Math.ceil(Math.sqrt(numberOfParticipants));
     let columns = Math.min(columnsToMaintainASquare, maxColumns);

@@ -5,6 +5,7 @@ import { Text, TouchableOpacity, View } from 'react-native';
 
 import { translate } from '../../../base/i18n';
 import { Icon, IconClose } from '../../../base/icons';
+import { replaceNonUnicodeEmojis } from '../../../chat/functions';
 import AbstractNotification, {
     type Props
 } from '../AbstractNotification';
@@ -21,7 +22,7 @@ const DEFAULT_MAX_LINES = 1;
 /**
  * Implements a React {@link Component} to display a notification.
  *
- * @extends Component
+ * @augments Component
  */
 class Notification extends AbstractNotification<Props> {
     /**
@@ -81,7 +82,7 @@ class Notification extends AbstractNotification<Props> {
                     key = { index }
                     numberOfLines = { maxLines }
                     style = { styles.contentText }>
-                    { line }
+                    { replaceNonUnicodeEmojis(line) }
                 </Text>
             ));
         }

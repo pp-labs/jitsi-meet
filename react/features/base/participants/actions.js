@@ -1,4 +1,4 @@
-import { NOTIFICATION_TIMEOUT, showNotification } from '../../notifications';
+import { NOTIFICATION_TIMEOUT_TYPE, showNotification } from '../../notifications';
 import { set } from '../redux';
 
 import {
@@ -7,6 +7,7 @@ import {
     HIDDEN_PARTICIPANT_LEFT,
     GRANT_MODERATOR,
     KICK_PARTICIPANT,
+    LOCAL_PARTICIPANT_AUDIO_LEVEL_CHANGED,
     LOCAL_PARTICIPANT_RAISE_HAND,
     MUTE_REMOTE_PARTICIPANT,
     PARTICIPANT_ID_CHANGED,
@@ -501,9 +502,9 @@ export function participantMutedUs(participant, track) {
         dispatch(showNotification({
             titleKey: isAudio ? 'notify.mutedRemotelyTitle' : 'notify.videoMutedRemotelyTitle',
             titleArguments: {
-                moderator: getParticipantDisplayName(getState, participant.getId())
+                participantDisplayName: getParticipantDisplayName(getState, participant.getId())
             }
-        }));
+        }, NOTIFICATION_TIMEOUT_TYPE.LONG));
     };
 }
 
@@ -535,7 +536,7 @@ export function participantKicked(kicker, kicked) {
                     getParticipantDisplayName(getState, kicker.getId())
             },
             titleKey: 'notify.kickParticipant'
-        }, NOTIFICATION_TIMEOUT * 2)); // leave more time for this
+        }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
     };
 }
 
@@ -565,20 +566,23 @@ export function pinParticipant(id) {
  *
  * @param {string} participantId - The ID of the participant.
  * @param {string} url - The new URL.
+ * @param {boolean} useCORS - Indicates whether we need to use CORS for this URL.
  * @returns {{
  *     type: SET_LOADABLE_AVATAR_URL,
  *     participant: {
  *         id: string,
- *         loadableAvatarUrl: string
+ *         loadableAvatarUrl: string,
+ *         loadableAvatarUrlUseCORS: boolean
  *     }
  * }}
 */
-export function setLoadableAvatarUrl(participantId, url) {
+export function setLoadableAvatarUrl(participantId, url, useCORS) {
     return {
         type: SET_LOADABLE_AVATAR_URL,
         participant: {
             id: participantId,
-            loadableAvatarUrl: url
+            loadableAvatarUrl: url,
+            loadableAvatarUrlUseCORS: useCORS
         }
     };
 }
@@ -589,13 +593,13 @@ export function setLoadableAvatarUrl(participantId, url) {
  * @param {boolean} enabled - Raise or lower hand.
  * @returns {{
  *     type: LOCAL_PARTICIPANT_RAISE_HAND,
- *     enabled: boolean
+ *     raisedHandTimestamp: number
  * }}
  */
 export function raiseHand(enabled) {
     return {
         type: LOCAL_PARTICIPANT_RAISE_HAND,
-        enabled
+        raisedHandTimestamp: enabled ? Date.now() : 0
     };
 }
 
@@ -612,5 +616,21 @@ export function raiseHandUpdateQueue(participant) {
     return {
         type: RAISE_HAND_UPDATED,
         participant
+    };
+}
+
+/**
+ * Notifies if the local participant audio level has changed.
+ *
+ * @param {number} level - The audio level.
+ * @returns {{
+ *      type: LOCAL_PARTICIPANT_AUDIO_LEVEL_CHANGED,
+ *      level: number
+ * }}
+ */
+export function localParticipantAudioLevelChanged(level) {
+    return {
+        type: LOCAL_PARTICIPANT_AUDIO_LEVEL_CHANGED,
+        level
     };
 }

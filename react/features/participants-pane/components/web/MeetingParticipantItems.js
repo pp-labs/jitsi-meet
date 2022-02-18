@@ -12,12 +12,12 @@ type Props = {
     askUnmuteText: string,
 
     /**
-     * Callback for the mouse leaving this item
+     * Callback for the mouse leaving this item.
      */
     lowerMenu: Function,
 
     /**
-     * Callback for the activation of this item's context menu
+     * Callback for the activation of this item's context menu.
      */
     toggleMenu: Function,
 
@@ -57,6 +57,11 @@ type Props = {
     participantActionEllipsisLabel: string,
 
     /**
+     * Current search string.
+     */
+    searchString?: string,
+
+    /**
      * The translated "you" text.
      */
     youText: string
@@ -78,8 +83,9 @@ function MeetingParticipantItems({
     overflowDrawer,
     raiseContextId,
     participantActionEllipsisLabel,
+    searchString,
     youText
-}) {
+}: Props) {
     const renderParticipant = id => (
         <MeetingParticipantItem
             askUnmuteText = { askUnmuteText }
@@ -93,6 +99,7 @@ function MeetingParticipantItems({
             overflowDrawer = { overflowDrawer }
             participantActionEllipsisLabel = { participantActionEllipsisLabel }
             participantID = { id }
+            searchString = { searchString }
             youText = { youText } />
     );
 

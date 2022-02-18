@@ -1,6 +1,26 @@
 // @flow
 
 /**
+ * The type of the action which signals that a Poll will be changed
+ *
+ * {
+ *     type: CHANGE_VOTE,
+ * }
+ *
+ */
+export const CHANGE_VOTE = 'CHANGE_VOTE';
+
+/**
+ * The type of the action which signals that we need to clear all polls from the state.
+ * For example we are moving to another conference.
+ *
+ * {
+ *     type: CLEAR_POLLS
+ * }
+ */
+export const CLEAR_POLLS = 'CLEAR_POLLS';
+
+/**
  * The type of the action which signals that a new Poll was received.
  *
  * {
