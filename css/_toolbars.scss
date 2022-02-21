@@ -330,13 +330,15 @@
         margin-bottom: 0;
 
         .toolbox-content-wrapper {
-            width: 100%;
+            // sally  - disable toobar button centering on mobiles
+            //width: 100%;
         }
 
         .toolbox-content-items {
+            // sally  - disable toobar button centering on mobiles
             border-radius: 0;
             display: flex;
-            justify-content: space-evenly;
+            //justify-content: space-evenly;
             padding: 8px 0;
             width: 100%;
         }
@@ -347,6 +349,11 @@
 
         .invite-more-container.elevated {
             margin-bottom: 52px;
+        }
+
+        // sally - toolbox item width smaller in mobile
+        .toolbox-icon {
+            width: 60px;
         }
     }
 }
