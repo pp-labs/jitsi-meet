@@ -49,7 +49,8 @@
 
 .toolbox-content {
     background-color: $newToolbarBackgroundColor;
-    justify-content: flex-end;
+    // sally - align toolbox right
+    justify-content: flex-start;
     box-sizing: border-box;
     display: flex;
     margin-bottom: 16px;
