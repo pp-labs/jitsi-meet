@@ -35,6 +35,7 @@
 }
 .hidden {
     .filmstrip__toolbar{
+        //sally - adust so button is fully on screen when toolbar hidden
         left: -50px;
         transition: left 5s;
     }
