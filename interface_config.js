@@ -77,7 +77,7 @@ var interfaceConfig = {
 
     ENABLE_FEEDBACK_ANIMATION: false, // Enables feedback star animation.
 
-    FILM_STRIP_MAX_HEIGHT: 200,
+    FILM_STRIP_MAX_HEIGHT: 120,
 
     GENERATE_ROOMNAMES_ON_WELCOME_PAGE: true,
 
@@ -98,7 +98,7 @@ var interfaceConfig = {
 
     LANG_DETECTION: true, // Allow i18n to detect the system language
     LIVE_STREAMING_HELP_LINK: 'https://jitsi.org/live', // Documentation reference for the live streaming feature.
-    LOCAL_THUMBNAIL_RATIO: 16 / 9, // 16:9
+    LOCAL_THUMBNAIL_RATIO: 4 / 3, // 16:9
 
     /**
      * Maximum coefficient of the ratio of the large video to the visible area
@@ -150,7 +150,7 @@ var interfaceConfig = {
      */
 
     RECENT_LIST_ENABLED: false,
-    REMOTE_THUMBNAIL_RATIO: 16 / 9, // 1:1
+    REMOTE_THUMBNAIL_RATIO: 4 / 3, // 1:1
 
 
     // SETTINGS_SECTIONS: [ 'devices', 'language', 'moderator', 'profile', 'calendar', 'sounds' ],
@@ -291,5 +291,5 @@ var interfaceConfig = {
 
     // No configuration value should follow this line.
 };
-// export default interfaceConfig
+
 /* eslint-enable no-unused-vars, no-var, max-len */

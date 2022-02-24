@@ -11,20 +11,30 @@ import { _CONFIG_STORE_PREFIX } from './constants';
 import INTERFACE_CONFIG_WHITELIST from './interfaceConfigWhitelist';
 import logger from './logger';
 
+//FILM_STRIP_MAX_HEIGHT: 120,
+//REMOTE_THUMBNAIL_RATIO: 4 / 3, // 1:1
+//  LOCAL_THUMBNAIL_RATIO: 4 / 3
 // Sally - For local testing only  -- REMOVE 
-import interfaceConfigOverride from '../../../../interface_config'
-// import configOverride from '../../../../config'
-//     channelLastN: 3
+//import interfaceConfigOverride from '../../../../interface_config'
+
+var interfaceConfigOverride = {
+    FILM_STRIP_MAX_HEIGHT: 120,
+    REMOTE_THUMBNAIL_RATIO: 4 / 3, // 1:1
+    LOCAL_THUMBNAIL_RATIO: 4 / 3 
+}
 
 var configOverride = {
     startWithAudioMuted: true,
     startWithVideoMuted: true,
     toolbarButtons: [
-       'microphone', 'camera', 'desktop', 'profile', 'settings', 'filmstrip'
+       'microphone', 'camera', 'desktop', 'profile', 'settings', 'filmstrip', 'tileview'
     ],
      testing: {
         enableThumbnailReordering: false,
     },
+    toolbarconfig: {
+        alwaysVisible: true
+    }
 }
 
 // XXX The function getRoomName is split out of

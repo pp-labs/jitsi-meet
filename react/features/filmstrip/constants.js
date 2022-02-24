@@ -199,7 +199,10 @@ export const SCROLL_SIZE = 7;
  *
  * @type {number}
  */
-export const VERTICAL_FILMSTRIP_VERTICAL_MARGIN = 60;
+
+ // sally - reduce verticle filmstrip margin
+ export const VERTICAL_FILMSTRIP_VERTICAL_MARGIN = 0;
+//export const VERTICAL_FILMSTRIP_VERTICAL_MARGIN = 60;
 
 /**
  * The min horizontal space between the thumbnails container and the edges of the window.

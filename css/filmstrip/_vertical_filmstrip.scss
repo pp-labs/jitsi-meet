@@ -44,12 +44,6 @@
     transition: height .3s ease-in;
     right: 0;
     z-index: $filmstripVideosZ;
-
-    &.reduce-height {
-        // sally
-        height: calc(100% - #{$newToolbarSizeWithPadding} + 7px);
-    }
-
     /**
      * Hide videos by making them slight to the right.
      */
@@ -164,7 +158,9 @@
     }
 
     &.reduce-height {
-        height: calc(100% - calc(#{$newToolbarSizeWithPadding} + #{$scrollHeight}));
+        // sally - adjust to fit with no gaps
+        height: calc(100% - calc(#{$newToolbarSizeWithPadding}) + 10px);
+        //height: calc(100% - calc(#{$newToolbarSizeWithPadding} + #{$scrollHeight}));
     }
 
     .remote-videos {
