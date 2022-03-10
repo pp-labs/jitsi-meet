@@ -1321,11 +1321,6 @@ function _mapStateToProps(state, ownProps) {
         toolbarButtons = stateToolbarButtons;
     }
 
-    // disable screen share for non trainers
-    if (!localParticipant?.name.startsWith('Trainer')) {
-        desktopSharingEnabled = false;
-    }
-
     return {
         _backgroundType: state['features/virtual-background'].backgroundType,
         _buttonsWithNotifyClick: buttonsWithNotifyClick,
