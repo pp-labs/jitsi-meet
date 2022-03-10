@@ -20,7 +20,8 @@ import logger from './logger';
 var interfaceConfigOverride = {
     FILM_STRIP_MAX_HEIGHT: 120,
     REMOTE_THUMBNAIL_RATIO: 4 / 3, // 1:1
-    LOCAL_THUMBNAIL_RATIO: 4 / 3 
+    LOCAL_THUMBNAIL_RATIO: 4 / 3 ,
+    TOOLBAR_ALWAYS_VISIBLE: true
 }
 
 var configOverride = {
@@ -30,7 +31,7 @@ var configOverride = {
        'microphone', 'camera', 'desktop', 'profile', 'settings', 'filmstrip'
     ],
      testing: {
-        enableThumbnailReordering: false,
+        enableThumbnailReordering: false
     },
     toolbarconfig: {
         alwaysVisible: true

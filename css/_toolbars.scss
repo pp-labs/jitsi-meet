@@ -353,7 +353,12 @@
 
         // sally - toolbox item width smaller in mobile
         .toolbox-icon {
-            width: 60px;
+            width: 45px;
+            height: 45px;
+            svg {
+                zoom: 0.75;
+            }
         }
+
     }
 }
