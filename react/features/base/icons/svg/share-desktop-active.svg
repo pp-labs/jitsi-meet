@@ -1,0 +1,16 @@
+<!-- Sally
+New icon for screen share, when screen sharing is active
+</svg>
+-->
+
+<svg id="Komponente_1834_5" data-name="Komponente 1834 – 5" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
+  <g id="Ellipse_4" data-name="Ellipse 4" fill="#fff" stroke="#fff" stroke-width="1">
+    <circle cx="24" cy="24" r="24" stroke="none"/>
+    <circle cx="24" cy="24" r="23.5" fill="none"/>
+  </g>
+  <g id="share_small" transform="translate(12 12)">
+    <rect id="Rechteck_5" data-name="Rechteck 5" width="24" height="24" fill="none"/>
+    <path id="Pfad_82" data-name="Pfad 82" d="M13.826-1.269H19.56V-15H0V-1.269H5.7" transform="translate(2.22 18.385)" fill="none" stroke="#000" stroke-width="1"/>
+    <path id="Pfad_83" data-name="Pfad 83" d="M3.5,12.5V0M0,3.5,3.5,0,7,3.5" transform="translate(8.499 8.116)" fill="none" stroke="#000" stroke-width="1"/>
+  </g>
+</svg>

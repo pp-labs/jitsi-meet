@@ -1,7 +1,7 @@
 // @flow
 
 import { translate } from '../../../base/i18n';
-import { IconShareDesktop } from '../../../base/icons';
+import { IconShareDesktop, IconShareDesktopActive } from '../../../base/icons';
 import JitsiMeetJS from '../../../base/lib-jitsi-meet/_';
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
@@ -38,6 +38,7 @@ class ShareDesktopButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.shareYourScreen';
     label = 'toolbar.startScreenSharing';
     icon = IconShareDesktop;
+    toggledIcon = IconShareDesktopActive;
     toggledLabel = 'toolbar.stopScreenSharing'
     tooltip = 'toolbar.accessibilityLabel.shareYourScreen';
 
