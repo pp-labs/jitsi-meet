@@ -110,6 +110,7 @@ export { default as IconSignalLevel2 } from './signal_cellular_2.svg';
 export { default as IconShare } from './share.svg';
 export { default as IconShareAudio } from './share-audio.svg';
 export { default as IconShareDesktop } from './share-desktop.svg';
+export { default as IconShareDesktopActive } from './share-desktop-active.svg';
 export { default as IconShareDesktopThumb } from './share-desktop-thumb.svg';
 export { default as IconShareDoc } from './share-doc.svg';
 export { default as IconShareVideo } from './shared-video.svg';
