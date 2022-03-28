@@ -21,12 +21,14 @@ var interfaceConfigOverride = {
     FILM_STRIP_MAX_HEIGHT: 120,
     REMOTE_THUMBNAIL_RATIO: 4 / 3, // 1:1
     LOCAL_THUMBNAIL_RATIO: 4 / 3 ,
-    TOOLBAR_ALWAYS_VISIBLE: true
+    TOOLBAR_ALWAYS_VISIBLE: true,
+    DISABLE_JOIN_LEAVE_NOTIFICATIONS: true
 }
 
 var configOverride = {
     startWithAudioMuted: true,
     startWithVideoMuted: true,
+    disableJoinLeaveSounds: true,
     toolbarButtons: [
        'microphone', 'camera', 'desktop', 'profile', 'settings', 'filmstrip'
     ],

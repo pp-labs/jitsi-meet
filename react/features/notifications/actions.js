@@ -104,6 +104,11 @@ export function showNotification(props: Object = {}, timeout: ?number) {
         const { notifications } = getState()['features/base/config'];
         const enabledFlag = getFeatureFlag(getState(), NOTIFICATIONS_ENABLED, true);
 
+        // sally make all notificaitons Normal
+        const newProps = {
+            ...props,
+            appearance: NOTIFICATION_TYPE.NORMAL
+        }
         const shouldDisplay = enabledFlag
             && (!notifications
                 || notifications.includes(props.descriptionKey)
@@ -112,7 +117,7 @@ export function showNotification(props: Object = {}, timeout: ?number) {
         if (shouldDisplay) {
             return dispatch({
                 type: SHOW_NOTIFICATION,
-                props,
+                props: newProps,
                 timeout,
                 uid: props.uid || window.Date.now().toString()
             });
