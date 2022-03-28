@@ -152,12 +152,17 @@ export function shouldDisplayTileView(state: Object = {}) {
         return false;
     }
 
-    const { tileViewEnabled } = state['features/video-layout'];
+    const { tileViewEnabled, remoteScreenShares } = state['features/video-layout'];
 
     if (tileViewEnabled !== undefined) {
         // If the user explicitly requested a view mode, we
         // do that.
         return tileViewEnabled;
+    }
+
+    // sally - if any remote is screen sharing, use tile view.
+    if ((remoteScreenShares || []).length > 0) {
+        return false;
     }
 
     const { iAmRecorder } = state['features/base/config'];
