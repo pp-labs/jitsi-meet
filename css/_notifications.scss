@@ -2,6 +2,7 @@
 	div{
 		&[role='alert'] {
 			background-color: #bb0a30;
+			border-radius: 0px;
 
 		}
 	}
@@ -14,6 +15,7 @@
 		&[role='alert'] {
 			background-color: #4c4c4c;
 			color: #FFF;
+			border-radius: 0px;
 
 		}
 		span,button{
@@ -26,6 +28,7 @@
 	div{
 		&[role='alert'] {
 			background-color: #009900;
+			border-radius: 0px;
 
 		}
 	}
@@ -35,7 +38,7 @@
 	div{
 		&[role='alert'] {
 			background-color: #ffaa00;
-
+			border-radius: 0px;
 		}
 	}
 }
