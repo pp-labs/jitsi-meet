@@ -492,7 +492,7 @@ ReducerRegistry.register('features/base/participants/recentActive', (state = [],
         let { participants } = conference;
         let participant = participants[id];
 
-        if (participant?.local || participant?._displayName.startsWith('Trainer')) {
+        if (participant?.local || participant?._displayName.startsWith('Moderator')) {
             return state;
         }
         let newState = [ ... state ]

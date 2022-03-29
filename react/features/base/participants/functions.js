@@ -455,9 +455,9 @@ export function getCustomTrainers(stateful: Object | Function, id: string) {
     const state = toState(stateful);
     const { remote } = state["features/base/participants"];
 
-    const trainers = Array.from(remote.values()).filter((p) => p?.name?.startsWith("Trainer"));
+    const trainers = Array.from(remote.values()).filter((p) => p?.name?.startsWith("Moderator"));
     const localParticipant = getLocalParticipant(state);
-    if (localParticipant?.name.startsWith("Trainer")) {
+    if (localParticipant?.name.startsWith("Moderator")) {
         trainers.unshift(localParticipant);
 
     }
@@ -493,7 +493,7 @@ export function getCntVisibileActiveSpeakers(stateful: Object | Function, id: st
     const tileViewActive = _currentLayout === LAYOUTS.TILE_VIEW;
 
     const cntTrainers = remoteParticipants.filter(
-        (p) => p.name?.startsWith("Trainer")
+        (p) => p.name?.startsWith("Moderator")
     ).length;
 
     if (tileViewActive){
@@ -524,7 +524,7 @@ export function getCustomOrderedRemoteParticipants(stateful: Object | Function, 
         // sally - no trainer in left side
         if (!tileViewActive) {
             remoteParticipants = remoteParticipants.filter(
-                (p) => !p.name?.startsWith("Trainer") && !p.local
+                (p) => !p.name?.startsWith("Moderator") && !p.local
             );
         }
 
@@ -532,7 +532,7 @@ export function getCustomOrderedRemoteParticipants(stateful: Object | Function, 
         const tracks = state["features/base/tracks"];
         //sally order participants
         remoteParticipants = remoteParticipants.map((p) => {
-            if (p.name?.startsWith("Trainer")) {
+            if (p.name?.startsWith("Moderator")) {
                 p.order = 1;
                 return p;
             }
@@ -624,40 +624,6 @@ export function getCustomOrderedRemoteParticipants(stateful: Object | Function, 
         } catch (e) {
             console.log(e);
         }
-        // if (!_isDominantSpeakerDisabled && p?.dominantSpeaker) {
-        //         p.order = 3
-        //         return p;
-        //     }
-
-        // Sally -  Add additional classes for trainer
-        // if (_participant.name.startsWith('Trainer')) {
-        //     className += ` trainer-participant`
-        // } else {
-        //     // add additional class for remote participants not sharing video
-        //     // isCurrentlyOnLargeVideo: _isCurrentlyOnLargeVideo,
-        //     // isHovered,
-        //     // isAudioOnly: _isAudioOnly,
-        //     // tileViewActive,
-        //     // isVideoPlayable: _isVideoPlayable,
-        //     // connectionStatus: _participant?.connectionStatus,
-        //     // canPlayEventReceived,
-        //     // videoStream: Boolean(_videoTrack),
-        //     // isRemoteParticipant: !_participant?.isFakeParticipant && !_participant?.local,
-        //     // isScreenSharing: _isScreenSharing,
-        //     // videoStreamMuted: _videoTrack ? _videoTrack.muted : 'no stream'
-        //     const dmInput = Thumbnail.getDisplayModeInput(this.props, this.state)
-        //     if (isRemoteParticipant && (dmInput.isVideoPlayable && !dmInput.videoStreamMuted)) {
-        //         className += ' has-video'
-        //     } else if (isRemoteParticipant && _audioTrack && !_audioTrack.muted) {
-        //         className += ' audio-only'
-        //     }
-        //     if ( isRemoteParticipant && dmInput.isScreenSharing) {
-        //         className += ' sharing-screen'
-        //     }
-        //     if (_participant?.local) {
-        //         className += ' local-participant'
-        //     }
-
 
     remoteParticipants = remoteParticipants.map((p) => p.id).slice(0, maxVisibleRemoteParticipants)
     return remoteParticipants;
@@ -679,7 +645,7 @@ export function getHiddenRemoteParticipants(stateful: Object | Function, id: str
 
 export function getIsLocalTrainer(stateful: Object | Function): boolean {
     const { name } = getLocalParticipant(stateful);
-    return name?.startsWith("Trainer");
+    return name?.startsWith("Moderator");
 }
 
 

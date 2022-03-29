@@ -807,36 +807,6 @@ class Thumbnail extends Component<Props, State> {
         if (!displayModeInput.videoStreamMuted && _participant?.connectionStatus !== 'active') {
             className += ' video-unavailable'
         }
-        // Sally -  Add additional classes for trainer
-        // if (_participant.name.startsWith('Trainer')) {
-        //     className += ` trainer-participant`
-        // } else {
-        //     // add additional class for remote participants not sharing video
-        //     // isCurrentlyOnLargeVideo: _isCurrentlyOnLargeVideo,
-        //     // isHovered,
-        //     // isAudioOnly: _isAudioOnly,
-        //     // tileViewActive,
-        //     // isVideoPlayable: _isVideoPlayable,
-        //     // connectionStatus: _participant?.connectionStatus,
-        //     // canPlayEventReceived,
-        //     // videoStream: Boolean(_videoTrack),
-        //     // isRemoteParticipant: !_participant?.isFakeParticipant && !_participant?.local,
-        //     // isScreenSharing: _isScreenSharing,
-        //     // videoStreamMuted: _videoTrack ? _videoTrack.muted : 'no stream'
-        //     const dmInput = Thumbnail.getDisplayModeInput(this.props, this.state)
-        //     if (isRemoteParticipant && (dmInput.isVideoPlayable && !dmInput.videoStreamMuted)) {
-        //         className += ' has-video'
-        //     } else if (isRemoteParticipant && _audioTrack && !_audioTrack.muted) {
-        //         className += ' audio-only'
-        //     }
-        //     if ( isRemoteParticipant && dmInput.isScreenSharing) {
-        //         className += ' sharing-screen'
-        //     }
-        //     if (_participant?.local) {
-        //         className += ' local-participant'
-        //     }
-
-        //}
 
         return className;
     }
