@@ -18,6 +18,10 @@ import {
 } from '../filmstrip/constants';
 import { isVideoPlaying } from '../shared-video/functions';
 
+//sally for local screenshare
+import { getLocalVideoTrack } from '../base/tracks';
+import { MEDIA_TYPE } from '../base/media';
+
 import { LAYOUTS } from './constants';
 
 declare var interfaceConfig: Object;
@@ -144,6 +148,25 @@ export function shouldDisplayTileView(state: Object = {}) {
 
     const tileViewEnabledFeatureFlag = getFeatureFlag(state, TILE_VIEW_ENABLED, true);
     const { disableTileView } = state['features/base/config'];
+     const { tileViewEnabled, remoteScreenShares } = state['features/video-layout'];
+     const tracks = state["features/base/tracks"];
+     const p = state['features/base/participants'];
+     const _videoTrack = getLocalVideoTrack(
+                tracks,
+                MEDIA_TYPE.VIDEO
+            );
+
+     const isScreenSharing = _videoTrack?.videoType === "desktop";
+
+         // sally - if screen sharting do not use tile view
+    if (isScreenSharing) {
+        return false;
+    }
+
+        // sally - if any remote is screen sharing, do not use tile view.
+    if ((remoteScreenShares || []).length > 0) {
+        return false;
+    }
 
     // // sally - use disabled tile view to stay in tile view or not
     // return !disableTileView
@@ -152,17 +175,10 @@ export function shouldDisplayTileView(state: Object = {}) {
         return false;
     }
 
-    const { tileViewEnabled, remoteScreenShares } = state['features/video-layout'];
-
     if (tileViewEnabled !== undefined) {
         // If the user explicitly requested a view mode, we
         // do that.
         return tileViewEnabled;
-    }
-
-    // sally - if any remote is screen sharing, use tile view.
-    if ((remoteScreenShares || []).length > 0) {
-        return false;
     }
 
     const { iAmRecorder } = state['features/base/config'];

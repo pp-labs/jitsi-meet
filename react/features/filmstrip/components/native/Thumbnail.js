@@ -140,61 +140,6 @@ type Props = {
 /**
  * React component for video thumbnail.
  */
-<<<<<<< HEAD
-function Thumbnail(props: Props) {
-    const {
-        _audioMuted: audioMuted,
-        _largeVideo: largeVideo,
-        _onClick,
-        _onThumbnailLongPress,
-        _renderDominantSpeakerIndicator: renderDominantSpeakerIndicator,
-        _renderModeratorIndicator: renderModeratorIndicator,
-        _styles,
-        _videoTrack: videoTrack,
-        disableTint,
-        participant,
-        renderDisplayName,
-        tileView
-    } = props;
-
-    const participantId = participant.id;
-    const participantInLargeVideo
-        = participantId === largeVideo.participantId;
-    const videoMuted = !videoTrack || videoTrack.muted;
-    const isScreenShare = videoTrack && videoTrack.videoType === VIDEO_TYPE.DESKTOP;
-
-    return (
-        <Container
-            onClick = { _onClick }
-            onLongPress = { _onThumbnailLongPress }
-            style = { [
-                styles.thumbnail,
-                participant.pinned && !tileView
-                    ? _styles.thumbnailPinned : null,
-                props.styleOverrides || null
-            ] }
-            touchFeedback = { false }>
-
-            <ParticipantView
-                avatarSize = { tileView ? AVATAR_SIZE * 1.5 : AVATAR_SIZE }
-                disableVideo = { isScreenShare || participant.isFakeParticipant }
-                participantId = { participantId }
-                style = { _styles.participantViewStyle }
-                tintEnabled = { participantInLargeVideo && !disableTint }
-                tintStyle = { _styles.activeThumbnailTint }
-                zOrder = { 1 } />
-
-            { renderDisplayName && <Container style = { styles.displayNameContainer }>
-                <DisplayNameLabel participantId = { participantId } />
-            </Container> }
-
-            {/*{ renderModeratorIndicator
-                && <View style = { styles.moderatorIndicatorContainer }>
-                    <ModeratorIndicator />
-                </View>}*/}
-
-            { !participant.isFakeParticipant && <View
-=======
 class Thumbnail extends PureComponent<Props> {
 
     /**
@@ -282,7 +227,6 @@ class Thumbnail extends PureComponent<Props> {
         if (!_isFakeParticipant) {
             indicators.push(<View
                 key = 'top-left-indicators'
->>>>>>> sally_stable_6433
                 style = { [
                     styles.thumbnailTopIndicatorContainer,
                     styles.thumbnailTopLeftIndicatorContainer
@@ -397,15 +341,9 @@ function _mapStateToProps(state, ownProps) {
     const participantCount = getParticipantCount(state);
     const renderDominantSpeakerIndicator = participant && participant.dominantSpeaker && participantCount > 2;
     const _isEveryoneModerator = isEveryoneModerator(state);
-<<<<<<< HEAD
-    // sally
-    const renderModeratorIndicator = false;
-    // const renderModeratorIndicator = !_isEveryoneModerator && participant.role === PARTICIPANT_ROLE.MODERATOR;
-=======
     const renderModeratorIndicator = !_isEveryoneModerator
         && participant?.role === PARTICIPANT_ROLE.MODERATOR;
     const participantInLargeVideo = id === largeVideo.participantId;
->>>>>>> sally_stable_6433
 
     return {
         _audioMuted: audioTrack?.muted ?? true,

@@ -84,10 +84,15 @@
             width: 65px;
 
         }
-        .notavailableMessage{
+        // sally - icon removed
+         .notavailableMessage{
             display: inline-block;
-            width: calc(100% - 65px);
+            width: calc(100%);
         }
+        // .notavailableMessage{
+        //     display: inline-block;
+        //     width: calc(100% - 65px);
+        // }
         .small {
             font-size: 10px;
             .notavailableIcon {

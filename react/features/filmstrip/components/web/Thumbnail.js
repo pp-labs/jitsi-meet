@@ -1012,9 +1012,9 @@ class Thumbnail extends Component<Props, State> {
                 <div className = 'videocontainer__background' />
                 <div className = 'videocontainer__notavailable'>
                     <div className = {`${videoWarningSize <= 30 ? 'small' : 'big'}`}>
-                        <div className='notavailableIcon'>
+                        {/* sally - remove unavailable icon <div className='notavailableIcon'>
                             <IconVideoWarning height={videoWarningSize} width={videoWarningSize} />
-                        </div>
+                        </div>*/}
                         <div className='notavailableMessage'>
                             {`Video is temporarily not available${videoWarningSize > 30 ? ' due to issues with your infrastructure' : ''}.`}
                         </div>

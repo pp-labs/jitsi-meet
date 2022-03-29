@@ -14,7 +14,8 @@ import {
 } from '../../../react/features/base/lib-jitsi-meet';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../../../react/features/base/media';
 import { getParticipantById } from '../../../react/features/base/participants';
-import { getTrackByMediaTypeAndParticipant } from '../../../react/features/base/tracks';
+import { getTrackByMediaTypeAndParticipant, getLocalVideoTrack } from '../../../react/features/base/tracks';
+
 import { CHAT_SIZE } from '../../../react/features/chat';
 import {
     updateKnownLargeVideoResolution

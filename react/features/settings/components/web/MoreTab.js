@@ -145,7 +145,7 @@ class MoreTab extends AbstractDialogTab<Props, State> {
     render() {
         const content = [];
 
-        content.push(this._renderSettingsLeft());
+        //content.push(this._renderSettingsLeft());
         content.push(this._renderSettingsRight());
 
         return <div className = 'more-tab box'>{ content }</div>;
@@ -284,6 +284,8 @@ class MoreTab extends AbstractDialogTab<Props, State> {
      * @returns {ReactElement}
      */
     _renderFramerateSelect() {
+        // sally - remove
+        return null;
         const { currentFramerate, desktopShareFramerates, t } = this.props;
         const frameRateItems = desktopShareFramerates.map(frameRate => (
             <DropdownItem
