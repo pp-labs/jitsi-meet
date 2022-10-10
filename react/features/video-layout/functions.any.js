@@ -1,26 +1,25 @@
 // @flow
-import type { Dispatch } from 'redux';
+import type { Dispatch } from "redux";
 
-import { TILE_VIEW_ENABLED, getFeatureFlag } from '../base/flags';
+import { TILE_VIEW_ENABLED, getFeatureFlag } from "../base/flags";
 import {
     getParticipantCount,
     pinParticipant,
     getParticipantCountWithFake,
     getCustomOrderedRemoteParticipants,
     getPinnedParticipant,
-    pinParticipant
-} from '../base/participants';
-import { isStageFilmstripAvailable } from '../filmstrip/functions';
-import { isVideoPlaying } from '../shared-video/functions';
-import { VIDEO_QUALITY_LEVELS } from '../video-quality/constants';
-import { getReceiverVideoQualityLevel } from '../video-quality/functions';
-import { getMinHeightForQualityLvlMap } from '../video-quality/selector';
+} from "../base/participants";
+import { isStageFilmstripAvailable } from "../filmstrip/functions";
+import { isVideoPlaying } from "../shared-video/functions";
+import { VIDEO_QUALITY_LEVELS } from "../video-quality/constants";
+import { getReceiverVideoQualityLevel } from "../video-quality/functions";
+import { getMinHeightForQualityLvlMap } from "../video-quality/selector";
 
 //sally for local screenshare
-import { getLocalVideoTrack } from '../base/tracks';
-import { MEDIA_TYPE } from '../base/media';
+import { getLocalVideoTrack } from "../base/tracks";
+import { MEDIA_TYPE } from "../base/media";
 
-import { LAYOUTS } from './constants';
+import { LAYOUTS } from "./constants";
 
 declare var interfaceConfig: Object;
 
@@ -34,9 +33,9 @@ declare var interfaceConfig: Object;
  * pin any screen shares.
  */
 export function getAutoPinSetting() {
-    return typeof interfaceConfig === 'object'
+    return typeof interfaceConfig === "object"
         ? interfaceConfig.AUTO_PIN_LATEST_SCREEN_SHARE
-        : 'remote-only';
+        : "remote-only";
 }
 
 /**
@@ -47,7 +46,7 @@ export function getAutoPinSetting() {
  * @returns {string}
  */
 export function getCurrentLayout(state: Object) {
-    if (navigator.product === 'ReactNative') {
+    if (navigator.product === "ReactNative") {
         // FIXME: what should this return?
         return undefined;
     } else if (shouldDisplayTileView(state)) {
@@ -71,20 +70,20 @@ export function getCurrentLayout(state: Object) {
  * @returns {number}
  */
 export function getMaxColumnCount(state: Object) {
-    const configuredMax = (typeof interfaceConfig === 'undefined'
-        ? DEFAULT_MAX_COLUMNS
-        : interfaceConfig.TILE_VIEW_MAX_COLUMNS) || DEFAULT_MAX_COLUMNS;
-    const { disableResponsiveTiles } = state['features/base/config'];
+    const configuredMax =
+        (typeof interfaceConfig === "undefined"
+            ? DEFAULT_MAX_COLUMNS
+            : interfaceConfig.TILE_VIEW_MAX_COLUMNS) || DEFAULT_MAX_COLUMNS;
+    const { disableResponsiveTiles } = state["features/base/config"];
 
     if (!disableResponsiveTiles) {
-        const { clientWidth } = state['features/base/responsive-ui'];
+        const { clientWidth } = state["features/base/responsive-ui"];
         //const participantCount = getParticipantCount(state);
 
         // sally max partipant count 6
         const participants = getCustomOrderedRemoteParticipants(state);
         // include local in count
-        let participantCount = participants.length + 1
-
+        let participantCount = participants.length + 1;
 
         // If there are just two participants in a conference, enforce single-column view for mobile size.
         if (participantCount === 2 && clientWidth < ASPECT_RATIO_BREAKPOINT) {
@@ -118,12 +117,12 @@ export function getTileViewGridDimensions(state: Object) {
     const maxColumns = getMaxColumnCount(state);
     // When in tile view mode, we must discount ourselves (the local participant) because our
     // tile is not visible.
-    const { iAmRecorder } = state['features/base/config'];
+    const { iAmRecorder } = state["features/base/config"];
 
     // sally use custom remote participants function
     const participants = getCustomOrderedRemoteParticipants(state);
     // include local in count
-    let numberOfParticipants = participants.length + 1
+    let numberOfParticipants = participants.length + 1;
     //const numberOfParticipants = getParticipantCountWithFake(state) - (iAmRecorder ? 1 : 0);
     // sally - include local in count as we show local
     //let numberOfParticipants = getParticipantCountWithFake(state) ;
@@ -136,7 +135,7 @@ export function getTileViewGridDimensions(state: Object) {
     return {
         columns,
         minVisibleRows,
-        rows
+        rows,
     };
 }
 
@@ -151,24 +150,26 @@ export function getTileViewGridDimensions(state: Object) {
 export function shouldDisplayTileView(state: Object = {}) {
     const participantCount = getParticipantCount(state);
 
-    const tileViewEnabledFeatureFlag = getFeatureFlag(state, TILE_VIEW_ENABLED, true);
-    const { disableTileView } = state['features/base/config'];
-     const { tileViewEnabled, remoteScreenShares } = state['features/video-layout'];
-     const tracks = state["features/base/tracks"];
-     const p = state['features/base/participants'];
-     const _videoTrack = getLocalVideoTrack(
-                tracks,
-                MEDIA_TYPE.VIDEO
-            );
+    const tileViewEnabledFeatureFlag = getFeatureFlag(
+        state,
+        TILE_VIEW_ENABLED,
+        true
+    );
+    const { disableTileView } = state["features/base/config"];
+    const { tileViewEnabled, remoteScreenShares } =
+        state["features/video-layout"];
+    const tracks = state["features/base/tracks"];
+    const p = state["features/base/participants"];
+    const _videoTrack = getLocalVideoTrack(tracks, MEDIA_TYPE.VIDEO);
 
-     const isScreenSharing = _videoTrack?.videoType === "desktop";
+    const isScreenSharing = _videoTrack?.videoType === "desktop";
 
-         // sally - if screen sharting do not use tile view
+    // sally - if screen sharting do not use tile view
     if (isScreenSharing) {
         return false;
     }
 
-        // sally - if any remote is screen sharing, do not use tile view.
+    // sally - if any remote is screen sharing, do not use tile view.
     if ((remoteScreenShares || []).length > 0) {
         return false;
     }
@@ -186,36 +187,23 @@ export function shouldDisplayTileView(state: Object = {}) {
         return tileViewEnabled;
     }
 
-    const tileViewEnabledFeatureFlag = getFeatureFlag(state, TILE_VIEW_ENABLED, true);
-    const { disableTileView } = state['features/base/config'];
-
-    if (disableTileView || !tileViewEnabledFeatureFlag) {
-        return false;
-    }
-
-    const participantCount = getParticipantCount(state);
-    const { iAmRecorder } = state['features/base/config'];
+    const { iAmRecorder } = state["features/base/config"];
 
     // None tile view mode is easier to calculate (no need for many negations), so we do
     // that and negate it only once.
     const shouldDisplayNormalMode = Boolean(
-
         // Reasons for normal mode:
 
         // Editing etherpad
-        state['features/etherpad']?.editing
-
-        // We pinned a participant
-        || getPinnedParticipant(state)
-
-        // It's a 1-on-1 meeting
-        || participantCount < 3
-
-        // There is a shared YouTube video in the meeting
-        || isVideoPlaying(state)
-
-        // We want jibri to use stage view by default
-        || iAmRecorder
+        state["features/etherpad"]?.editing ||
+            // We pinned a participant
+            getPinnedParticipant(state) ||
+            // It's a 1-on-1 meeting
+            participantCount < 3 ||
+            // There is a shared YouTube video in the meeting
+            isVideoPlaying(state) ||
+            // We want jibri to use stage view by default
+            iAmRecorder
     );
 
     return !shouldDisplayNormalMode;
@@ -231,9 +219,12 @@ export function shouldDisplayTileView(state: Object = {}) {
  * @returns {void}
  */
 export function updateAutoPinnedParticipant(
-        screenShares: Array<string>, { dispatch, getState }: { dispatch: Dispatch<any>, getState: Function }) {
+    screenShares: Array<string>,
+    { dispatch, getState }: { dispatch: Dispatch<any>, getState: Function }
+) {
     const state = getState();
-    const remoteScreenShares = state['features/video-layout'].remoteScreenShares;
+    const remoteScreenShares =
+        state["features/video-layout"].remoteScreenShares;
     const pinned = getPinnedParticipant(getState);
 
     // if the pinned participant is shared video or some other fake participant we want to skip auto-pinning
@@ -246,7 +237,7 @@ export function updateAutoPinnedParticipant(
     if (!remoteScreenShares?.length) {
         let participantId = null;
 
-        if (pinned && !screenShares.find(share => share === pinned.id)) {
+        if (pinned && !screenShares.find((share) => share === pinned.id)) {
             participantId = pinned.id;
         }
         dispatch(pinParticipant(participantId));
@@ -254,7 +245,8 @@ export function updateAutoPinnedParticipant(
         return;
     }
 
-    const latestScreenShareParticipantId = remoteScreenShares[remoteScreenShares.length - 1];
+    const latestScreenShareParticipantId =
+        remoteScreenShares[remoteScreenShares.length - 1];
 
     if (latestScreenShareParticipantId) {
         dispatch(pinParticipant(latestScreenShareParticipantId));
@@ -306,7 +298,10 @@ export function getVideoQualityForResizableFilmstripThumbnails(height, state) {
         return VIDEO_QUALITY_LEVELS.LOW;
     }
 
-    return getReceiverVideoQualityLevel(height, getMinHeightForQualityLvlMap(state));
+    return getReceiverVideoQualityLevel(
+        height,
+        getMinHeightForQualityLvlMap(state)
+    );
 }
 
 /**
@@ -321,7 +316,10 @@ export function getVideoQualityForScreenSharingFilmstrip(height, state) {
         return VIDEO_QUALITY_LEVELS.LOW;
     }
 
-    return getReceiverVideoQualityLevel(height, getMinHeightForQualityLvlMap(state));
+    return getReceiverVideoQualityLevel(
+        height,
+        getMinHeightForQualityLvlMap(state)
+    );
 }
 
 /**
@@ -346,5 +344,8 @@ export function getVideoQualityForStageThumbnails(height, state) {
         return VIDEO_QUALITY_LEVELS.LOW;
     }
 
-    return getReceiverVideoQualityLevel(height, getMinHeightForQualityLvlMap(state));
+    return getReceiverVideoQualityLevel(
+        height,
+        getMinHeightForQualityLvlMap(state)
+    );
 }

@@ -338,12 +338,31 @@ function _mapStateToProps(state) {
     const testingConfig = state['features/base/config'].testing;
     const { backgroundColor, backgroundImageUrl } = state['features/dynamic-branding'];
     const { isOpen: isChatOpen } = state['features/chat'];
+    const { width: verticalFilmstripWidth, visible } = state['features/filmstrip'];
+    const { defaultLocalDisplayName, hideDominantSpeakerBadge } = state['features/base/config'];
+    const { seeWhatIsBeingShared } = state['features/large-video'];
+
+    const tracks = state['features/base/tracks'];
+    const localParticipantId = getLocalParticipant(state)?.id;
+    const largeVideoParticipant = getLargeVideoParticipant(state);
+    let videoTrack;
+
+    if (getMultipleVideoSupportFeatureFlag(state) && largeVideoParticipant?.isVirtualScreenshareParticipant) {
+        videoTrack = getVirtualScreenshareParticipantTrack(tracks, largeVideoParticipant?.id);
+    } else {
+        videoTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, largeVideoParticipant?.id);
+    }
+    const isLocalScreenshareOnLargeVideo = largeVideoParticipant?.id?.includes(localParticipantId)
+        && videoTrack?.videoType === VIDEO_TYPE.DESKTOP;
+
+    const isOnSpot = defaultLocalDisplayName === SPOT_DISPLAY_NAME;
     // sally set background image
     const audiBackgroundImageUrl =  'images/BG-LOT.png'
     return {
         _backgroundAlpha: state['features/base/config'].backgroundAlpha,
         _customBackgroundColor: backgroundColor,
         _customBackgroundImageUrl: audiBackgroundImageUrl,
+        _displayScreenSharingPlaceholder: isLocalScreenshareOnLargeVideo && !seeWhatIsBeingShared && !isOnSpot,
         _isChatOpen: isChatOpen,
         _isScreenSharing: isLocalScreenshareOnLargeVideo,
         _largeVideoParticipantId: largeVideoParticipant?.id,

@@ -15,7 +15,6 @@ import { Avatar } from "../../../react/features/base/avatar";
 import theme from "../../../react/features/base/components/themes/participantsPaneTheme.json";
 import { JitsiParticipantConnectionStatus } from "../../../react/features/base/lib-jitsi-meet";
 import { MEDIA_TYPE, VIDEO_TYPE } from "../../../react/features/base/media";
-import { getParticipantById } from "../../../react/features/base/participants";
 import {
     getTrackByMediaTypeAndParticipant,
     getLocalVideoTrack,
@@ -27,9 +26,7 @@ import {
 } from "../../../react/features/base/config";
 import { i18next } from "../../../react/features/base/i18n";
 import { JitsiTrackEvents } from "../../../react/features/base/lib-jitsi-meet";
-import { VIDEO_TYPE } from "../../../react/features/base/media";
 import {
-    getParticipantById,
     getParticipantDisplayName,
 } from "../../../react/features/base/participants";
 import {

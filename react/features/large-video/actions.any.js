@@ -137,7 +137,7 @@ function _electParticipantInLargeVideo(state) {
     // 1. If a participant is pinned, they will be shown in the LargeVideo
     // (regardless of whether they are local or remote).
 
-   // let participant = getPinnedParticipant(state);
+    // let participant = getPinnedParticipant(state);
 
 
     // if (participant) {
@@ -152,55 +152,56 @@ function _electParticipantInLargeVideo(state) {
         // Pick the most recent remote screenshare that was added to the conference.
         const remoteScreenShares = state['features/video-layout'].remoteScreenShares;
 
-    if (remoteScreenShares?.length > 0) {
-        return remoteScreenShares[remoteScreenShares.length - 1];
-    }
-     // sally
-    // next pick the trainer
-    const trainers = getCustomTrainers(state);
+        if (remoteScreenShares?.length > 0) {
+            return remoteScreenShares[remoteScreenShares.length - 1];
+        }
+        // sally
+        // next pick the trainer
+        const trainers = getCustomTrainers(state);
 
-    if (trainers.length > 0) {
-        return trainers[0].id;
-    } else return null;
+        if (trainers.length > 0) {
+            return trainers[0].id;
+        } else return null;
 
-    // Next, pick the dominant speaker (other than self).
-    participant = getDominantSpeakerParticipant(state);
-    if (participant && !participant.local) {
-        // Return the screensharing participant id associated with this endpoint if multi-stream is enabled and
-        // auto pin latest screenshare is disabled.
-        if (getMultipleVideoSupportFeatureFlag(state)) {
-            const screenshareParticipant = getVirtualScreenshareParticipantByOwnerId(state, participant.id);
+        // Next, pick the dominant speaker (other than self).
+        participant = getDominantSpeakerParticipant(state);
+        if (participant && !participant.local) {
+            // Return the screensharing participant id associated with this endpoint if multi-stream is enabled and
+            // auto pin latest screenshare is disabled.
+            if (getMultipleVideoSupportFeatureFlag(state)) {
+                const screenshareParticipant = getVirtualScreenshareParticipantByOwnerId(state, participant.id);
 
-            return screenshareParticipant?.id ?? participant.id;
+                return screenshareParticipant?.id ?? participant.id;
+            }
+
+            return participant.id;
         }
 
-        return participant.id;
-    }
+        // In case this is the local participant.
+        participant = undefined;
 
-    // In case this is the local participant.
-    participant = undefined;
+        // Next, pick the most recent participant with video.
+        const tracks = state['features/base/tracks'];
+        const videoTrack = _electLastVisibleRemoteVideo(tracks);
 
-    // Next, pick the most recent participant with video.
-    const tracks = state['features/base/tracks'];
-    const videoTrack = _electLastVisibleRemoteVideo(tracks);
+        if (videoTrack) {
+            return videoTrack.participantId;
+        }
 
-    if (videoTrack) {
-        return videoTrack.participantId;
-    }
-
-    // 5. As a last resort, select the participant that joined last (other than poltergist or other bot type
-    // participants).
+        // 5. As a last resort, select the participant that joined last (other than poltergist or other bot type
+        // participants).
 
     
 
-    for (let i = participants.length; i > 0 && !participant; i--) {
-        const p = participants[i - 1];
+        for (let i = participants.length; i > 0 && !participant; i--) {
+            const p = participants[i - 1];
 
-        !p.botType && (participant = p);
-    }
-    if (participant) {
-        return participant.id;
-    }
+            !p.botType && (participant = p);
+        }
+        if (participant) {
+            return participant.id;
+        }
 
-    return getLocalParticipant(state)?.id;
+        return getLocalParticipant(state)?.id;
+    }
 }

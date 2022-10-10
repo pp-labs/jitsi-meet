@@ -48,221 +48,17 @@
     }
 }
 
-
 .videocontainer {
     position: relative;
     text-align: center;
+    overflow: "hidden";
     .displayNameContainer {
         visibility: visible;
     }
-
-    &__background {
-        @include topLeft();
-        background-color: #1A1A1A;
-        border-radius: $borderRadius;
-        width: 100%;
-        height: 100%;
-    }
-
-    /* Gregor */
-    &__notavailable {
-        position: absolute;
-        display: none;
-        top: 14%;
-        text-align: center;
-        width: 100%;
-        font-size: 20px;
-        // sally - display warning icon, resize when thumb gets smaller
-        div {
-            content: "";
-            display: inline-block;
-            vertical-align: middle;
-            height: 100%;
-
-        }
-        .notavailableIcon {
-            display: inline-block;
-            width: 65px;
-
-        }
-        // sally - icon removed
-         .notavailableMessage{
-            display: inline-block;
-            width: calc(100%);
-        }
-        // .notavailableMessage{
-        //     display: inline-block;
-        //     width: calc(100% - 65px);
-        // }
-        .small {
-            font-size: 10px;
-            .notavailableIcon {
-                display: inline-block;
-                width: 35px;
-
-            }
-            .notavailableMessage{
-                display: inline-block;
-                width: calc(100% - 35px);
-            }
-        }
-    }
-
-    /**
-     * The toolbar of the video thumbnail.
-     */
-    &__toolbar,
-    &__toptoolbar {
-        position: absolute;
-        left: 0;
-        pointer-events: none;
-        z-index: $zindex10;
-        width: 100%;
-        box-sizing: border-box; // Includes the padding in the 100% width.
-
-        /**
-         * FIXME (lenny): Disabling pointer-events is a pretty big sin that
-         * sidesteps the problems. There are z-index wars occurring within
-         * videocontainer and AtlasKit Tooltips rely on their parent z-indexe
-         * being higher than whatever they need to appear over. So set a higher
-         * z-index for the tooltip containers but make any empty space not block
-         * mouse overs for various mouseover triggers.
-         */
-        pointer-events: none;
-
-        * {
-            pointer-events: auto;
-        }
-
-        .indicator-container {
-            display: inline-block;
-            float: right;
-            pointer-events: all;
-        }
-    }
-
-    &__toolbar {
-        top: 0;
-        height: $thumbnailToolbarHeight;
-        padding: 0 5px 0 5px;
-        text-align: right;
-    }
-
-    &__toptoolbar {
-        $toolbarIconMargin: 5px;
-        top: 0;
-        padding-bottom: 0;
-        /**
-         * Override text-align center as icons need to be left justified.
-         */
-        text-align: left;
-
-        /**
-         * Intentionally use margin on the icon itself as AtlasKit InlineDialog
-         * positioning depends on the trigger (indicator icon).
-         */
-        .indicator {
-            margin-left: 5px;
-            margin-top: $toolbarIconMargin;
-        }
-
-        .indicator-container:nth-child(1) .indicator {
-            margin-left: $toolbarIconMargin;
-        }
-
-        .indicator-container {
-            display: inline-block;
-            vertical-align: top;
-
-            .popover-trigger {
-                display: inline-block;
-            }
-        }
-
-        .connection-indicator,
-        .indicator {
-            position: relative;
-            font-size: 8px;
-            text-align: center;
-            line-height: $thumbnailIndicatorSize;
-            padding: 0;
-            @include circle($thumbnailIndicatorSize);
-            box-sizing: border-box;
-            z-index: $zindex3;
-            background: $dominantSpeakerBg;
-            color: $thumbnailPictogramColor;
-            border: $thumbnailIndicatorBorder solid $thumbnailPictogramColor;
-
-            .indicatoricon {
-                @include absoluteAligning();
-            }
-
-            .connection {
-                position: relative;
-                display: inline-block;
-                margin: 0 auto;
-                left: 0;
-                @include transform(translate(0, -50%));
-
-                &_empty,
-                &_lost
-                {
-                    color: #8B8B8B;/*#FFFFFF*/
-                    overflow: hidden;
-                }
-
-                &_full
-                {
-                    @include topLeft();
-                    color: #FFFFFF;/*#15A1ED*/
-                    overflow: hidden;
-                }
-
-                &_ninja
-                {
-                    font-size: 1.5em;
-                }
-            }
-
-            .icon-gsm-bars {
-                cursor: pointer;
-                font-size: 1em;
-            }
-        }
-
-        .hide-connection-indicator {
-            display: none;
-        }
-        .show-connection-indicator {
-            display: none;
-        }
-    }
-
-    &__hoverOverlay {
-        background: rgba(0,0,0,.6);
-        border-radius: $borderRadius;
-        position: absolute;
-        top: 0px;
-        left: 0px;
-        width: 100%;
-        height: 100%;
-        visibility: hidden;
-        z-index: $zindex2;
-    }
-
-    @media (min-width: 581px) {
-        &.shift-right {
-            &#largeVideoContainer {
-                margin-left: $sidebarWidth;
-                width: calc(100% - #{$sidebarWidth});
-            }
-        }
-    }
-    overflow: 'hidden';
 }
 
 #localVideoWrapper {
-    display:inline-block;
+    display: inline-block;
 }
 
 .flipVideoX {
@@ -291,7 +87,6 @@
     }
 }
 
-
 #largeVideoContainer {
     height: 100%;
     width: 100%;
@@ -302,8 +97,7 @@
 }
 
 #largeVideo,
-#largeVideoWrapper
-{
+#largeVideoWrapper {
     object-fit: cover;
 }
 
@@ -322,10 +116,10 @@
 #localVideoWrapper object,
 #localVideoWrapper,
 #largeVideoWrapper,
-#largeVideoWrapper>video,
-#largeVideoWrapper>object,
-.videocontainer>video,
-.videocontainer>object {
+#largeVideoWrapper > video,
+#largeVideoWrapper > object,
+.videocontainer > video,
+.videocontainer > object {
     position: absolute;
     left: 0;
     top: 0;
@@ -353,7 +147,7 @@
     left: 4%;
     bottom: -5;
     max-width: 92%;
-    background-color: rgb(0,0,0, 0.5);
+    background-color: rgb(0, 0, 0, 0.5);
     @include transform(translateY(-40%));
     color: $participantNameColor;
     text-align: left;
@@ -376,147 +170,10 @@
 }
 
 /**
- * Positions video thumbnail display name editor.
- */
-.videocontainer .editdisplayname {
-    outline: none;
-    border: none;
-    background: none;
-    box-shadow: none;
-    padding: 0;
-}
-
-#localVideoContainer .displayname:hover {
-    cursor: text;
-}
-
-.videocontainer .displayname {
-    pointer-events: none;
-    padding: 0 3px 0 3px;
-}
-
-.videocontainer .editdisplayname {
-    height: auto;
-}
-
-#localDisplayName {
-    pointer-events: auto !important;
-}
-
-.videocontainer>a.displayname {
-    display: inline-block;
-    position: absolute;
-    color: #FFFFFF;
-    bottom: 0;
-    right: 0;
-    padding: 3px 5px;
-    font-size: 9pt;
-    cursor: pointer;
-    z-index: $zindex2;
-}
-
-/**
- * Video thumbnail toolbar icon.
- */
-.videocontainer .toolbar-icon {
-    font-size: 8pt;
-    text-align: center;
-    text-shadow: 0px 1px 0px rgba(255,255,255,.3), 0px -1px 0px rgba(0,0,0,.7);
-    color: #FFFFFF;
-    width: 12px;
-    line-height: $thumbnailToolbarHeight;
-    height: $thumbnailToolbarHeight;
-    padding: 0;
-    border: 0;
-    margin: 0px 5px 0px 0px;
-}
-
-/**
- * Toolbar icon internal i elements (font icons).
- */
-.toolbar-icon>div {
-    height: $thumbnailToolbarHeight;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-/**
- * Toolbar icons positioned on the right.
- */
-.moderator-icon {
-    display: inline-block;
-
-    &.right {
-        float: right;
-        margin: 0px 0px 0px 5px;
-    }
-
-    .toolbar-icon {
-        margin: 0;
-    }
-}
-
-.raisehandindicator {
-  background: $raiseHandBg;
-}
-
-.connection-indicator {
-    background: $connectionIndicatorBg;
-
-    &.status-high {
-        background: green;
-    }
-
-    &.status-med {
-        background: #FFD740;
-    }
-
-    &.status-lost {
-        background: gray;
-    }
-
-    &.status-low {
-        background: #BF2117;
-    }
-
-    &.status-other {
-        background: $connectionIndicatorBg;
-    }
-}
-
-.local-video-menu-trigger,
-.remote-video-menu-trigger,
-.localvideomenu,
-.remotevideomenu
-{
-    display: none;
-    position: absolute;
-    top: 0px;
-    right: 0;
-    z-index: $zindex2;
-    width: 18px;
-    height: 18px;
-    color: #FFF;
-    font-size: 10pt;
-    margin-right: $remoteVideoMenuIconMargin;
-    
-    // gregor - remove hand cursor
-    /*
-    >i{
-        cursor: hand;
-    }*/
-}
-.local-video-menu-trigger,
-.remote-video-menu-trigger {
-    margin-top: 7px;
-}
-
-/**
  * Audio indicator on video thumbnails.
  */
-.videocontainer>span.audioindicator,
-.videocontainer>.audioindicator-container {
+.videocontainer > span.audioindicator,
+.videocontainer > .audioindicator-container {
     position: absolute;
     display: inline-block;
     left: 6px;
@@ -535,8 +192,8 @@
         @include circle(5px);
         background: $audioLevelShadow;
         margin: 1px 0 1px 0;
-        transition: opacity .25s ease-in-out;
-        -moz-transition: opacity .25s ease-in-out;
+        transition: opacity 0.25s ease-in-out;
+        -moz-transition: opacity 0.25s ease-in-out;
     }
 
     span.audiodot-top::after,
@@ -556,9 +213,9 @@
 #reloadPresentation {
     display: none;
     position: absolute;
-    color: #FFFFFF;
+    color: #ffffff;
     top: 0;
-    right:0;
+    right: 0;
     padding: 10px 10px;
     font-size: 11pt;
     cursor: pointer;
@@ -581,7 +238,7 @@
 }
 
 #mixedstream {
-    display:none !important;
+    display: none !important;
 }
 
 #dominantSpeakerAvatarContainer,
@@ -654,8 +311,8 @@
 }
 
 .videoMessageFilter {
-    -webkit-filter: grayscale(.5) opacity(0.8);
-    filter: grayscale(.5) opacity(0.8);
+    -webkit-filter: grayscale(0.5) opacity(0.8);
+    filter: grayscale(0.5) opacity(0.8);
 }
 
 #remotePresenceMessage,
@@ -666,19 +323,17 @@
     font-weight: 600;
     font-size: 14px;
     text-align: center;
-    color: #FFF;
+    color: #fff;
     left: 50%;
     transform: translate(-50%, 0);
 }
 #remotePresenceMessage .presence-label,
 #remoteConnectionMessage {
-    opacity: .80;
-    text-shadow:    0px 0px 1px rgba(0,0,0,0.3),
-                    0px 1px 1px rgba(0,0,0,0.3),
-                    1px 0px 1px rgba(0,0,0,0.3),
-                    0px 0px 1px rgba(0,0,0,0.3);
+    opacity: 0.8;
+    text-shadow: 0px 0px 1px rgba(0, 0, 0, 0.3), 0px 1px 1px rgba(0, 0, 0, 0.3),
+        1px 0px 1px rgba(0, 0, 0, 0.3), 0px 0px 1px rgba(0, 0, 0, 0.3);
 
-    background: rgba(0,0,0,.5);
+    background: rgba(0, 0, 0, 0.5);
     border-radius: 5px;
     padding: 5px;
     padding-left: 10px;
@@ -757,4 +412,3 @@
     white-space: nowrap;
     width: 100%;
 }
-

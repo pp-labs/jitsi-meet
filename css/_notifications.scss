@@ -1,66 +1,66 @@
 .notification-error {
-	div{
-		&[role='alert'] {
-			background-color: #bb0a30;
-			border-radius: 0px;
-
-		}
-	}
+    div {
+        &[role="alert"] {
+            background-color: #bb0a30;
+            border-radius: 0px;
+        }
+    }
 }
 
 .notification-normal,
 .notification-info {
-	div{
-		color: #FFF;
-		&[role='alert'] {
-			background-color: #4c4c4c;
-			color: #FFF;
-			border-radius: 0px;
-
-		}
-		span,button{
-			color: #FFF;
-		}
-	}
-}
-
-.notification-success {
-	div{
-		&[role='alert'] {
-			background-color: #009900;
-			border-radius: 0px;
-
-		}
-	}
-}
-
-.notification-warning {
-	div{
-		&[role='alert'] {
-			background-color: #ffaa00;
-			border-radius: 0px;
-		}
-	}
-.notification-appear, .notification-enter {
-    opacity: 0;
-    position: relative;
-    left: -200px;
-    transition: all .2s !important; // !important needed to overwrite atlaskit default style
-
-    &-active {
-        opacity: 1;
-        left: 0;
+    div {
+        color: #fff;
+        &[role="alert"] {
+            background-color: #4c4c4c;
+            color: #fff;
+            border-radius: 0px;
+        }
+        span,
+        button {
+            color: #fff;
+        }
     }
 }
 
-.notification-exit {
-    opacity: 1;
-    position: relative;
-    left: 0;
-    transition: all .2s !important; // !important needed to overwrite atlaskit default style
+.notification-success {
+    div {
+        &[role="alert"] {
+            background-color: #009900;
+            border-radius: 0px;
+        }
+    }
+}
 
-    &-active {
+.notification-warning {
+    div {
+        &[role="alert"] {
+            background-color: #ffaa00;
+            border-radius: 0px;
+        }
+    }
+    .notification-appear,
+    .notification-enter {
         opacity: 0;
+        position: relative;
         left: -200px;
+        transition: all 0.2s !important; // !important needed to overwrite atlaskit default style
+
+        &-active {
+            opacity: 1;
+            left: 0;
+        }
+    }
+
+    .notification-exit {
+        opacity: 1;
+        position: relative;
+        left: 0;
+        transition: all 0.2s !important; // !important needed to overwrite atlaskit default style
+
+        &-active {
+            opacity: 0;
+            left: -200px;
+        }
     }
 }

@@ -128,14 +128,10 @@ function _mapStateToProps(state, ownProps) {
     const { disableModeratorIndicator } = state["features/base/config"];
 
     return {
-        _currentLayout: getCurrentLayout(state),
-        _showAudioMutedIndicator: isAudioMuted,
+        _showAudioMutedIndicator: isAudioMuted && audio,
         _showModeratorIndicator: false,
         // sally - never show moderator indicator
-        //       _showModeratorIndicator:
-        //           !disableModeratorIndicator && participant && participant.role === PARTICIPANT_ROLE.MODERATOR,
         _showScreenShareIndicator: isScreenSharing && screenshare,
-        _showVideoMutedIndicator: isVideoMuted,
     };
 }
 
