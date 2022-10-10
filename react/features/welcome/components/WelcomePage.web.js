@@ -9,13 +9,14 @@ import { Watermarks } from '../../base/react';
 import { connect } from '../../base/redux';
 import { CalendarList } from '../../calendar-sync';
 import { RecentList } from '../../recent-list';
-import { SettingsButton, SETTINGS_TABS } from '../../settings';
+import { SETTINGS_TABS, SettingsButton } from '../../settings';
 
 import { AbstractWelcomePage, _mapStateToProps } from './AbstractWelcomePage';
 import Tabs from './Tabs';
 
 /**
  * The pattern used to validate room name.
+ *
  * @type {string}
  */
 export const ROOM_NAME_VALIDATE_PATTERN_STR = '^[^?&:\u0022\u0027%#]+$';
@@ -23,7 +24,7 @@ export const ROOM_NAME_VALIDATE_PATTERN_STR = '^[^?&:\u0022\u0027%#]+$';
 /**
  * The Web container rendering the welcome page.
  *
- * @extends AbstractWelcomePage
+ * @augments AbstractWelcomePage
  */
 class WelcomePage extends AbstractWelcomePage {
     /**
@@ -190,7 +191,8 @@ class WelcomePage extends AbstractWelcomePage {
                 <div className = 'header'>
                     <div className = 'welcome-page-settings'>
                         <SettingsButton
-                            defaultTab = { SETTINGS_TABS.CALENDAR } />
+                            defaultTab = { SETTINGS_TABS.CALENDAR }
+                            isDisplayedOnWelcomePage = { true } />
                         { showAdditionalToolbarContent
                             ? <div
                                 className = 'settings-toolbar-content'

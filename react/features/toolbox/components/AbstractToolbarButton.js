@@ -30,7 +30,7 @@ export type Props = {
     onClick: Function,
 
     /**
-     * {@code AbstractToolbarButton} styles.
+     * {@code AbstractToolbarButton} Styles.
      */
     style?: Array<string> | Object,
 
@@ -40,7 +40,7 @@ export type Props = {
     toggled?: boolean,
 
     /**
-     * The color underlaying the button.
+     * The color underlying the button.
      */
     underlayColor?: any
 };

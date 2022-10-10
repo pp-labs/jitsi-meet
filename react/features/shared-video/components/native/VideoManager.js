@@ -1,4 +1,4 @@
-import Logger from 'jitsi-meet-logger';
+import Logger from '@jitsi/logger';
 import React from 'react';
 import Video from 'react-native-video';
 
@@ -6,8 +6,8 @@ import { connect } from '../../../base/redux';
 import { PLAYBACK_STATUSES } from '../../constants';
 
 import AbstractVideoManager, {
-    _mapStateToProps,
-    Props
+    Props,
+    _mapStateToProps
 } from './AbstractVideoManager';
 
 const logger = Logger.getLogger(__filename);

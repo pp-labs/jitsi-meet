@@ -11,7 +11,7 @@ import { translate } from '../../base/i18n';
 import { Icon, IconPlusCalendar } from '../../base/icons';
 import { AbstractPage } from '../../base/react';
 import { connect } from '../../base/redux';
-import { openSettingsDialog, SETTINGS_TABS } from '../../settings';
+import { SETTINGS_TABS, openSettingsDialog } from '../../settings';
 import { refreshCalendar } from '../actions';
 import { ERRORS } from '../constants';
 
@@ -221,7 +221,7 @@ class CalendarList extends AbstractPage<Props> {
      * @returns {void}
      */
     _onOpenSettings() {
-        sendAnalytics(createCalendarClickedEvent('calendar.connect'));
+        sendAnalytics(createCalendarClickedEvent('connect'));
 
         this.props.dispatch(openSettingsDialog(SETTINGS_TABS.CALENDAR));
     }

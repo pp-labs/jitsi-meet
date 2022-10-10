@@ -7,6 +7,8 @@
 $baseFontFamily: 'audi-font', -apple-system, BlinkMacSystemFont, 'open_sanslight', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 $hangupColor:#DD3849;
 $hangupHoverColor: #F25363;
+$hangupMenuButtonColor:#0056E0;;
+$hangupMenuButtonHoverColor: #246FE5;
 $hangupFontSize: 2em;
 
 // Sally Audio
@@ -25,6 +27,10 @@ $thumbnailVideoMargin: 1px;
 $thumbnailsBorder: 1px;
 $thumbnailVideoBorder: 1px;
 $filmstripToggleButtonWidth: 10px;
+$thumbnailVideoMargin: 2px;
+$thumbnailsBorder: 2px;
+$thumbnailVideoBorder: 2px;
+$filmstripToggleButtonWidth: 17px;
 
 
 /**
@@ -36,10 +42,6 @@ $defaultSemiDarkColor: #ACACAC;
 $defaultDarkColor: #2b3d5c;
 $defaultWarningColor: rgb(215, 121, 118);
 $participantsPaneBgColor: #141414;
-$presence-available: rgb(110, 176, 5);
-$presence-away: rgb(250, 201, 20);
-$presence-busy: rgb(233, 0, 27);
-$presence-idle: rgb(172, 172, 172);
 
 /**
  * Toolbar
@@ -72,11 +74,12 @@ $dominantSpeakerBg: #165ecc;
 $raiseHandBg: #D6D61E;
 $audioLevelBg: $audiRed;
 $connectionIndicatorBg: #165ecc;
+$participantNameColor: #fff;
+$audioLevelBg: #44A5FF;
 $audioLevelShadow: rgba(9, 36, 77, 0.9);
 $videoStateIndicatorColor: $defaultColor;
 $videoStateIndicatorBackground: $toolbarBackground;
 $videoStateIndicatorSize: 40px;
-$remoteVideoMenuIconMargin: initial;
 
 /**
  * Feedback Modal
@@ -101,6 +104,8 @@ $modalTextColor: #333;
 $chatActionsSeparatorColor: rgb(173, 105, 112);
 $chatBackgroundColor: #131519;
 $chatInputSeparatorColor: #A4B8D1;
+$chatLobbyMessageBackgroundColor: #6A50D3;
+$chatLobbyActionsSeparatorColor: #6A50D3;
 $chatLocalMessageBackgroundColor: #484A4F;
 $chatPrivateMessageBackgroundColor: rgb(153, 69, 77);
 $chatRemoteMessageBackgroundColor:  #242528;
@@ -111,6 +116,7 @@ $sidebarWidth: 315px;
  */
 $borderRadius: 0px;
 $popoverMenuPadding: 13px;
+$borderRadius: 4px;
 $happySoftwareBackground: transparent;
 $desktopAppDragBarHeight: 25px;
 $scrollHeight: 7px;
@@ -126,11 +132,10 @@ $toolbarBackgroundZ: 4;
 $labelsZ: 5;
 $subtitlesZ: 7;
 $popoverZ: 8;
-$zindex10: 10;
 $reloadZ: 20;
 $poweredByZ: 100;
 $ringingZ: 300;
-$sideToolbarContainerZ: 200;
+$sideToolbarContainerZ: 300;
 $toolbarZ: 250;
 $drawerZ: 351;
 $tooltipsZ: 401;

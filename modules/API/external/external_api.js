@@ -24,31 +24,49 @@ const ALWAYS_ON_TOP_FILENAMES = [
 
 /**
  * Maps the names of the commands expected by the API with the name of the
- * commands expected by jitsi-meet
+ * commands expected by jitsi-meet.
  */
 const commands = {
+    addBreakoutRoom: 'add-breakout-room',
+    answerKnockingParticipant: 'answer-knocking-participant',
+    approveVideo: 'approve-video',
+    askToUnmute: 'ask-to-unmute',
+    autoAssignToBreakoutRooms: 'auto-assign-to-breakout-rooms',
     avatarUrl: 'avatar-url',
     cancelPrivateChat: 'cancel-private-chat',
+    closeBreakoutRoom: 'close-breakout-room',
     displayName: 'display-name',
     e2eeKey: 'e2ee-key',
     email: 'email',
-    toggleLobby: 'toggle-lobby',
+    grantModerator: 'grant-moderator',
     hangup: 'video-hangup',
+    hideNotification: 'hide-notification',
     initiatePrivateChat: 'initiate-private-chat',
+    joinBreakoutRoom: 'join-breakout-room',
+    localSubject: 'local-subject',
     kickParticipant: 'kick-participant',
     muteEveryone: 'mute-everyone',
     overwriteConfig: 'overwrite-config',
+    overwriteNames: 'overwrite-names',
     password: 'password',
     pinParticipant: 'pin-participant',
+    rejectParticipant: 'reject-participant',
+    removeBreakoutRoom: 'remove-breakout-room',
+    resizeFilmStrip: 'resize-film-strip',
     resizeLargeVideo: 'resize-large-video',
     sendChatMessage: 'send-chat-message',
     sendEndpointTextMessage: 'send-endpoint-text-message',
+    sendParticipantToRoom: 'send-participant-to-room',
     sendTones: 'send-tones',
     setFollowMe: 'set-follow-me',
     setLargeVideoParticipant: 'set-large-video-participant',
+    setMediaEncryptionKey: 'set-media-encryption-key',
+    setNoiseSuppressionEnabled: 'set-noise-suppression-enabled',
     setParticipantVolume: 'set-participant-volume',
+    setSubtitles: 'set-subtitles',
     setTileView: 'set-tile-view',
     setVideoQuality: 'set-video-quality',
+    showNotification: 'show-notification',
     startRecording: 'start-recording',
     startShareVideo: 'start-share-video',
     stopRecording: 'stop-recording',
@@ -59,10 +77,15 @@ const commands = {
     toggleCamera: 'toggle-camera',
     toggleCameraMirror: 'toggle-camera-mirror',
     toggleChat: 'toggle-chat',
+    toggleE2EE: 'toggle-e2ee',
     toggleFilmStrip: 'toggle-film-strip',
+    toggleLobby: 'toggle-lobby',
+    toggleModeration: 'toggle-moderation',
+    toggleNoiseSuppression: 'toggle-noise-suppression',
+    toggleParticipantsPane: 'toggle-participants-pane',
     toggleRaiseHand: 'toggle-raise-hand',
-    toggleShareAudio: 'toggle-share-audio',
     toggleShareScreen: 'toggle-share-screen',
+    toggleSubtitles: 'toggle-subtitles',
     toggleTileView: 'toggle-tile-view',
     toggleVirtualBackgroundDialog: 'toggle-virtual-background',
     toggleVideo: 'toggle-video'
@@ -70,12 +93,14 @@ const commands = {
 
 /**
  * Maps the names of the events expected by the API with the name of the
- * events expected by jitsi-meet
+ * events expected by jitsi-meet.
  */
 const events = {
     'avatar-changed': 'avatarChanged',
     'audio-availability-changed': 'audioAvailabilityChanged',
     'audio-mute-status-changed': 'audioMuteStatusChanged',
+    'audio-or-video-sharing-toggled': 'audioOrVideoSharingToggled',
+    'breakout-rooms-updated': 'breakoutRoomsUpdated',
     'browser-support': 'browserSupport',
     'camera-error': 'cameraError',
     'chat-updated': 'chatUpdated',
@@ -86,12 +111,18 @@ const events = {
     'email-change': 'emailChange',
     'error-occurred': 'errorOccurred',
     'endpoint-text-message-received': 'endpointTextMessageReceived',
+    'face-landmark-detected': 'faceLandmarkDetected',
     'feedback-submitted': 'feedbackSubmitted',
     'feedback-prompt-displayed': 'feedbackPromptDisplayed',
     'filmstrip-display-changed': 'filmstripDisplayChanged',
+    'iframe-dock-state-changed': 'iframeDockStateChanged',
     'incoming-message': 'incomingMessage',
+    'knocking-participant': 'knockingParticipant',
     'log': 'log',
     'mic-error': 'micError',
+    'moderation-participant-approved': 'moderationParticipantApproved',
+    'moderation-participant-rejected': 'moderationParticipantRejected',
+    'moderation-status-changed': 'moderationStatusChanged',
     'mouse-enter': 'mouseEnter',
     'mouse-leave': 'mouseLeave',
     'mouse-move': 'mouseMove',
@@ -100,9 +131,12 @@ const events = {
     'participant-kicked-out': 'participantKickedOut',
     'participant-left': 'participantLeft',
     'participant-role-changed': 'participantRoleChanged',
+    'participants-pane-toggled': 'participantsPaneToggled',
     'password-required': 'passwordRequired',
+    'prejoin-screen-loaded': 'prejoinScreenLoaded',
     'proxy-connection-event': 'proxyConnectionEvent',
     'raise-hand-updated': 'raiseHandUpdated',
+    'recording-link-available': 'recordingLinkAvailable',
     'recording-status-changed': 'recordingStatusChanged',
     'video-ready-to-close': 'readyToClose',
     'video-conference-joined': 'videoConferenceJoined',
@@ -119,7 +153,8 @@ const events = {
 };
 
 /**
- * Last id of api object
+ * Last id of api object.
+ *
  * @type {number}
  */
 let id = 0;
@@ -149,6 +184,7 @@ function changeParticipantNumber(APIInstance, number) {
  * configuration options defined in interface_config.js to be overridden.
  * @param {string} [options.jwt] - The JWT token if needed by jitsi-meet for
  * authentication.
+ * @param {string} [options.lang] - The meeting's default language.
  * @param {string} [options.roomName] - The name of the room to join.
  * @returns {string} The URL.
  */
@@ -187,7 +223,8 @@ function parseArguments(args) {
             configOverwrite,
             interfaceConfigOverwrite,
             jwt,
-            onload
+            onload,
+            lang
         ] = args;
 
         return {
@@ -198,7 +235,8 @@ function parseArguments(args) {
             configOverwrite,
             interfaceConfigOverwrite,
             jwt,
-            onload
+            onload,
+            lang
         };
     }
     case 'object': // new arguments format
@@ -259,6 +297,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * configuration options defined in interface_config.js to be overridden.
      * @param {string} [options.jwt] - The JWT token if needed by jitsi-meet for
      * authentication.
+     * @param {string} [options.lang] - The meeting's default language.
      * @param {string} [options.onload] - The onload function that will listen
      * for iframe onload event.
      * @param {Array<Object>} [options.invitees] - Array of objects containing
@@ -269,6 +308,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * the participant opening the meeting.
      * @param {string}  [options.e2eeKey] - The key used for End-to-End encryption.
      * THIS IS EXPERIMENTAL.
+     * @param {string}  [options.release] - The key used for specifying release if enabled on the backend.
      */
     constructor(domain, ...args) {
         super();
@@ -280,11 +320,13 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             configOverwrite = {},
             interfaceConfigOverwrite = {},
             jwt = undefined,
+            lang = undefined,
             onload = undefined,
             invitees,
             devices,
             userInfo,
-            e2eeKey
+            e2eeKey,
+            release
         } = parseArguments(args);
         const localStorageContent = jitsiLocalStorage.getItem('jitsiLocalStorage');
 
@@ -293,12 +335,14 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             configOverwrite,
             interfaceConfigOverwrite,
             jwt,
+            lang,
             roomName,
             devices,
             userInfo,
             appData: {
                 localStorageContent
-            }
+            },
+            release
         });
         this._createIFrame(height, width, onload);
         this._transport = new Transport({
@@ -314,7 +358,8 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             this.invite(invitees);
         }
         this._tmpE2EEKey = e2eeKey;
-        this._isLargeVideoVisible = true;
+        this._isLargeVideoVisible = false;
+        this._isPrejoinVideoVisible = false;
         this._numberOfParticipants = 0;
         this._participants = {};
         this._myUserID = undefined;
@@ -377,7 +422,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         }
 
         return ALWAYS_ON_TOP_FILENAMES.map(
-            filename => (new URL(filename, baseURL)).href
+            filename => new URL(filename, baseURL).href
         );
     }
 
@@ -420,6 +465,24 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         }
 
         return iframe.contentWindow.document.getElementById('largeVideo');
+    }
+
+    /**
+     * Getter for the prejoin video element in Jitsi Meet.
+     *
+     * @returns {HTMLElement|undefined} - The prejoin video.
+     */
+    _getPrejoinVideo() {
+        const iframe = this.getIFrame();
+
+        if (!this._isPrejoinVideoVisible
+                || !iframe
+                || !iframe.contentWindow
+                || !iframe.contentWindow.document) {
+            return;
+        }
+
+        return iframe.contentWindow.document.getElementById('prejoinVideo');
     }
 
     /**
@@ -490,6 +553,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
 
                 this._myUserID = userID;
                 this._participants[userID] = {
+                    email: data.email,
                     avatarURL: data.avatarURL
                 };
             }
@@ -540,12 +604,25 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
                 this._isLargeVideoVisible = data.isVisible;
                 this.emit('largeVideoChanged');
                 break;
+            case 'prejoin-screen-loaded':
+                this._participants[userID] = {
+                    displayName: data.displayName,
+                    formattedDisplayName: data.formattedDisplayName
+                };
+                break;
+            case 'on-prejoin-video-changed':
+                this._isPrejoinVideoVisible = data.isVisible;
+                this.emit('prejoinVideoChanged');
+                break;
             case 'video-conference-left':
                 changeParticipantNumber(this, -1);
                 delete this._participants[this._myUserID];
                 break;
             case 'video-quality-changed':
                 this._videoQuality = data.videoQuality;
+                break;
+            case 'breakout-rooms-updated':
+                this.updateNumberOfParticipants(data.rooms);
                 break;
             case 'local-storage-changed':
                 jitsiLocalStorage.setItem('jitsiLocalStorage', data.localStorageContent);
@@ -563,6 +640,40 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             }
 
             return false;
+        });
+    }
+
+    /**
+     * Update number of participants based on all rooms.
+     *
+     * @param {Object} rooms - Rooms available rooms in the conference.
+     * @returns {void}
+     */
+    updateNumberOfParticipants(rooms) {
+        if (!rooms || !Object.keys(rooms).length) {
+            return;
+        }
+
+        const allParticipants = Object.keys(rooms).reduce((prev, roomItemKey) => {
+            if (rooms[roomItemKey]?.participants) {
+                return Object.keys(rooms[roomItemKey].participants).length + prev;
+            }
+
+            return prev;
+        }, 0);
+
+        this._numberOfParticipants = allParticipants;
+    }
+
+
+    /**
+     * Returns the rooms info in the conference.
+     *
+     * @returns {Object} Rooms info.
+     */
+    async getRoomsInfo() {
+        return this._transport.sendRequest({
+            name: 'rooms-info'
         });
     }
 
@@ -897,6 +1008,60 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     }
 
     /**
+     * Returns the audio disabled status.
+     *
+     * @returns {Promise} - Resolves with the audio disabled status and rejects on
+     * failure.
+     */
+    isAudioDisabled() {
+        return this._transport.sendRequest({
+            name: 'is-audio-disabled'
+        });
+    }
+
+    /**
+     * Returns the moderation on status on the given mediaType.
+     *
+     * @param {string} mediaType - The media type for which to check moderation.
+     * @returns {Promise} - Resolves with the moderation on status and rejects on
+     * failure.
+     */
+    isModerationOn(mediaType) {
+        return this._transport.sendRequest({
+            name: 'is-moderation-on',
+            mediaType
+        });
+    }
+
+    /**
+     * Returns force muted status of the given participant id for the given media type.
+     *
+     * @param {string} participantId - The id of the participant to check.
+     * @param {string} mediaType - The media type for which to check.
+     * @returns {Promise} - Resolves with the force muted status and rejects on
+     * failure.
+     */
+    isParticipantForceMuted(participantId, mediaType) {
+        return this._transport.sendRequest({
+            name: 'is-participant-force-muted',
+            participantId,
+            mediaType
+        });
+    }
+
+    /**
+     * Returns whether the participants pane is open.
+     *
+     * @returns {Promise} - Resolves with true if the participants pane is open
+     * and with false if not.
+     */
+    isParticipantsPaneOpen() {
+        return this._transport.sendRequest({
+            name: 'is-participants-pane-open'
+        });
+    }
+
+    /**
      * Returns screen sharing status.
      *
      * @returns {Promise} - Resolves with screensharing status and rejects on failure.
@@ -904,6 +1069,17 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     isSharingScreen() {
         return this._transport.sendRequest({
             name: 'is-sharing-screen'
+        });
+    }
+
+    /**
+     * Returns whether meeting is started silent.
+     *
+     * @returns {Promise} - Resolves with start silent status.
+     */
+    isStartSilent() {
+        return this._transport.sendRequest({
+            name: 'is-start-silent'
         });
     }
 
@@ -917,6 +1093,17 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         const { avatarURL } = this._participants[participantId] || {};
 
         return avatarURL;
+    }
+
+    /**
+     * Gets the deployment info.
+     *
+     * @returns {Promise} - Resolves with the deployment info object.
+     */
+    getDeploymentInfo() {
+        return this._transport.sendRequest({
+            name: 'deployment-info'
+        });
     }
 
     /**
@@ -953,7 +1140,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     }
 
     /**
-     * Returns the number of participants in the conference. The local
+     * Returns the number of participants in the conference from all rooms. The local
      * participant is included.
      *
      * @returns {int} The number of participants in the conference.
@@ -983,6 +1170,17 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     isVideoMuted() {
         return this._transport.sendRequest({
             name: 'is-video-muted'
+        });
+    }
+
+    /**
+     * Returns the list of breakout rooms.
+     *
+     * @returns {Promise} Resolves with the list of breakout rooms.
+     */
+    listBreakoutRooms() {
+        return this._transport.sendRequest({
+            name: 'list-breakout-rooms'
         });
     }
 
@@ -1117,9 +1315,9 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * @param { boolean } options.shouldShare - Whether the recording should be shared with the participants or not.
      * Only applies to certain jitsi meet deploys.
      * @param { string } options.rtmpStreamKey - The RTMP stream key.
-     * @param { string } options.rtmpBroadcastID - The RTMP broacast ID.
+     * @param { string } options.rtmpBroadcastID - The RTMP broadcast ID.
      * @param { string } options.youtubeStreamKey - The youtube stream key.
-     * @param { string } options.youtubeBroadcastID - The youtube broacast ID.
+     * @param { string } options.youtubeBroadcastID - The youtube broadcast ID.
      * @returns {void}
      */
     startRecording(options) {
@@ -1133,6 +1331,40 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * @returns {void}
      */
     stopRecording(mode) {
-        this.executeCommand('startRecording', mode);
+        this.executeCommand('stopRecording', mode);
+    }
+
+    /**
+     * Sets e2ee enabled/disabled.
+     *
+     * @param {boolean} enabled - The new value for e2ee enabled.
+     * @returns {void}
+     */
+    toggleE2EE(enabled) {
+        this.executeCommand('toggleE2EE', enabled);
+    }
+
+    /**
+     * Sets the key and keyIndex for e2ee.
+     *
+     * @param {Object} keyInfo - Json containing key information.
+     * @param {CryptoKey} [keyInfo.encryptionKey] - The encryption key.
+     * @param {number} [keyInfo.index] - The index of the encryption key.
+     * @returns {void}
+     */
+    async setMediaEncryptionKey(keyInfo) {
+        const { key, index } = keyInfo;
+
+        if (key) {
+            const exportedKey = await crypto.subtle.exportKey('raw', key);
+
+            this.executeCommand('setMediaEncryptionKey', JSON.stringify({
+                exportedKey: Array.from(new Uint8Array(exportedKey)),
+                index }));
+        } else {
+            this.executeCommand('setMediaEncryptionKey', JSON.stringify({
+                exportedKey: false,
+                index }));
+        }
     }
 }

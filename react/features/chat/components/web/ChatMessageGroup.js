@@ -21,7 +21,7 @@ type Props = {
  * Displays a list of chat messages. Will show only the display name for the
  * first chat message and the timestamp for the last chat message.
  *
- * @extends React.Component
+ * @augments React.Component
  */
 class ChatMessageGroup extends Component<Props> {
     static defaultProps = {
@@ -44,15 +44,13 @@ class ChatMessageGroup extends Component<Props> {
 
         return (
             <div className = { `chat-message-group ${className}` }>
-                {
-                    messages.map((message, i) => (
-                        <ChatMessage
-                            key = { i }
-                            message = { message }
-                            showDisplayName = { i === 0 }
-                            showTimestamp = { i === messages.length - 1 } />
-                    ))
-                }
+                { messages.map((message, i) => (
+                    <ChatMessage
+                        key = { i }
+                        message = { message }
+                        showDisplayName = { i === 0 }
+                        showTimestamp = { i === messages.length - 1 } />
+                ))}
             </div>
         );
     }

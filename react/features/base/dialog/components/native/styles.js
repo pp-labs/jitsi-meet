@@ -1,5 +1,3 @@
-// @flow
-
 import { StyleSheet } from 'react-native';
 
 import BaseTheme from '../../../../base/ui/components/BaseTheme.native';
@@ -20,7 +18,41 @@ export const MD_FONT_SIZE = 16;
 export const MD_ITEM_HEIGHT = 48;
 export const MD_ITEM_MARGIN_PADDING = 16;
 
-export const PLACEHOLDER_COLOR = ColorPalette.lightGrey;
+/**
+ * Reusable (colored) style for text in any branded dialogs.
+ */
+const brandedDialogText = {
+    color: schemeColor('text'),
+    fontSize: MD_FONT_SIZE,
+    textAlign: 'center'
+};
+
+const brandedDialogLabelStyle = {
+    color: ColorPalette.white,
+    flexShrink: 1,
+    fontSize: MD_FONT_SIZE,
+    opacity: 0.90
+};
+
+const brandedDialogItemContainerStyle = {
+    alignItems: 'center',
+    flexDirection: 'row',
+    height: MD_ITEM_HEIGHT
+};
+
+const brandedDialogIconStyle = {
+    color: ColorPalette.white,
+    fontSize: 24
+};
+
+export const inputDialog = {
+    formMessage: {
+        alignSelf: 'flex-start',
+        fontStyle: 'italic',
+        fontWeight: 'bold',
+        marginTop: BaseTheme.spacing[3]
+    }
+};
 
 /**
  * The React {@code Component} styles of {@code BottomSheet}. These have
@@ -52,123 +84,10 @@ export const bottomSheetStyles = {
     },
 
     sheetItemContainer: {
-        flex: -1
-    }
-};
-
-export const brandedDialog = {
-
-    /**
-     * The style of bold {@code Text} rendered by the {@code Dialog}s of the
-     * feature authentication.
-     */
-    boldDialogText: {
-        fontWeight: 'bold'
+        flex: -1,
+        maxHeight: '75%'
     },
 
-    buttonFarLeft: {
-        borderBottomLeftRadius: BORDER_RADIUS
-    },
-
-    buttonFarRight: {
-        borderBottomRightRadius: BORDER_RADIUS
-    },
-
-    buttonWrapper: {
-        alignItems: 'stretch',
-        borderRadius: BORDER_RADIUS,
-        flexDirection: 'row'
-    },
-
-    closeWrapper: {
-        padding: BoxModel.padding
-    },
-
-    dialogTitle: {
-        fontWeight: 'bold',
-        paddingLeft: BoxModel.padding * 2
-    },
-
-    headerWrapper: {
-        alignItems: 'center',
-        flexDirection: 'row',
-        justifyContent: 'space-between'
-    },
-
-    mainWrapper: {
-        alignSelf: 'stretch',
-        padding: BoxModel.padding * 2,
-
-        // The added bottom padding is to compensate the empty space around the
-        // close icon.
-        paddingBottom: BoxModel.padding * 3
-    },
-
-    overlay: {
-        ...StyleSheet.absoluteFillObject,
-        alignItems: 'center',
-        backgroundColor: 'rgba(127, 127, 127, 0.6)',
-        flexDirection: 'row',
-        justifyContent: 'center',
-        padding: 30
-    },
-
-    overlayTouchable: {
-        ...StyleSheet.absoluteFillObject
-    }
-};
-
-/**
- * Reusable (colored) style for text in any branded dialogs.
- */
-const brandedDialogText = {
-    color: schemeColor('text'),
-    fontSize: MD_FONT_SIZE,
-    textAlign: 'center'
-};
-
-const brandedDialogLabelStyle = {
-    color: ColorPalette.white,
-    flexShrink: 1,
-    fontSize: MD_FONT_SIZE,
-    opacity: 0.90
-};
-
-const brandedDialogItemContainerStyle = {
-    alignItems: 'center',
-    flexDirection: 'row',
-    height: MD_ITEM_HEIGHT
-};
-
-const brandedDialogIconStyle = {
-    color: ColorPalette.white,
-    fontSize: 24
-};
-
-export const inputDialog = {
-    bottomField: {
-        marginBottom: 0
-    },
-
-    fieldWrapper: {
-        ...brandedDialog.mainWrapper,
-        paddingBottom: BoxModel.padding * 2
-    },
-
-    formMessage: {
-        alignSelf: 'flex-start',
-        fontStyle: 'italic',
-        margin: BoxModel.margin
-    }
-};
-
-/**
- * Default styles for the items of a {@code BottomSheet}-based menu.
- *
- * These have been implemented as per the Material Design guidelines:
- * {@link https://material.io/guidelines/components/bottom-sheets.html}.
- */
-ColorSchemeRegistry.register('BottomSheet', {
     buttons: {
         /**
          * Style for the {@code Icon} element in a generic item of the menu.
@@ -221,7 +140,53 @@ ColorSchemeRegistry.register('BottomSheet', {
     sheetFooter: {
         backgroundColor: BaseTheme.palette.bottomSheet
     }
-});
+};
+
+export default {
+    dialogButton: {
+        ...BaseTheme.typography.labelButton
+    },
+
+    destructiveDialogButton: {
+        ...BaseTheme.typography.labelButton,
+        color: BaseTheme.palette.actionDanger
+    }
+};
+
+export const brandedDialog = {
+
+    /**
+     * The style of bold {@code Text} rendered by the {@code Dialog}s of the
+     * feature authentication.
+     */
+    boldDialogText: {
+        fontWeight: 'bold'
+    },
+
+    buttonFarRight: {
+        borderBottomRightRadius: BORDER_RADIUS
+    },
+
+    buttonWrapper: {
+        alignItems: 'stretch',
+        borderRadius: BORDER_RADIUS,
+        flexDirection: 'row'
+    },
+
+    mainWrapper: {
+        alignSelf: 'stretch',
+        padding: BoxModel.padding * 2,
+
+        // The added bottom padding is to compensate the empty space around the
+        // close icon.
+        paddingBottom: BoxModel.padding * 3
+    },
+
+    overlayTouchable: {
+        ...StyleSheet.absoluteFillObject
+    }
+};
+
 
 /**
  * Color schemed styles for all the component based on the abstract dialog.
@@ -290,36 +255,12 @@ ColorSchemeRegistry.register('Dialog', {
     },
 
     text: {
-        ...brandedDialogText
+        ...brandedDialogText,
+        color: BaseTheme.palette.text01
     },
 
     topBorderContainer: {
-        borderTopColor: schemeColor('border'),
+        borderTopColor: BaseTheme.palette.dividerColor,
         borderTopWidth: 1
-    }
-});
-
-ColorSchemeRegistry.register('SecurityDialog', {
-    /**
-     * Field on an input dialog.
-     */
-    field: {
-        borderBottomWidth: 1,
-        borderColor: schemeColor('border'),
-        color: schemeColor('text'),
-        fontSize: 14,
-        paddingBottom: 8
-    },
-
-    text: {
-        color: schemeColor('text'),
-        fontSize: 14,
-        marginTop: 8
-    },
-
-    title: {
-        color: schemeColor('text'),
-        fontSize: 18,
-        fontWeight: 'bold'
     }
 });

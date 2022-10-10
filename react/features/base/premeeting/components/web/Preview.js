@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { getDisplayName } from '../../../../base/settings';
 import { Avatar } from '../../../avatar';
@@ -9,10 +9,12 @@ import { getLocalParticipant } from '../../../participants';
 import { connect } from '../../../redux';
 import { getLocalVideoTrack } from '../../../tracks';
 
+declare var APP: Object;
+
 export type Props = {
 
     /**
-     * Local participant id
+     * Local participant id.
      */
     _participantId: string,
 
@@ -47,21 +49,31 @@ function Preview(props: Props) {
     const { _participantId, flipVideo, name, videoMuted, videoTrack } = props;
     const className = flipVideo ? 'flipVideoX' : '';
 
+    useEffect(() => {
+        APP.API.notifyPrejoinVideoVisibilityChanged(Boolean(!videoMuted && videoTrack));
+    }, [ videoMuted, videoTrack ]);
+
+    useEffect(() => {
+        APP.API.notifyPrejoinLoaded();
+
+        return () => APP.API.notifyPrejoinVideoVisibilityChanged(false);
+    }, []);
+
     return (
         <div id = 'preview'>
             {!videoMuted && videoTrack
                 ? (
                     <Video
                         className = { className }
+                        id = 'prejoinVideo'
                         videoTrack = {{ jitsiTrack: videoTrack }} />
                 )
                 : (
                     <Avatar
                         className = 'premeeting-screen-avatar'
                         displayName = { name }
-                        dynamicColor = { false }
                         participantId = { _participantId }
-                        size = { 180 } />
+                        size = { 200 } />
                 )}
         </div>
     );

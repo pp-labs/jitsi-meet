@@ -29,7 +29,8 @@
     right: 0;
     transition: top .3s ease-in;
     width: 100%;
-
+    pointer-events: none;
+    z-index: $toolbarZ + 2;
 
     &.visible {
         top: 0;
@@ -37,13 +38,6 @@
 
     &.no-buttons {
         display: none;
-    }
-
-    @media (min-width: 581px) {
-        &.shift-right {
-            margin-left: $sidebarWidth;
-            width: calc(100% - #{$sidebarWidth});
-        }
     }
 }
 
@@ -78,14 +72,6 @@
     }
 }
 
-.toolbox-button {
-    color: $toolbarButtonColor;
-    cursor: pointer;
-    display: inline-block;
-    line-height: $newToolbarSize;
-    text-align: center;
-}
-
 .toolbar-button-with-badge {
     display: inline-block;
     position: relative;
@@ -107,6 +93,10 @@
     max-width: 100%;
     pointer-events: all;
     border-radius: 6px;
+
+    .toolbox-content-items {
+        @include ltr;
+    }
 }
 
 .toolbox-content-wrapper::after {
@@ -288,6 +278,20 @@
     }
 }
 
+.hangup-menu-button {
+    background-color: $hangupMenuButtonColor;
+
+    @media (hover: hover) and (pointer: fine) {
+        &:hover {
+            background-color: $hangupMenuButtonHoverColor;
+        }
+    }
+
+    svg {
+        fill: #fff;
+    }
+}
+
 .profile-button-avatar {
     align-items: center;
 }
@@ -336,6 +340,7 @@
 
         .toolbox-content-items {
             // sally  - disable toobar button centering on mobiles
+            @include ltr;
             border-radius: 0;
             display: flex;
             //justify-content: space-evenly;

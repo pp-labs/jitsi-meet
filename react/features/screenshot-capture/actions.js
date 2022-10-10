@@ -1,7 +1,7 @@
 // @flow
 
-import { getLocalVideoTrack } from '../../features/base/tracks';
-
+import { getLocalJitsiDesktopTrack, getLocalJitsiVideoTrack } from '../../features/base/tracks';
+import { getMultipleVideoSendingSupportFeatureFlag } from '../base/config';
 
 import { SET_SCREENSHOT_CAPTURE } from './actionTypes';
 import { createScreenshotCaptureSummary } from './functions';
@@ -36,8 +36,6 @@ export function toggleScreenshotCaptureSummary(enabled: boolean) {
         const state = getState();
 
         if (state['features/screenshot-capture'].capturesEnabled !== enabled) {
-            const { jitsiTrack } = getLocalVideoTrack(state['features/base/tracks']);
-
             if (!screenshotSummary) {
                 try {
                     screenshotSummary = await createScreenshotCaptureSummary(state);
@@ -48,10 +46,13 @@ export function toggleScreenshotCaptureSummary(enabled: boolean) {
 
             if (enabled) {
                 try {
+                    const jitsiTrack = getMultipleVideoSendingSupportFeatureFlag(state)
+                        ? getLocalJitsiDesktopTrack(state)
+                        : getLocalJitsiVideoTrack(state);
+
                     await screenshotSummary.start(jitsiTrack);
                     dispatch(setScreenshotCapture(enabled));
                 } catch {
-
                     // Handle promise rejection from {@code start} due to stream type not being desktop.
                     logger.error('Unsupported stream type.');
                 }

@@ -13,8 +13,7 @@
     .remote-videos {
         align-items: center;
         box-sizing: border-box;
-        display: flex;
-        flex-direction: column;
+        overscroll-behavior: contain;
     }
 
     .filmstrip__videos .videocontainer {
@@ -50,17 +49,6 @@
         top: 0;
         width: 100%;
 
-        @media (min-width: 581px) {
-            &.shift-right {
-                margin-left: $sidebarWidth;
-                width: calc(100% - #{$sidebarWidth});
-
-                .remote-videos {
-                    width: calc(100vw - #{$sidebarWidth});
-                }
-            }
-        }
-
         &.collapse {
             #remoteVideos {
                 height: calc(100% - #{$newToolbarSizeMobile}) !important;
@@ -80,6 +68,10 @@
      */
     .filmstrip__videos.hidden {
         display: block;
+    }
+
+    .filmstrip__videos.has-scroll {
+        padding-left: 7px;
     }
 
     .remote-videos {
@@ -187,8 +179,4 @@
             object-fit: cover;
         }
     }
-}
-
-.indicator-icon-container {
-    display: inline-block;
 }

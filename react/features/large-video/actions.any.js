@@ -2,6 +2,7 @@
 
 import type { Dispatch } from 'redux';
 
+import { getMultipleVideoSupportFeatureFlag } from '../base/config';
 import { MEDIA_TYPE } from '../base/media';
 import {
     getDominantSpeakerParticipant,
@@ -9,11 +10,15 @@ import {
     getPinnedParticipant,
     getRemoteParticipants,
     getCustomTrainers,
-    getParticipantById
+    getParticipantById,
+    getVirtualScreenshareParticipantByOwnerId
 } from '../base/participants';
+import { isStageFilmstripAvailable } from '../filmstrip/functions';
+import { getAutoPinSetting } from '../video-layout';
 
 import {
     SELECT_LARGE_VIDEO_PARTICIPANT,
+    SET_LARGE_VIDEO_DIMENSIONS,
     UPDATE_KNOWN_LARGE_VIDEO_RESOLUTION
 } from './actionTypes';
 
@@ -30,6 +35,16 @@ import {
 export function selectParticipantInLargeVideo(participant: ?string) {
     return (dispatch: Dispatch<any>, getState: Function) => {
         const state = getState();
+
+        if (isStageFilmstripAvailable(state, 2)) {
+            return;
+        }
+
+        // Keep Etherpad open.
+        if (state['features/etherpad'].editing) {
+            return;
+        }
+
         const participantId = participant ?? _electParticipantInLargeVideo(state);
         const largeVideo = state['features/large-video'];
         const remoteScreenShares = state['features/video-layout'].remoteScreenShares;
@@ -67,6 +82,25 @@ export function updateKnownLargeVideoResolution(resolution: number) {
     return {
         type: UPDATE_KNOWN_LARGE_VIDEO_RESOLUTION,
         resolution
+    };
+}
+
+/**
+ * Sets the dimenstions of the large video in redux.
+ *
+ * @param {number} height - The height of the large video.
+ * @param {number} width - The width of the large video.
+ * @returns {{
+ *     type: SET_LARGE_VIDEO_DIMENSIONS,
+ *     height: number,
+ *     width: number
+ * }}
+ */
+export function setLargeVideoDimensions(height, width) {
+    return {
+        type: SET_LARGE_VIDEO_DIMENSIONS,
+        height,
+        width
     };
 }
 
@@ -114,8 +148,9 @@ function _electParticipantInLargeVideo(state) {
 
 
 
-    // 2. Next, pick the most recent remote screenshare that was added to the conference.
-    const remoteScreenShares = state['features/video-layout'].remoteScreenShares;
+    if (getAutoPinSetting()) {
+        // Pick the most recent remote screenshare that was added to the conference.
+        const remoteScreenShares = state['features/video-layout'].remoteScreenShares;
 
     if (remoteScreenShares?.length > 0) {
         return remoteScreenShares[remoteScreenShares.length - 1];
@@ -128,16 +163,24 @@ function _electParticipantInLargeVideo(state) {
         return trainers[0].id;
     } else return null;
 
-    // 3. Next, pick the dominant speaker (other than self).
+    // Next, pick the dominant speaker (other than self).
     participant = getDominantSpeakerParticipant(state);
     if (participant && !participant.local) {
+        // Return the screensharing participant id associated with this endpoint if multi-stream is enabled and
+        // auto pin latest screenshare is disabled.
+        if (getMultipleVideoSupportFeatureFlag(state)) {
+            const screenshareParticipant = getVirtualScreenshareParticipantByOwnerId(state, participant.id);
+
+            return screenshareParticipant?.id ?? participant.id;
+        }
+
         return participant.id;
     }
 
     // In case this is the local participant.
     participant = undefined;
 
-    // 4. Next, pick the most recent participant with video.
+    // Next, pick the most recent participant with video.
     const tracks = state['features/base/tracks'];
     const videoTrack = _electLastVisibleRemoteVideo(tracks);
 

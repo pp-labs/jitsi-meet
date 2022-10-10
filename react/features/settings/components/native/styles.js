@@ -1,14 +1,32 @@
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
+
 export const ANDROID_UNDERLINE_COLOR = 'transparent';
-export const PLACEHOLDER_COLOR = BaseTheme.palette.action02Focus;
-export const THUMB_COLOR = BaseTheme.palette.field02;
+export const PLACEHOLDER_COLOR = BaseTheme.palette.focus01;
+export const PLACEHOLDER_TEXT_COLOR = BaseTheme.palette.text03;
 
 const TEXT_SIZE = 14;
+
 
 /**
  * The styles of the native components of the feature {@code settings}.
  */
 export default {
+
+    avatarContainer: {
+        alignItems: 'center',
+        flexDirection: 'column',
+        height: 180,
+        justifyContent: 'center'
+    },
+
+    /**
+     * Style for screen container.
+     */
+    settingsViewContainer: {
+        backgroundColor: BaseTheme.palette.ui01,
+        flex: 1
+    },
+
     /**
      * Standardized style for a field container {@code View}.
      */
@@ -55,7 +73,7 @@ export default {
      */
     fieldSeparator: {
         borderBottomWidth: 1,
-        borderColor: 'rgba(0, 0, 0, 0.1)'
+        borderColor: BaseTheme.palette.ui05
     },
 
     /**
@@ -74,34 +92,42 @@ export default {
      * Style for the form section separator titles.
      */
     formSectionTitle: {
-        backgroundColor: BaseTheme.palette.section01,
+        backgroundColor: BaseTheme.palette.ui02,
         paddingBottom: 0,
         paddingTop: 0
     },
 
-    formSectionTitleActive: {
-        color: BaseTheme.palette.section01Active
+    formSectionTitleText: {
+        color: BaseTheme.palette.text01
     },
 
-    formSectionTitleInActive: {
-        color: BaseTheme.palette.section01Inactive
-    },
-
-    sectionClose: {
-        color: BaseTheme.palette.section01Inactive,
+    section: {
+        color: BaseTheme.palette.icon01,
         fontSize: 14
     },
 
-    sectionOpen: {
-        color: BaseTheme.palette.section01Active,
-        fontSize: 14
+    sectionLink: {
+        ...BaseTheme.typography.bodyShortBoldLarge,
+        color: BaseTheme.palette.link01,
+        margin: BaseTheme.spacing[3],
+        textAlign: 'center'
+    },
+
+    sectionLinkContainer: {
+        margin: BaseTheme.spacing[3]
+    },
+
+    sectionLinkText: {
+        ...BaseTheme.typography.bodyShortBoldLarge,
+        color: BaseTheme.palette.link01,
+        textAlign: 'center'
     },
 
     /**
      * Global {@code Text} color for the components.
      */
     text: {
-        color: BaseTheme.palette.field01
+        color: BaseTheme.palette.text01
     },
 
     /**
@@ -109,11 +135,10 @@ export default {
      */
     textInputContainer: {
         flex: 1,
-        height: 40,
-        paddingBottom: 8,
-        paddingTop: 2,
-        paddingLeft: 16,
-        paddingRight: 16
+        height: BaseTheme.spacing[7],
+        marginBottom: BaseTheme.spacing[3],
+        marginHorizontal: BaseTheme.spacing[3],
+        marginTop: BaseTheme.spacing[2]
     },
 
     /**
@@ -135,5 +160,12 @@ export default {
         marginVertical: 5,
         paddingVertical: 3,
         textAlign: 'left'
+    },
+
+    /**
+     * Style for screen container.
+     */
+    screenContainer: {
+        flex: 1
     }
 };

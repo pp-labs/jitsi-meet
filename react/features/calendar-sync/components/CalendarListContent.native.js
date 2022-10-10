@@ -11,7 +11,7 @@ import { appNavigate } from '../../app/actions';
 import { getLocalizedDateFormatter, translate } from '../../base/i18n';
 import { NavigateSectionList } from '../../base/react';
 import { connect } from '../../base/redux';
-import { refreshCalendar, openUpdateCalendarEventDialog } from '../actions';
+import { openUpdateCalendarEventDialog, refreshCalendar } from '../actions';
 
 
 /**
@@ -117,7 +117,7 @@ class CalendarListContent extends Component<Props> {
      * associated with this action.
      * @returns {void}
      */
-    _onPress(url, analyticsEventName = 'calendar.meeting.tile') {
+    _onPress(url, analyticsEventName = 'meeting.tile') {
         sendAnalytics(createCalendarClickedEvent(analyticsEventName));
 
         this.props.dispatch(appNavigate(url));

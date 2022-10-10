@@ -84,10 +84,28 @@ export default class AbstractRecordingLabel
         super(props);
 
         this.state = {
-            staleLabel: false
+            staleLabel: true
         };
 
         this._updateStaleStatus({}, props);
+    }
+
+    /**
+     * Implements React {@code Component}'s componentDidMount.
+     *
+     * @inheritdoc
+     */
+    componentDidMount() {
+        this._mounted = true;
+    }
+
+    /**
+     * Implements React {@code Component}'s componentWillUnmount.
+     *
+     * @inheritdoc
+     */
+    componentWillUnmount() {
+        this._mounted = false;
     }
 
     /**
@@ -109,7 +127,7 @@ export default class AbstractRecordingLabel
             ? this._renderLabel() : null;
     }
 
-    _getLabelKey: () => ?string
+    _getLabelKey: () => ?string;
 
     /**
      * Returns the label key that this indicator should render.
@@ -135,7 +153,7 @@ export default class AbstractRecordingLabel
      * @protected
      * @returns {React$Element}
      */
-    _renderLabel: () => React$Element<*>
+    _renderLabel: () => React$Element<*>;
 
     /**
      * Updates the stale status of the label on a prop change. A label is stale
@@ -149,6 +167,10 @@ export default class AbstractRecordingLabel
         if (newProps._status === JitsiRecordingConstants.status.OFF) {
             if (oldProps._status !== JitsiRecordingConstants.status.OFF) {
                 setTimeout(() => {
+                    if (!this._mounted) {
+                        return;
+                    }
+
                     // Only if it's still OFF.
                     if (this.props._status
                             === JitsiRecordingConstants.status.OFF) {

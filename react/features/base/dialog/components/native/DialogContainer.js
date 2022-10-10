@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 
 import { ReactionEmoji } from '../../../../reactions/components';
 import { getReactionsQueue } from '../../../../reactions/functions.any';
@@ -12,7 +12,7 @@ import AbstractDialogContainer, {
  * need a separate container so we can handle multiple dialogs by showing them
  * simultaneously or queueing them.
  *
- * @extends AbstractDialogContainer
+ * @augments AbstractDialogContainer
  */
 class DialogContainer extends AbstractDialogContainer {
 
@@ -38,10 +38,12 @@ class DialogContainer extends AbstractDialogContainer {
      * @returns {ReactElement}
      */
     render() {
-        return (<React.Fragment>
-            {this._renderReactions()}
-            {this._renderDialogContent()}
-        </React.Fragment>);
+        return (
+            <Fragment>
+                {this._renderReactions()}
+                {this._renderDialogContent()}
+            </Fragment>
+        );
     }
 }
 

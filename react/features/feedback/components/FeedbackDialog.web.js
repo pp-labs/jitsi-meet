@@ -1,6 +1,5 @@
 // @flow
 
-import { FieldTextAreaStateless } from '@atlaskit/field-text-area';
 import StarIcon from '@atlaskit/icon/glyph/star';
 import StarFilledIcon from '@atlaskit/icon/glyph/star-filled';
 import React, { Component } from 'react';
@@ -14,6 +13,7 @@ import { Dialog } from '../../base/dialog';
 import { isMobileBrowser } from '../../base/environment/utils';
 import { translate } from '../../base/i18n';
 import { connect } from '../../base/redux';
+import Input from '../../base/ui/components/web/Input';
 import { cancelFeedback, submitFeedback } from '../actions';
 
 declare var APP: Object;
@@ -25,8 +25,6 @@ const scoreAnimationClass
 /**
  * The scores to display for selecting. The score is the index in the array and
  * the value of the index is a translation key used for display in the dialog.
- *
- * @types {string[]}
  */
 const SCORES = [
     'feedback.veryBad',
@@ -109,7 +107,7 @@ type State = {
  * conference quality, write a message describing the experience, and submit
  * the feedback.
  *
- * @extends Component
+ * @augments Component
  */
 class FeedbackDialog extends Component<Props, State> {
     /**
@@ -273,13 +271,12 @@ class FeedbackDialog extends Component<Props, State> {
                         </div>
                     </div>
                     <div className = 'details'>
-                        <FieldTextAreaStateless
+                        <Input
                             autoFocus = { true }
-                            className = 'input-control'
                             id = 'feedbackTextArea'
                             label = { t('feedback.detailsLabel') }
                             onChange = { this._onMessageChange }
-                            shouldFitContainer = { true }
+                            textarea = { true }
                             value = { message } />
                     </div>
                 </div>
@@ -311,13 +308,13 @@ class FeedbackDialog extends Component<Props, State> {
     /**
      * Updates the known entered feedback message.
      *
-     * @param {Object} event - The DOM event from updating the textfield for the
+     * @param {string} newValue - The new value from updating the textfield for the
      * feedback message.
      * @private
      * @returns {void}
      */
-    _onMessageChange(event) {
-        this.setState({ message: event.target.value });
+    _onMessageChange(newValue) {
+        this.setState({ message: newValue });
     }
 
     /**

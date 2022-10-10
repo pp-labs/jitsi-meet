@@ -1,7 +1,7 @@
 // @flow
 
-import { Platform } from 'react-native';
-import * as watch from 'react-native-watch-connectivity';
+import { NativeModules, Platform } from 'react-native';
+import { updateApplicationContext, watchEvents } from 'react-native-watch-connectivity';
 
 import { appNavigate } from '../../app/actions';
 import { APP_WILL_MOUNT } from '../../base/app';
@@ -18,7 +18,8 @@ import { setConferenceTimestamp, setSessionId, setWatchReachable } from './actio
 import { CMD_HANG_UP, CMD_JOIN_CONFERENCE, CMD_SET_MUTED, MAX_RECENT_URLS } from './constants';
 import logger from './logger';
 
-const watchOSEnabled = Platform.OS === 'ios';
+const { AppInfo } = NativeModules;
+const watchOSEnabled = Platform.OS === 'ios' && !AppInfo.isLiteSDK;
 
 // Handles the recent URLs state sent to the watch
 watchOSEnabled && StateListenerRegistry.register(
@@ -70,18 +71,12 @@ watchOSEnabled && MiddlewareRegistry.register(store => next => action => {
  * @returns {void}
  */
 function _appWillMount({ dispatch, getState }) {
-    watch.subscribeToWatchReachability((error, reachable) => {
+    watchEvents.addListener('reachability', reachable => {
         dispatch(setWatchReachable(reachable));
         _updateApplicationContext(getState);
     });
 
-    watch.subscribeToMessages((error, message) => {
-        if (error) {
-            logger.error('watch.subscribeToMessages error:', error);
-
-            return;
-        }
-
+    watchEvents.addListener('message', message => {
         const {
             command,
             sessionID
@@ -185,7 +180,7 @@ function _updateApplicationContext(stateful) {
     }
 
     try {
-        watch.updateApplicationContext({
+        updateApplicationContext({
             conferenceTimestamp,
             conferenceURL: getCurrentConferenceUrl(state),
             micMuted: _isAudioMuted(state),

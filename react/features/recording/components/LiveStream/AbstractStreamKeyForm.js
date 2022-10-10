@@ -3,20 +3,34 @@
 import debounce from 'lodash/debounce';
 import { Component } from 'react';
 
-declare var interfaceConfig: Object;
+import { getLiveStreaming } from './functions';
 
-/**
- * The live streaming help link to display. On web it comes from
- * interfaceConfig, but we don't have that on mobile.
- *
- * FIXME: This is in props now to prepare for the Redux-based interfaceConfig
- */
-const LIVE_STREAMING_HELP_LINK = 'https://jitsi.org/live';
+
+export type LiveStreaming = {
+    enabled: boolean,
+    helpLink: string, // Documentation reference for the live streaming feature.
+    termsLink: string, // Terms link
+    dataPrivacyLink: string, // Data privacy link
+    validatorRegExpString: string // RegExp string that validates the stream key input field
+}
+
+export type LiveStreamingProps = {
+    enabled: boolean,
+    helpURL: string,
+    termsURL: string,
+    dataPrivacyURL: string,
+    streamLinkRegexp: RegExp
+}
 
 /**
  * The props of the component.
  */
 export type Props = {
+
+    /**
+     * The live streaming dialog properties.
+     */
+    _liveStreaming: LiveStreamingProps,
 
     /**
      * Callback invoked when the entered stream key has changed.
@@ -50,11 +64,11 @@ type State = {
  * An abstract React Component for entering a key for starting a YouTube live
  * stream.
  *
- * @extends Component
+ * @augments Component
  */
 export default class AbstractStreamKeyForm<P: Props>
     extends Component<P, State> {
-    helpURL: string;
+
     _debouncedUpdateValidationErrorVisibility: Function;
 
     /**
@@ -69,10 +83,6 @@ export default class AbstractStreamKeyForm<P: Props>
             showValidationError: Boolean(this.props.value)
                 && !this._validateStreamKey(this.props.value)
         };
-
-        this.helpURL = (typeof interfaceConfig !== 'undefined'
-            && interfaceConfig.LIVE_STREAMING_HELP_LINK)
-            || LIVE_STREAMING_HELP_LINK;
 
         this._debouncedUpdateValidationErrorVisibility = debounce(
             this._updateValidationErrorVisibility.bind(this),
@@ -104,7 +114,7 @@ export default class AbstractStreamKeyForm<P: Props>
         this._debouncedUpdateValidationErrorVisibility.cancel();
     }
 
-    _onInputChange: Object => void
+    _onInputChange: Object => void;
 
     /**
      * Callback invoked when the value of the input field has updated through
@@ -150,9 +160,22 @@ export default class AbstractStreamKeyForm<P: Props>
      */
     _validateStreamKey(streamKey = '') {
         const trimmedKey = streamKey.trim();
-        const fourGroupsDashSeparated = /^(?:[a-zA-Z0-9]{4}(?:-(?!$)|$)){4}/;
-        const match = fourGroupsDashSeparated.exec(trimmedKey);
+        const match = this.props._liveStreaming.streamLinkRegexp.exec(trimmedKey);
 
         return Boolean(match);
     }
+}
+
+/**
+ * Maps part of the Redux state to the component's props.
+ *
+ * @param {Object} state - The Redux state.
+ * @returns {{
+ *     _liveStreaming: LiveStreamingProps
+ * }}
+ */
+export function _mapStateToProps(state: Object) {
+    return {
+        _liveStreaming: getLiveStreaming(state)
+    };
 }

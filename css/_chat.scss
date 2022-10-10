@@ -1,35 +1,51 @@
 #sideToolbarContainer {
     background-color: $chatBackgroundColor;
-    box-sizing: border-box;
-    color: #FFF;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    left: -$sidebarWidth;
+    flex-shrink: 0;
     overflow: hidden;
-    position: absolute;
-    top: 0;
+    position: relative;
+    transition: width .16s ease-in-out;
     width: $sidebarWidth;
     z-index: $sideToolbarContainerZ;
 
-    /**
-     * The sidebar (chat) is off-screen when hidden. Move it flush to the left
-     * side of the window when it should be visible.
-     */
-    &.slideInExt {
+    @media (max-width: 580px) {
+        height: 100vh;
+        height: -webkit-fill-available;
         left: 0;
+        position: fixed;
+        right: 0;
+        top: 0;
+        width: auto;
     }
+}
+
+.chat-panel {
+    display: flex;
+    flex-direction: column;
+    // extract header + tabs height
+    height: calc(100% - 119px);
+}
+
+.chat-panel-no-tabs {
+    // extract header height
+    height: calc(100% - 70px);
+}
+
+#chat-conversation-container {
+    // extract message input height
+    height: calc(100% - 68px);
+    overflow: hidden;
+    position: relative;
 }
 
 #chatconversation {
     box-sizing: border-box;
     flex: 1;
     font-size: 10pt;
+    height: 100%;
     line-height: 20px;
     overflow: auto;
     padding: 16px;
     text-align: left;
-    width: $sidebarWidth;
     word-wrap: break-word;
 
     display: flex;
@@ -58,28 +74,6 @@
     a:active {
         color: black;
     }
-
-    &::-webkit-scrollbar {
-        background: #06a5df;
-        width: 7px;
-    }
-
-    &::-webkit-scrollbar-button {
-        display: none;
-    }
-
-    &::-webkit-scrollbar-track {
-        background: black;
-    }
-
-    &::-webkit-scrollbar-track-piece {
-        background: black;
-    }
-
-    &::-webkit-scrollbar-thumb {
-        background: #06a5df;
-        border-radius: 4px;
-    }
 }
 
 #chat-recipient {
@@ -101,6 +95,10 @@
             cursor: pointer;
             fill: white;
         }
+    }
+
+    &.lobby-chat-recipient {
+        background-color: $chatLobbyMessageBackgroundColor;
     }
 }
 
@@ -127,63 +125,18 @@
 
 .chat-input-container {
     padding: 0 16px 16px;
-
-    &.populated {
-        #chat-input {
-            .send-button {
-                background: #1B67EC;
-                cursor: pointer;
-                margin-left: 0.3rem;
-
-                @media (hover: hover) and (pointer: fine) {
-                    &:hover {
-                        background: #3D82FB;
-                    }
-                }
-
-                &:active {
-                    background: #0852D4;
-                }
-
-                path {
-                    fill: #fff;
-                }
-            }
-        }
-    }
 }
 
 #chat-input {
-    border: 1px solid $chatInputSeparatorColor;
     display: flex;
+    align-items: flex-end;
     padding: 4px;
-    border-radius: 3px;
-
-    &:focus-within {
-        border: 1px solid #619CF4;
-    }
-
-    * {
-        background-color: transparent;
-    }
+    position: relative;
 }
 
-.send-button-container {
-    display: flex;
-    align-items: center;
-}
-
-.send-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 40px;
-    width: 40px;
-    border-radius: 3px;
-
-    path {
-        fill: $chatInputSeparatorColor;
-    }
+.chat-input {
+    flex: 1;
+    margin-right: 8px;
 }
 
 .smiley-button {
@@ -319,10 +272,6 @@
         text-overflow: ellipsis;
         overflow: hidden;
     }
-
-    @media (max-width: 580px) {
-        display: none !important;
-    }
 }
 
 .sr-only {
@@ -407,7 +356,9 @@
 
 .smiley-input {
     display: flex;
-    position: relative;
+    position: absolute;
+    top: 0;
+    left: 0;
 }
 
 .smileys-panel {
@@ -415,7 +366,7 @@
     box-sizing: border-box;
     background-color: rgba(0, 0, 0, .6) !important;
     height: auto;
-    display: none;
+    display: flex;
     overflow: hidden;
     position: absolute;
     width: calc(#{$sidebarWidth} - 32px);
@@ -429,11 +380,6 @@
      * of that.
      */
     transition: max-height 0.3s;
-
-    &.show-smileys {
-        display: flex;
-        max-height: 500%;
-    }
 
     #smileysContainer {
         background-color: $chatBackgroundColor;
@@ -476,6 +422,9 @@
             &.privatemessage {
                 background-color: $chatPrivateMessageBackgroundColor;
             }
+            &.lobbymessage {
+                background-color: $chatLobbyMessageBackgroundColor;
+            }
         }
 
         .display-name {
@@ -515,6 +464,10 @@
                 justify-content: center;
                 padding: 5px;
 
+                &.lobbychatmessageactions {
+                    border-left-color: $chatLobbyActionsSeparatorColor;
+                }
+
                 .toolbox-icon {
                     cursor: pointer;
                 }
@@ -531,6 +484,9 @@
 
         &.privatemessage {
             background-color: $chatPrivateMessageBackgroundColor;
+        }
+        &.lobbymessage {
+            background-color: $chatLobbyMessageBackgroundColor;
         }
     }
 }
@@ -563,11 +519,6 @@
     }
 }
 
-.touchmove-hack {
-    display: flex;
-    flex: 1;
-    overflow: auto;
-}
 
 /**
  * Make header close button more easily tappable on mobile.
@@ -579,42 +530,4 @@
     width: 48px;
     background: #36383C;
     border-radius: 3px;
-}
-
-.chat-tabs-container {
-    width: 100%;
-    border-bottom: thin solid #292929;
-    display: flex;
-    justify-content: space-around;
-}
-
-.chat-tab {
-    font-size: 1.2em;
-    padding-bottom: 0.5em;
-    width: 50%;
-    text-align: center;
-    color: #8B8B8B;
-    cursor: pointer;
-}
-
-.chat-tab-focus {
-    border-bottom-style: solid;
-    color: #FFF;
-}
-
-.chat-tab-title {
-    margin-right: 8px;
-}
-
-.chat-tab-badge {
-    background-color: #165ecc;
-    border-radius: 50%;
-    box-sizing: border-box;
-    font-weight: 700;
-    overflow: hidden;
-    text-align: center;
-    text-overflow: ellipsis;
-    vertical-align: middle;
-    padding: 0 4px;
-    color: #FFF;
 }

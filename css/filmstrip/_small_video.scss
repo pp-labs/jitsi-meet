@@ -41,6 +41,10 @@
         }
     }
     
+    &:hover {
+        cursor: hand;
+    }
+
     & > video {
         // gregor - remove hand cursor
         //cursor: hand;

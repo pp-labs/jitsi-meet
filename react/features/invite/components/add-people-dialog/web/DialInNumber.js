@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 
 import { translate } from '../../../../base/i18n';
 import { Icon, IconCopy } from '../../../../base/icons';
-import { copyText } from '../../../../base/util';
+import { copyText } from '../../../../base/util/copyText';
 import { _formatConferenceIDPin } from '../../../_utils';
 
 /**
@@ -34,7 +34,7 @@ type Props = {
  * React {@code Component} responsible for displaying a telephone number and
  * conference ID for dialing into a conference.
  *
- * @extends Component
+ * @augments Component
  */
 class DialInNumber extends Component<Props> {
 

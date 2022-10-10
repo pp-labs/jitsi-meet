@@ -1,13 +1,17 @@
 /* global APP  */
 
-import Logger from 'jitsi-meet-logger';
+import Logger from '@jitsi/logger';
 
+import { getMultipleVideoSupportFeatureFlag } from '../../../react/features/base/config';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../../../react/features/base/media';
 import {
-    getPinnedParticipant,
-    getParticipantById
+    getParticipantById,
+    getPinnedParticipant
 } from '../../../react/features/base/participants';
-import { getTrackByMediaTypeAndParticipant } from '../../../react/features/base/tracks';
+import {
+    getTrackByMediaTypeAndParticipant,
+    getVirtualScreenshareParticipantTrack
+} from '../../../react/features/base/tracks';
 
 import LargeVideoManager from './LargeVideoManager';
 import { VIDEO_CONTAINER_TYPE } from './VideoContainer';
@@ -91,6 +95,10 @@ const VideoLayout = {
             return VIDEO_TYPE.CAMERA;
         }
 
+        if (getMultipleVideoSupportFeatureFlag(state) && participant?.isVirtualScreenshareParticipant) {
+            return VIDEO_TYPE.DESKTOP;
+        }
+
         const videoTrack = getTrackByMediaTypeAndParticipant(state['features/base/tracks'], MEDIA_TYPE.VIDEO, id);
 
         return videoTrack?.videoType;
@@ -169,7 +177,7 @@ const VideoLayout = {
         return largeVideo && largeVideo.id === id;
     },
 
-    updateLargeVideo(id, forceUpdate) {
+    updateLargeVideo(id, forceUpdate, forceStreamToReattach = false) {
         if (!largeVideo) {
             return;
         }
@@ -177,8 +185,22 @@ const VideoLayout = {
         const currentContainerType = largeVideo.getCurrentContainerType();
         const isOnLarge = this.isCurrentlyOnLarge(id);
         const state = APP.store.getState();
-        const videoTrack = getTrackByMediaTypeAndParticipant(state['features/base/tracks'], MEDIA_TYPE.VIDEO, id);
+        const participant = getParticipantById(state, id);
+        const tracks = state['features/base/tracks'];
+
+        let videoTrack;
+
+        if (getMultipleVideoSupportFeatureFlag(state) && participant?.isVirtualScreenshareParticipant) {
+            videoTrack = getVirtualScreenshareParticipantTrack(tracks, id);
+        } else {
+            videoTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, id);
+        }
+
         const videoStream = videoTrack?.jitsiTrack;
+
+        if (videoStream && forceStreamToReattach) {
+            videoStream.forceStreamToReattach = forceStreamToReattach;
+        }
 
         if (isOnLarge && !forceUpdate
                 && LargeVideoManager.isVideoContainer(currentContainerType)
@@ -195,7 +217,6 @@ const VideoLayout = {
 
         if (!isOnLarge || forceUpdate) {
             const videoType = this.getRemoteVideoType(id);
-
 
             largeVideo.updateLargeVideo(
                 id,
@@ -312,7 +333,7 @@ const VideoLayout = {
      */
     _updateLargeVideoIfDisplayed(participantId, force = false) {
         if (this.isCurrentlyOnLarge(participantId)) {
-            this.updateLargeVideo(participantId, force);
+            this.updateLargeVideo(participantId, force, false);
         }
     },
 
