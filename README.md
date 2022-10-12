@@ -13,35 +13,35 @@ video conferencing platforms with state-of-the-art video quality and features.
 
 Amongst others here are the main features Jitsi Meet offers:
 
-* Support for all current browsers
-* Mobile applications
-* Web and native SDKs for integration
-* HD audio and video
-* Content sharing
-* End-to-End Encryption
-* Raise hand and reactions
-* Chat with private conversations
-* Polls
-* Virtual backgrounds
+-   Support for all current browsers
+-   Mobile applications
+-   Web and native SDKs for integration
+-   HD audio and video
+-   Content sharing
+-   End-to-End Encryption
+-   Raise hand and reactions
+-   Chat with private conversations
+-   Polls
+-   Virtual backgrounds
 
 And many more!
 
 ## Using Jitsi Meet
 
-Using Jitsi Meet is straightforward, as it's browser based. Head over to [meet.jit.si](https://meet.jit.si) and give it a try. It's anonymous, scalable and free to use. All browsers are supported! 
+Using Jitsi Meet is straightforward, as it's browser based. Head over to [meet.jit.si](https://meet.jit.si) and give it a try. It's anonymous, scalable and free to use. All browsers are supported!
 
 Using mobile? No problem, you can either use your mobile web browser or our fully-featured
 mobile apps:
 
-| Android | Android (F-Droid) | iOS |
-|:-:|:-:|:-:|
+|                                                           Android                                                           |                                             Android (F-Droid)                                              |                                                         iOS                                                         |
+| :-------------------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------------: |
 | [<img src="resources/img/google-play-badge.png" height="50">](https://play.google.com/store/apps/details?id=org.jitsi.meet) | [<img src="resources/img/f-droid-badge.png" height="50">](https://f-droid.org/en/packages/org.jitsi.meet/) | [<img src="resources/img/appstore-badge.png" height="50">](https://itunes.apple.com/us/app/jitsi-meet/id1165103905) |
 
 If you are feeling adventurous and want to get an early scoop of the features as they are being
 developed you can also sign up for our open beta testing here:
 
-* [Android](https://play.google.com/apps/testing/org.jitsi.meet)
-* [iOS](https://testflight.apple.com/join/isy6ja7S)
+-   [Android](https://play.google.com/apps/testing/org.jitsi.meet)
+-   [iOS](https://testflight.apple.com/join/isy6ja7S)
 
 ## Running your own instance
 
@@ -51,6 +51,16 @@ We provide Debian packages and a comprehensive Docker setup to make deployments 
 Advanced users also have the possibility of building all the components from source.
 
 You can check the latest releases [here](https://jitsi.github.io/handbook/docs/releases).
+
+```
+to run locally:
+
+export NODE_OPTIONS=--openssl-legacy-provider
+
+npm install --legacy-peer-deps
+
+make dev
+```
 
 ## Jitsi as a Service
 
@@ -86,3 +96,4 @@ see our [guidelines for contributing](CONTRIBUTING.md).
 Built with ❤️ by the Jitsi team at <a href="https://8x8.com" target="_blank">8x8</a> and our community.
 </p>
 </footer>
+````
