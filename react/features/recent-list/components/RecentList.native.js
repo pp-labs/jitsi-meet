@@ -1,20 +1,20 @@
-// @flow
-
 import React from 'react';
+import { TouchableWithoutFeedback, View } from 'react-native';
 import type { Dispatch } from 'redux';
 
 import { getDefaultURL } from '../../app/functions';
-import { openDialog } from '../../base/dialog/actions';
+import { openSheet } from '../../base/dialog/actions';
 import { translate } from '../../base/i18n';
 import { NavigateSectionList, type Section } from '../../base/react';
 import { connect } from '../../base/redux';
+import styles from '../../welcome/components/styles';
 import { isRecentListEnabled, toDisplayableList } from '../functions';
 
 import AbstractRecentList from './AbstractRecentList';
 import RecentListItemMenu from './RecentListItemMenu.native';
 
 /**
- * The type of the React {@code Component} props of {@link RecentList}
+ * The type of the React {@code Component} props of {@link RecentList}.
  */
 type Props = {
 
@@ -27,6 +27,11 @@ type Props = {
      * The redux store's {@code dispatch} function.
      */
     dispatch: Dispatch<any>,
+
+    /**
+     * Callback to be invoked when pressing the list container.
+     */
+    onListContainerPress?: Function,
 
     /**
      * The translate function.
@@ -49,9 +54,6 @@ type Props = {
  *
  */
 class RecentList extends AbstractRecentList<Props> {
-    _getRenderListEmptyComponent: () => React$Node;
-    _onPress: string => {};
-
     /**
      * Initializes a new {@code RecentList} instance.
      *
@@ -75,6 +77,7 @@ class RecentList extends AbstractRecentList<Props> {
         }
         const {
             disabled,
+            onListContainerPress,
             t,
             _defaultServerURL,
             _recentList
@@ -82,17 +85,20 @@ class RecentList extends AbstractRecentList<Props> {
         const recentList = toDisplayableList(_recentList, t, _defaultServerURL);
 
         return (
-            <NavigateSectionList
-                disabled = { disabled }
-                onLongPress = { this._onLongPress }
-                onPress = { this._onPress }
-                renderListEmptyComponent
-                    = { this._getRenderListEmptyComponent() }
-                sections = { recentList } />
+            <TouchableWithoutFeedback
+                onPress = { onListContainerPress }>
+                <View style = { disabled ? styles.recentListDisabled : styles.recentList }>
+                    <NavigateSectionList
+                        disabled = { disabled }
+                        onLongPress = { this._onLongPress }
+                        onPress = { this._onPress }
+                        renderListEmptyComponent
+                            = { this._getRenderListEmptyComponent() }
+                        sections = { recentList } />
+                </View>
+            </TouchableWithoutFeedback>
         );
     }
-
-    _onLongPress: (Object) => void;
 
     /**
      * Handles the list's navigate action.
@@ -102,7 +108,7 @@ class RecentList extends AbstractRecentList<Props> {
      * @returns {void}
      */
     _onLongPress(item) {
-        this.props.dispatch(openDialog(RecentListItemMenu, { item }));
+        this.props.dispatch(openSheet(RecentListItemMenu, { item }));
     }
 }
 

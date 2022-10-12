@@ -8,7 +8,7 @@ import { Dialog } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
 import { JitsiRecordingConstants } from '../../../../base/lib-jitsi-meet';
 import { connect } from '../../../../base/redux';
-import { isDynamicBrandingDataLoaded } from '../../../../dynamic-branding/functions';
+import { isDynamicBrandingDataLoaded } from '../../../../dynamic-branding/functions.any';
 import EmbedMeetingTrigger from '../../../../embed-meeting/components/EmbedMeetingTrigger';
 import { isVpaasMeeting } from '../../../../jaas/functions';
 import { getActiveSession } from '../../../../recording';
@@ -19,11 +19,12 @@ import {
     getInviteTextiOS,
     isAddPeopleEnabled,
     isDialOutEnabled,
-    sharingFeatures,
-    isSharingEnabled
+    isSharingEnabled,
+    sharingFeatures
 } from '../../../functions';
 
 import CopyMeetingLinkSection from './CopyMeetingLinkSection';
+import DialInLimit from './DialInLimit';
 import DialInSection from './DialInSection';
 import InviteByEmailSection from './InviteByEmailSection';
 import InviteContactsSection from './InviteContactsSection';
@@ -65,7 +66,7 @@ type Props = {
 
     /**
      * The custom no new-lines meeting invitation text for iOS default email.
-     * Needed because of this mailto: iOS issue: https://developer.apple.com/forums/thread/681023
+     * Needed because of this mailto: iOS issue: https://developer.apple.com/forums/thread/681023.
      */
     _invitationTextiOS: string,
 
@@ -83,6 +84,11 @@ type Props = {
      * The current url of the conference to be copied onto the clipboard.
      */
     _inviteUrl: string,
+
+    /**
+     * Whether or not the current meeting belongs to a JaaS user.
+     */
+     _isVpaasMeeting: boolean,
 
     /**
      * The current known URL for a live stream in progress.
@@ -121,6 +127,7 @@ function AddPeopleDialog({
     _inviteAppName,
     _inviteContactsVisible,
     _inviteUrl,
+    _isVpaasMeeting,
     _liveStreamViewURL,
     _phoneNumber,
     t,
@@ -142,11 +149,11 @@ function AddPeopleDialog({
      */
     useEffect(() => {
         sendAnalytics(createInviteDialogEvent(
-            'invite.dialog.opened', 'dialog'));
+            'opened', 'dialog'));
 
         return () => {
             sendAnalytics(createInviteDialogEvent(
-                'invite.dialog.closed', 'dialog'));
+                'closed', 'dialog'));
         };
     }, []);
 
@@ -182,6 +189,9 @@ function AddPeopleDialog({
                     _phoneNumber
                         && _dialInVisible
                         && <DialInSection phoneNumber = { _phoneNumber } />
+                }
+                {
+                    !_dialInVisible && _isVpaasMeeting && <DialInLimit />
                 }
             </div>
         </Dialog>
@@ -222,6 +232,7 @@ function mapStateToProps(state, ownProps) {
         _inviteAppName: inviteAppName,
         _inviteContactsVisible: interfaceConfig.ENABLE_DIAL_OUT && !hideInviteContacts,
         _inviteUrl: getInviteURL(state),
+        _isVpaasMeeting: isVpaasMeeting(state),
         _liveStreamViewURL:
             currentLiveStreamingSession
                 && currentLiveStreamingSession.liveStreamViewURL,

@@ -1,23 +1,29 @@
 // @flow
 
 import { CHAT_ENABLED, getFeatureFlag } from '../../../base/flags';
+import { translate } from '../../../base/i18n';
 import { IconChat, IconChatUnread } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import {
     AbstractButton,
     type AbstractButtonProps
 } from '../../../base/toolbox/components';
-import { openChat } from '../../actions.native';
+import { navigate } from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
+import { screen } from '../../../mobile/navigation/routes';
 import { getUnreadCount } from '../../functions';
+
 
 type Props = AbstractButtonProps & {
 
     /**
+     * True if the polls feature is disabled.
+     */
+    _isPollsDisabled: boolean,
+
+    /**
      * The unread message count.
      */
-    _unreadMessageCount: number,
-
-    dispatch: Function
+    _unreadMessageCount: number
 };
 
 /**
@@ -36,7 +42,9 @@ class ChatButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
-        this.props.dispatch(openChat());
+        this.props._isPollsDisabled
+            ? navigate(screen.conference.chat)
+            : navigate(screen.conference.chatandpolls.main);
     }
 
     /**
@@ -59,12 +67,14 @@ class ChatButton extends AbstractButton<Props, *> {
  */
 function _mapStateToProps(state, ownProps) {
     const enabled = getFeatureFlag(state, CHAT_ENABLED, true);
+    const { disablePolls } = state['features/base/config'];
     const { visible = enabled } = ownProps;
 
     return {
+        _isPollsDisabled: disablePolls,
         _unreadMessageCount: getUnreadCount(state),
         visible
     };
 }
 
-export default connect(_mapStateToProps)(ChatButton);
+export default translate(connect(_mapStateToProps)(ChatButton));

@@ -5,8 +5,8 @@ import React from 'react';
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
 import AbstractPageReloadOverlay, {
-    abstractMapStateToProps,
-    type Props
+    type Props,
+    abstractMapStateToProps
 } from '../AbstractPageReloadOverlay';
 
 import OverlayFrame from './OverlayFrame';
@@ -52,9 +52,9 @@ class PageReloadOverlay extends AbstractPageReloadOverlay<Props> {
         );
     }
 
-    _renderButton: () => React$Element<*>
+    _renderButton: () => React$Element<*>;
 
-    _renderProgressBar: () => React$Element<*>
+    _renderProgressBar: () => React$Element<*>;
 }
 
 export default translate(connect(abstractMapStateToProps)(PageReloadOverlay));

@@ -2,14 +2,12 @@
 
 import { translate } from '../../../base/i18n';
 import {
-    ExpandedLabel,
-    type Props as AbstractProps
+    type Props as AbstractProps,
+    ExpandedLabel
 } from '../../../base/label';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import { connect } from '../../../base/redux';
 import { getSessionStatusToShow } from '../../functions';
-
-import { LIVE_LABEL_COLOR, REC_LABEL_COLOR } from './styles';
 
 type Props = AbstractProps & {
 
@@ -34,21 +32,6 @@ type Props = AbstractProps & {
  * component to explain the meaning of the {@code RecordingLabel}.
  */
 class RecordingExpandedLabel extends ExpandedLabel<Props> {
-    /**
-     * Returns the color this expanded label should be rendered with.
-     *
-     * @returns {string}
-     */
-    _getColor() {
-        switch (this.props.mode) {
-        case JitsiRecordingConstants.mode.STREAM:
-            return LIVE_LABEL_COLOR;
-        case JitsiRecordingConstants.mode.FILE:
-            return REC_LABEL_COLOR;
-        default:
-            return null;
-        }
-    }
 
     /**
      * Returns the label specific text of this {@code ExpandedLabel}.

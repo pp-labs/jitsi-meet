@@ -1,7 +1,8 @@
-// @flow
+import type { Dispatch } from 'redux';
 
-import { openDialog } from '../base/dialog';
+import { openSheet } from '../base/dialog';
 import { SharedVideoMenu } from '../video-menu';
+import { LocalVideoMenu } from '../video-menu/components/native';
 import ConnectionStatusComponent
     from '../video-menu/components/native/ConnectionStatusComponent';
 import RemoteVideoMenu from '../video-menu/components/native/RemoteVideoMenu';
@@ -10,6 +11,7 @@ import { SET_VOLUME } from './actionTypes';
 import {
     ContextMenuLobbyParticipantReject
 } from './components/native';
+import RoomParticipantMenu from './components/native/RoomParticipantMenu';
 export * from './actions.any';
 
 /**
@@ -19,7 +21,7 @@ export * from './actions.any';
  * @returns {Function}
  */
 export function showContextMenuReject(participant: Object) {
-    return openDialog(ContextMenuLobbyParticipantReject, { participant });
+    return openSheet(ContextMenuLobbyParticipantReject, { participant });
 }
 
 
@@ -30,17 +32,26 @@ export function showContextMenuReject(participant: Object) {
  * @returns {Function}
  */
 export function showConnectionStatus(participantID: string) {
-    return openDialog(ConnectionStatusComponent, { participantID });
+    return openSheet(ConnectionStatusComponent, { participantID });
 }
 
 /**
  * Displays the context menu for the selected meeting participant.
  *
  * @param {string} participantId - The ID of the selected meeting participant.
+ * @param {boolean} local - Whether the participant is local or not.
  * @returns {Function}
  */
-export function showContextMenuDetails(participantId: string) {
-    return openDialog(RemoteVideoMenu, { participantId });
+export function showContextMenuDetails(participantId: string, local: boolean = false) {
+    return (dispatch: Dispatch<any>, getState: Function) => {
+        const { remoteVideoMenu } = getState()['features/base/config'];
+
+        if (local) {
+            dispatch(openSheet(LocalVideoMenu));
+        } else if (!remoteVideoMenu?.disabled) {
+            dispatch(openSheet(RemoteVideoMenu, { participantId }));
+        }
+    };
 }
 
 /**
@@ -50,7 +61,7 @@ export function showContextMenuDetails(participantId: string) {
  * @returns {Function}
  */
 export function showSharedVideoMenu(participantId: string) {
-    return openDialog(SharedVideoMenu, { participantId });
+    return openSheet(SharedVideoMenu, { participantId });
 }
 
 /**
@@ -70,4 +81,18 @@ export function setVolume(participantId: string, volume: number) {
         participantId,
         volume
     };
+}
+
+/**
+ * Displays the breakout room participant menu.
+ *
+ * @param {Object} room - The room the participant is in.
+ * @param {string} participantJid - The jid of the participant.
+ * @param {string} participantName - The display name of the participant.
+ * @returns {Function}
+ */
+export function showRoomParticipantMenu(room: Object, participantJid: string, participantName: string) {
+    return openSheet(RoomParticipantMenu, { room,
+        participantJid,
+        participantName });
 }

@@ -6,21 +6,21 @@ import { useSelector } from 'react-redux';
 
 import { shouldShowResults } from '../../functions';
 
+import PollAnswer from './PollAnswer';
+import PollResults from './PollResults';
 import { chatStyles } from './styles';
-
-import { PollAnswer, PollResults } from '.';
 
 type Props = {
 
     /**
-     * Id of the poll
+     * Id of the poll.
      */
     pollId: string,
 
 }
 
 const PollItem = ({ pollId }: Props) => {
-    const showResults = useSelector(state => shouldShowResults(state, pollId));
+    const showResults = useSelector(shouldShowResults(pollId));
 
     return (
         <View

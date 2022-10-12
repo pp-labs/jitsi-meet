@@ -5,11 +5,11 @@ import React from 'react';
 import { translate } from '../../base/i18n';
 import { Label } from '../../base/label';
 import { connect } from '../../base/redux';
-import { combineStyles, type StyleType } from '../../base/styles';
+import { type StyleType, combineStyles } from '../../base/styles';
 
 import AbstractVideoQualityLabel, {
-    _abstractMapStateToProps,
-    type Props as AbstractProps
+    type Props as AbstractProps,
+    _abstractMapStateToProps
 } from './AbstractVideoQualityLabel';
 import styles from './styles';
 
@@ -53,22 +53,4 @@ class VideoQualityLabel extends AbstractVideoQualityLabel<Props> {
     }
 }
 
-/**
- * Maps (parts of) the Redux state to the associated
- * {@code VideoQualityLabel}'s props.
- *
- * NOTE: This component has no props other than the abstract ones but keeping
- * the coding style the same for consistency reasons.
- *
- * @param {Object} state - The Redux state.
- * @private
- * @returns {{
- * }}
- */
-function _mapStateToProps(state: Object) {
-    return {
-        ..._abstractMapStateToProps(state)
-    };
-}
-
-export default translate(connect(_mapStateToProps)(VideoQualityLabel));
+export default translate(connect(_abstractMapStateToProps)(VideoQualityLabel));

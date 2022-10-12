@@ -1,5 +1,7 @@
 // @flow
 
+/* eslint-disable react/jsx-no-bind */
+
 import React, { useState } from 'react';
 
 import { isIosMobileBrowser } from '../../../../base/environment/utils';
@@ -14,7 +16,7 @@ import {
     IconYahoo
 } from '../../../../base/icons';
 import { Tooltip } from '../../../../base/tooltip';
-import { copyText } from '../../../../base/util';
+import { copyText } from '../../../../base/util/copyText';
 
 type Props = {
 

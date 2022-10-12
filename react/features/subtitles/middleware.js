@@ -1,9 +1,11 @@
 // @flow
+import i18next from 'i18next';
 
 import { MiddlewareRegistry } from '../base/redux';
 
 import {
     ENDPOINT_MESSAGE_RECEIVED,
+    SET_REQUESTING_SUBTITLES,
     TOGGLE_REQUESTING_SUBTITLES
 } from './actionTypes';
 import {
@@ -54,7 +56,11 @@ MiddlewareRegistry.register(store => next => action => {
         return _endpointMessageReceived(store, next, action);
 
     case TOGGLE_REQUESTING_SUBTITLES:
-        _requestingSubtitlesToggled(store);
+        _requestingSubtitlesChange(store);
+        break;
+    case SET_REQUESTING_SUBTITLES:
+        _requestingSubtitlesChange(store);
+        _requestingSubtitlesSet(store, action.enabled);
         break;
     }
 
@@ -110,7 +116,7 @@ function _endpointMessageReceived({ dispatch, getState }, next, action) {
                 newTranscriptMessage));
 
         } else if (json.type === JSON_TYPE_TRANSCRIPTION_RESULT
-                && !translationLanguage) {
+        && i18next.language === translationLanguage) {
             // Displays interim and final results without any translation if
             // translations are disabled.
 
@@ -167,14 +173,40 @@ function _endpointMessageReceived({ dispatch, getState }, next, action) {
  * @private
  * @returns {void}
  */
-function _requestingSubtitlesToggled({ getState }) {
+function _requestingSubtitlesChange({ getState }) {
     const state = getState();
-    const { _requestingSubtitles } = state['features/subtitles'];
+    const { _language } = state['features/subtitles'];
+    const { conference } = state['features/base/conference'];
+
+    const requestingSubtitles = _language !== 'transcribing.subtitlesOff';
+
+    conference.setLocalParticipantProperty(
+        P_NAME_REQUESTING_TRANSCRIPTION,
+        requestingSubtitles);
+
+    if (requestingSubtitles) {
+        conference.setLocalParticipantProperty(
+            P_NAME_TRANSLATION_LANGUAGE,
+            _language.replace('translation-languages:', ''));
+    }
+}
+
+/**
+ * Set the local property 'requestingTranscription'. This will cause Jicofo
+ * and Jigasi to decide whether the transcriber needs to be in the room.
+ *
+ * @param {Store} store - The redux store.
+ * @param {boolean} enabled - The new state of the subtitles.
+ * @private
+ * @returns {void}
+ */
+function _requestingSubtitlesSet({ getState }, enabled: boolean) {
+    const state = getState();
     const { conference } = state['features/base/conference'];
 
     conference.setLocalParticipantProperty(
         P_NAME_REQUESTING_TRANSCRIPTION,
-        !_requestingSubtitles);
+        enabled);
 }
 
 /**

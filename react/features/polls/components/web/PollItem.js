@@ -10,14 +10,14 @@ import { shouldShowResults } from '../../functions';
 type Props = {
 
     /**
-     * Id of the poll
+     * Id of the poll.
      */
     pollId: string,
 
 }
 
-const PollItem = React.forwardRef<Props, HTMLElement>(({ pollId }, ref) => {
-    const showResults = useSelector(state => shouldShowResults(state, pollId));
+const PollItem = React.forwardRef<Props, HTMLElement>(({ pollId }: Props, ref) => {
+    const showResults = useSelector(shouldShowResults(pollId));
 
     return (
         <div ref = { ref }>

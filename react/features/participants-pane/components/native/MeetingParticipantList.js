@@ -1,30 +1,46 @@
 // @flow
 
 import React, { PureComponent } from 'react';
-import { FlatList, Text, View } from 'react-native';
-import { Button } from 'react-native-paper';
+import { FlatList } from 'react-native';
+
 
 import { translate } from '../../../base/i18n';
 import { Icon, IconInviteMore } from '../../../base/icons';
-import { getLocalParticipant, getParticipantCountWithFake } from '../../../base/participants';
+import { getLocalParticipant, getParticipantCountWithFake, getRemoteParticipants } from '../../../base/participants';
 import { connect } from '../../../base/redux';
+import Button from '../../../base/ui/components/native/Button';
+import Input from '../../../base/ui/components/native/Input';
+import { BUTTON_TYPES } from '../../../base/ui/constants';
+import { getBreakoutRooms, getCurrentRoomId } from '../../../breakout-rooms/functions';
 import { doInvitePeople } from '../../../invite/actions.native';
-import { shouldRenderInviteButton } from '../../functions';
+import { participantMatchesSearch, shouldRenderInviteButton } from '../../functions';
 
+import CollapsibleList from './CollapsibleList';
 import MeetingParticipantItem from './MeetingParticipantItem';
 import styles from './styles';
+
 
 type Props = {
 
     /**
-     * The ID of the local participant.
+     * Current breakout room, if we are in one.
      */
-    _localParticipantId: string,
+    _currentRoom: ?Object,
+
+    /**
+     * The local participant.
+     */
+    _localParticipant: Object,
 
     /**
      * The number of participants in the conference.
      */
     _participantsCount: number,
+
+    /**
+     * The remote participants.
+     */
+    _remoteParticipants: Map<string, Object>,
 
     /**
      * Whether or not to show the invite button.
@@ -37,9 +53,34 @@ type Props = {
     _sortedRemoteParticipants: Map<string, string>,
 
     /**
+     * List of breakout rooms that were created.
+     */
+    breakoutRooms: Array,
+
+    /**
      * The redux dispatch function.
      */
     dispatch: Function,
+
+    /**
+     * Is the local participant moderator?
+     */
+    isLocalModerator: boolean,
+
+    /**
+     * List of participants waiting in lobby.
+     */
+    lobbyParticipants: Array,
+
+    /**
+     * Participants search string.
+     */
+    searchString: string,
+
+    /**
+     * Function to update the search string.
+     */
+    setSearchString: Function,
 
     /**
      * Translation function.
@@ -63,6 +104,7 @@ class MeetingParticipantList extends PureComponent<Props> {
         this._keyExtractor = this._keyExtractor.bind(this);
         this._onInvite = this._onInvite.bind(this);
         this._renderParticipant = this._renderParticipant.bind(this);
+        this._onSearchStringChange = this._onSearchStringChange.bind(this);
     }
 
     _keyExtractor: Function;
@@ -111,11 +153,30 @@ class MeetingParticipantList extends PureComponent<Props> {
      * @returns {ReactElement}
      */
     _renderParticipant({ item/* , index, separators */ }) {
-        return (
-            <MeetingParticipantItem
-                key = { item }
-                participantID = { item } />
-        );
+        const { _localParticipant, _remoteParticipants, searchString } = this.props;
+        const participant = item === _localParticipant?.id ? _localParticipant : _remoteParticipants.get(item);
+
+        if (participantMatchesSearch(participant, searchString)) {
+            return (
+                <MeetingParticipantItem
+                    key = { item }
+                    participant = { participant } />
+            );
+        }
+
+        return null;
+    }
+
+    _onSearchStringChange: (text: string) => void;
+
+    /**
+     * Handles search string changes.
+     *
+     * @param {string} text - New value of the search string.
+     * @returns {void}
+     */
+    _onSearchStringChange(text: string) {
+        this.props.setSearchString(text);
     }
 
     /**
@@ -126,38 +187,71 @@ class MeetingParticipantList extends PureComponent<Props> {
      */
     render() {
         const {
-            _localParticipantId,
+            _currentRoom,
+            _localParticipant,
             _participantsCount,
             _showInviteButton,
             _sortedRemoteParticipants,
+            breakoutRooms,
+            isLocalModerator,
+            lobbyParticipants,
             t
         } = this.props;
+        const title = _currentRoom?.name
+
+            // $FlowExpectedError
+            ? `${_currentRoom.name} (${_participantsCount})`
+            : t('participantsPane.headings.participantsList',
+                { count: _participantsCount });
+
+        // Regarding the fact that we have 3 sections, we apply
+        // a certain height percentage for every section in order for all to fit
+        // inside the participants pane container
+        // If there are only meeting participants available,
+        // we take the full container height
+        const onlyMeetingParticipants
+            = breakoutRooms?.length === 0 && lobbyParticipants?.length === 0;
+        const containerStyleModerator
+            = onlyMeetingParticipants
+                ? styles.meetingListFullContainer : styles.meetingListContainer;
+        const containerStyle
+            = isLocalModerator
+                ? containerStyleModerator : styles.notLocalModeratorContainer;
+        const finalContainerStyle
+            = _participantsCount > 6 && containerStyle;
 
         return (
-            <View style = { styles.meetingList }>
-                <Text style = { styles.meetingListDescription }>
-                    {t('participantsPane.headings.participantsList',
-                        { count: _participantsCount })}
-                </Text>
+            <CollapsibleList
+                containerStyle = { finalContainerStyle }
+                title = { title } >
                 {
                     _showInviteButton
                     && <Button
-                        children = { t('participantsPane.actions.invite') }
+                        accessibilityLabel = 'participantsPane.actions.invite'
                         icon = { this._renderInviteMoreIcon }
-                        labelStyle = { styles.inviteLabel }
-                        mode = 'contained'
-                        onPress = { this._onInvite }
-                        style = { styles.inviteButton } />
+                        labelKey = 'participantsPane.actions.invite'
+                        onClick = { this._onInvite }
+                        style = { styles.inviteButton }
+                        type = { BUTTON_TYPES.PRIMARY } />
                 }
+                <Input
+                    clearable = { true }
+                    customStyles = {{
+                        container: styles.inputContainer,
+                        input: styles.centerInput }}
+                    onChange = { this._onSearchStringChange }
+                    placeholder = { t('participantsPane.search') }
+                    value = { this.props.searchString } />
                 <FlatList
                     bounces = { false }
-                    data = { [ _localParticipantId, ..._sortedRemoteParticipants ] }
+                    data = { [ _localParticipant?.id, ..._sortedRemoteParticipants ] }
                     horizontal = { false }
                     keyExtractor = { this._keyExtractor }
                     renderItem = { this._renderParticipant }
+                    scrollEnabled = { true }
                     showsHorizontalScrollIndicator = { false }
                     windowSize = { 2 } />
-            </View>
+            </CollapsibleList>
         );
     }
 }
@@ -173,12 +267,17 @@ function _mapStateToProps(state): Object {
     const _participantsCount = getParticipantCountWithFake(state);
     const { remoteParticipants } = state['features/filmstrip'];
     const _showInviteButton = shouldRenderInviteButton(state);
+    const _remoteParticipants = getRemoteParticipants(state);
+    const currentRoomId = getCurrentRoomId(state);
+    const _currentRoom = getBreakoutRooms(state)[currentRoomId];
 
     return {
+        _currentRoom,
         _participantsCount,
+        _remoteParticipants,
         _showInviteButton,
         _sortedRemoteParticipants: remoteParticipants,
-        _localParticipantId: getLocalParticipant(state)?.id
+        _localParticipant: getLocalParticipant(state)
     };
 }
 

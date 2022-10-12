@@ -1,36 +1,31 @@
 // @flow
 
+import clsx from 'clsx';
 import React from 'react';
 
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
+import Tabs from '../../../base/ui/components/web/Tabs';
 import { PollsPane } from '../../../polls/components';
 import { toggleChat } from '../../actions.web';
+import { CHAT_TABS } from '../../constants';
 import AbstractChat, {
-    _mapStateToProps,
-    type Props
+    type Props,
+    _mapStateToProps
 } from '../AbstractChat';
 
-import ChatDialog from './ChatDialog';
-import Header from './ChatDialogHeader';
+import ChatHeader from './ChatHeader';
 import ChatInput from './ChatInput';
 import DisplayNameForm from './DisplayNameForm';
 import KeyboardAvoider from './KeyboardAvoider';
 import MessageContainer from './MessageContainer';
 import MessageRecipient from './MessageRecipient';
-import TouchmoveHack from './TouchmoveHack';
 
 /**
  * React Component for holding the chat feature in a side panel that slides in
  * and out of view.
  */
 class Chat extends AbstractChat<Props> {
-
-    /**
-     * Whether or not the {@code Chat} component is off-screen, having finished
-     * its hiding animation.
-     */
-    _isExited: boolean;
 
     /**
      * Reference to the React Component for displaying chat messages. Used for
@@ -47,37 +42,58 @@ class Chat extends AbstractChat<Props> {
     constructor(props: Props) {
         super(props);
 
-        this._isExited = true;
         this._messageContainerRef = React.createRef();
 
         // Bind event handlers so they are only bound once for every instance.
-        this._renderPanelContent = this._renderPanelContent.bind(this);
-        this._onChatInputResize = this._onChatInputResize.bind(this);
+        this._onChatTabKeyDown = this._onChatTabKeyDown.bind(this);
         this._onEscClick = this._onEscClick.bind(this);
+        this._onPollsTabKeyDown = this._onPollsTabKeyDown.bind(this);
         this._onToggleChat = this._onToggleChat.bind(this);
+        this._onChangeTab = this._onChangeTab.bind(this);
     }
 
     /**
-     * Implements {@code Component#componentDidMount}.
+     * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
+     * @returns {ReactElement}
      */
-    componentDidMount() {
-        this._scrollMessageContainerToBottom(true);
+    render() {
+        const { _isOpen, _isPollsEnabled, _showNamePrompt } = this.props;
+
+        return (
+            _isOpen ? <div
+                className = 'sideToolbarContainer'
+                id = 'sideToolbarContainer'
+                onKeyDown = { this._onEscClick } >
+                <ChatHeader
+                    className = 'chat-header'
+                    id = 'chat-header'
+                    isPollsEnabled = { _isPollsEnabled }
+                    onCancel = { this._onToggleChat } />
+                { _showNamePrompt
+                    ? <DisplayNameForm isPollsEnabled = { _isPollsEnabled } />
+                    : this._renderChat() }
+            </div> : null
+        );
     }
 
+    _onChatTabKeyDown: (KeyboardEvent) => void;
+
     /**
-     * Implements {@code Component#componentDidUpdate}.
+     * Key press handler for the chat tab.
      *
-     * @inheritdoc
+     * @param {KeyboardEvent} event - The event.
+     * @returns {void}
      */
-    componentDidUpdate(prevProps) {
-        if (this.props._messages !== prevProps._messages) {
-            this._scrollMessageContainerToBottom(true);
-        } else if (this.props._isOpen && !prevProps._isOpen) {
-            this._scrollMessageContainerToBottom(false);
+    _onChatTabKeyDown(event) {
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            event.stopPropagation();
+            this._onToggleChatTab();
         }
     }
+
     _onEscClick: (KeyboardEvent) => void;
 
     /**
@@ -94,31 +110,20 @@ class Chat extends AbstractChat<Props> {
         }
     }
 
-    /**
-     * Implements React's {@link Component#render()}.
-     *
-     * @inheritdoc
-     * @returns {ReactElement}
-     */
-    render() {
-        return (
-            <>
-                { this._renderPanelContent() }
-            </>
-        );
-    }
-
-    _onChatInputResize: () => void;
+    _onPollsTabKeyDown: (KeyboardEvent) => void;
 
     /**
-     * Callback invoked when {@code ChatInput} changes height. Preserves
-     * displaying the latest message if it is scrolled to.
+     * Key press handler for the polls tab.
      *
-     * @private
+     * @param {KeyboardEvent} event - The event.
      * @returns {void}
      */
-    _onChatInputResize() {
-        this._messageContainerRef.current.maybeUpdateBottomScroll();
+    _onPollsTabKeyDown(event) {
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            event.stopPropagation();
+            this._onTogglePollsTab();
+        }
     }
 
     /**
@@ -129,12 +134,18 @@ class Chat extends AbstractChat<Props> {
      * @returns {ReactElement}
      */
     _renderChat() {
+        const { _isPollsEnabled, _isPollsTabFocused } = this.props;
 
-        if (this.props._isPollsTabFocused) {
+        if (_isPollsTabFocused) {
             return (
                 <>
-                    { this.props._isPollsEnabled && this._renderTabs()}
-                    <PollsPane />
+                    { _isPollsEnabled && this._renderTabs() }
+                    <div
+                        aria-labelledby = { CHAT_TABS.POLLS }
+                        id = 'polls-panel'
+                        role = 'tabpanel'>
+                        <PollsPane />
+                    </div>
                     <KeyboardAvoider />
                 </>
             );
@@ -142,17 +153,18 @@ class Chat extends AbstractChat<Props> {
 
         return (
             <>
-                {this.props._isPollsEnabled && this._renderTabs()}
-                <TouchmoveHack isModal = { this.props._isModal }>
+                { _isPollsEnabled && this._renderTabs() }
+                <div
+                    aria-labelledby = { CHAT_TABS.CHAT }
+                    className = { clsx('chat-panel', !_isPollsEnabled && 'chat-panel-no-tabs') }
+                    id = 'chat-panel'
+                    role = 'tabpanel'>
                     <MessageContainer
-                        messages = { this.props._messages }
-                        ref = { this._messageContainerRef } />
-                </TouchmoveHack>
-                <MessageRecipient />
-                <ChatInput
-                    onResize = { this._onChatInputResize }
-                    onSend = { this._onSendMessage } />
-                <KeyboardAvoider />
+                        messages = { this.props._messages } />
+                    <MessageRecipient />
+                    <ChatInput
+                        onSend = { this._onSendMessage } />
+                </div>
             </>
         );
     }
@@ -164,123 +176,26 @@ class Chat extends AbstractChat<Props> {
      * @returns {ReactElement}
      */
     _renderTabs() {
+        const { _isPollsEnabled, _isPollsTabFocused, _nbUnreadMessages, _nbUnreadPolls, t } = this.props;
 
         return (
-            <div className = { 'chat-tabs-container' }>
-                <div
-                    className = { `chat-tab ${
-                        this.props._isPollsTabFocused ? '' : 'chat-tab-focus'
-                    }` }
-                    onClick = { this._onToggleChatTab }>
-                    <span className = { 'chat-tab-title' }>
-                        {this.props.t('chat.tabs.chat')}
-                    </span>
-                    {this.props._isPollsTabFocused
-                        && this.props._nbUnreadMessages > 0 && (
-                        <span className = { 'chat-tab-badge' }>
-                            {this.props._nbUnreadMessages}
-                        </span>
-                    )}
-                </div>
-                <div
-                    className = { `chat-tab ${
-                        this.props._isPollsTabFocused ? 'chat-tab-focus' : ''
-                    }` }
-                    onClick = { this._onTogglePollsTab }>
-                    <span className = { 'chat-tab-title' }>
-                        {this.props.t('chat.tabs.polls')}
-                    </span>
-                    {!this.props._isPollsTabFocused
-                        && this.props._nbUnreadPolls > 0 && (
-                        <span className = { 'chat-tab-badge' }>
-                            {this.props._nbUnreadPolls}
-                        </span>
-                    )}
-                </div>
-            </div>
+            <Tabs
+                accessibilityLabel = { t(_isPollsEnabled ? 'chat.titleWithPolls' : 'chat.title') }
+                onChange = { this._onChangeTab }
+                selected = { _isPollsTabFocused ? CHAT_TABS.POLLS : CHAT_TABS.CHAT }
+                tabs = { [ {
+                    accessibilityLabel: t('chat.tabs.chat'),
+                    countBadge: _isPollsTabFocused && _nbUnreadMessages > 0 ? _nbUnreadMessages : undefined,
+                    id: CHAT_TABS.CHAT,
+                    label: t('chat.tabs.chat')
+                }, {
+                    accessibilityLabel: t('chat.tabs.polls'),
+                    countBadge: !_isPollsTabFocused && _nbUnreadPolls > 0 ? _nbUnreadPolls : undefined,
+                    id: CHAT_TABS.POLLS,
+                    label: t('chat.tabs.polls')
+                }
+                ] } />
         );
-    }
-
-    /**
-     * Instantiates a React Element to display at the top of {@code Chat} to
-     * close {@code Chat}.
-     *
-     * @private
-     * @returns {ReactElement}
-     */
-    _renderChatHeader() {
-        return (
-            <Header
-                className = 'chat-header'
-                id = 'chat-header'
-                isPollsEnabled = { this.props._isPollsEnabled }
-                onCancel = { this._onToggleChat } />
-        );
-    }
-
-    _renderPanelContent: () => React$Node | null;
-
-    /**
-     * Renders the contents of the chat panel.
-     *
-     * @private
-     * @returns {ReactElement | null}
-     */
-    _renderPanelContent() {
-        const { _isModal, _isOpen, _showNamePrompt } = this.props;
-        let ComponentToRender = null;
-
-        if (_isOpen) {
-            if (_isModal) {
-                ComponentToRender = (
-                    <ChatDialog isPollsEnabled = { this.props._isPollsEnabled }>
-                        { _showNamePrompt
-                            ? <DisplayNameForm isPollsEnabled = { this.props._isPollsEnabled } />
-                            : this._renderChat() }
-                    </ChatDialog>
-                );
-            } else {
-                ComponentToRender = (
-                    <>
-                        { this._renderChatHeader() }
-                        { _showNamePrompt
-                            ? <DisplayNameForm isPollsEnabled = { this.props._isPollsEnabled } />
-                            : this._renderChat() }
-                    </>
-                );
-            }
-        }
-        let className = '';
-
-        if (_isOpen) {
-            className = 'slideInExt';
-        } else if (this._isExited) {
-            className = 'invisible';
-        }
-
-        return (
-            <div
-                aria-haspopup = 'true'
-                className = { `sideToolbarContainer ${className}` }
-                id = 'sideToolbarContainer'
-                onKeyDown = { this._onEscClick } >
-                { ComponentToRender }
-            </div>
-        );
-    }
-
-    /**
-     * Scrolls the chat messages so the latest message is visible.
-     *
-     * @param {boolean} withAnimation - Whether or not to show a scrolling
-     * animation.
-     * @private
-     * @returns {void}
-     */
-    _scrollMessageContainerToBottom(withAnimation) {
-        if (this._messageContainerRef.current) {
-            this._messageContainerRef.current.scrollToBottom(withAnimation);
-        }
     }
 
     _onSendMessage: (string) => void;
@@ -297,7 +212,17 @@ class Chat extends AbstractChat<Props> {
     }
     _onTogglePollsTab: () => void;
     _onToggleChatTab: () => void;
+    _onChangeTab: (string) => void;
 
+    /**
+     * Change selected tab.
+     *
+     * @param {string} id - Id of the clicked tab.
+     * @returns {void}
+     */
+    _onChangeTab(id) {
+        id === CHAT_TABS.CHAT ? this._onToggleChatTab() : this._onTogglePollsTab();
+    }
 }
 
 export default translate(connect(_mapStateToProps)(Chat));

@@ -2,7 +2,7 @@
 
 import type { Dispatch } from 'redux';
 
-import { getFeatureFlag, VIDEO_SHARE_BUTTON_ENABLED } from '../../../base/flags';
+import { VIDEO_SHARE_BUTTON_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { translate } from '../../../base/i18n';
 import { IconShareVideo } from '../../../base/icons';
 import { getLocalParticipant } from '../../../base/participants';
@@ -35,7 +35,7 @@ type Props = AbstractButtonProps & {
 /**
  * Component that renders a toolbar button for toggling the tile layout view.
  *
- * @extends AbstractButton
+ * @augments AbstractButton
  */
 class VideoShareButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.sharedvideo';

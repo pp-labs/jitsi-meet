@@ -1,9 +1,10 @@
 /* @flow */
 
-import Button from '@atlaskit/button/standard-button';
 import React, { Component } from 'react';
 
 import { translate } from '../../../i18n';
+import Button from '../../../ui/components/web/Button';
+
 
 declare var interfaceConfig: Object;
 
@@ -23,7 +24,7 @@ type Props = {
     t: Function,
 
     /**
-     * Indicates whether the support link should be shown in case of an error
+     * Indicates whether the support link should be shown in case of an error.
      */
      showSupportLink: Boolean,
 };
@@ -71,9 +72,8 @@ class InlineDialogFailure extends Component<Props> {
                 { supportLinkElem }
                 <Button
                     className = 'inline-dialog-error-button'
-                    onClick = { this.props.onRetry } >
-                    { t('inlineDialogFailure.retry') }
-                </Button>
+                    label = { t('inlineDialogFailure.retry') }
+                    onClick = { this.props.onRetry } />
             </div>
         );
     }

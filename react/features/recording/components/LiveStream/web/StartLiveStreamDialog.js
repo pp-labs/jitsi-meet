@@ -17,8 +17,8 @@ import {
     updateProfile
 } from '../../../../google-api';
 import AbstractStartLiveStreamDialog, {
-    _mapStateToProps as _abstractMapStateToProps,
-    type Props as AbstractProps
+    type Props as AbstractProps,
+    _mapStateToProps as _abstractMapStateToProps
 } from '../AbstractStartLiveStreamDialog';
 
 import StreamKeyForm from './StreamKeyForm';
@@ -37,7 +37,7 @@ type Props = AbstractProps & {
  * A React Component for requesting a YouTube stream key to use for live
  * streaming of the current conference.
  *
- * @extends Component
+ * @augments Component
  */
 class StartLiveStreamDialog
     extends AbstractStartLiveStreamDialog<Props> {
@@ -341,7 +341,7 @@ class StartLiveStreamDialog
         );
     }
 
-    _setStateIfMounted: Object => void
+    _setStateIfMounted: Object => void;
 
     /**
      * Returns the error message to display for the current error state.

@@ -1,17 +1,11 @@
-// @flow
-
 import React, { PureComponent } from 'react';
 import { View } from 'react-native';
 import { WebView } from 'react-native-webview';
-import type { Dispatch } from 'redux';
 
-import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { translate } from '../../../base/i18n';
-import { JitsiModal } from '../../../base/modal';
+import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { LoadingIndicator } from '../../../base/react';
 import { connect } from '../../../base/redux';
-import { toggleDocument } from '../../actions';
-import { SHARE_DOCUMENT_VIEW_ID } from '../../constants';
 import { getSharedDocumentUrl } from '../../functions';
 
 import styles, { INDICATOR_COLOR } from './styles';
@@ -27,19 +21,9 @@ type Props = {
     _documentUrl: string,
 
     /**
-     * Color schemed style of the header component.
+     * Default prop for navigation between screen components(React Navigation).
      */
-    _headerStyles: Object,
-
-    /**
-     * True if the chat window should be rendered.
-     */
-    _isOpen: boolean,
-
-    /**
-     * The Redux dispatch function.
-     */
-    dispatch: Dispatch<any>,
+    navigation: Object,
 
     /**
      * Function to be used to translate i18n labels.
@@ -59,8 +43,6 @@ class SharedDocument extends PureComponent<Props> {
     constructor(props: Props) {
         super(props);
 
-        this._onClose = this._onClose.bind(this);
-        this._onError = this._onError.bind(this);
         this._renderLoading = this._renderLoading.bind(this);
     }
 
@@ -73,56 +55,18 @@ class SharedDocument extends PureComponent<Props> {
         const { _documentUrl } = this.props;
 
         return (
-            <JitsiModal
-                headerProps = {{
-                    headerLabelKey: 'documentSharing.title'
-                }}
-                modalId = { SHARE_DOCUMENT_VIEW_ID }
-                style = { styles.webView }>
+            <JitsiScreen
+                addHeaderHeightValue = { true }
+                style = { styles.sharedDocContainer }>
                 <WebView
-                    onError = { this._onError }
+                    hideKeyboardAccessoryView = { true }
                     renderLoading = { this._renderLoading }
                     source = {{ uri: _documentUrl }}
-                    startInLoadingState = { true } />
-            </JitsiModal>
+                    startInLoadingState = { true }
+                    style = { styles.sharedDoc } />
+            </JitsiScreen>
         );
     }
-
-    _onClose: () => boolean
-
-    /**
-     * Closes the window.
-     *
-     * @returns {boolean}
-     */
-    _onClose() {
-        const { _isOpen, dispatch } = this.props;
-
-        if (_isOpen) {
-            dispatch(toggleDocument());
-
-            return true;
-        }
-
-        return false;
-    }
-
-    _onError: () => void;
-
-    /**
-     * Callback to handle the error if the page fails to load.
-     *
-     * @returns {void}
-     */
-    _onError() {
-        const { _isOpen, dispatch } = this.props;
-
-        if (_isOpen) {
-            dispatch(toggleDocument());
-        }
-    }
-
-    _renderLoading: () => React$Component<any>;
 
     /**
      * Renders the loading indicator.
@@ -148,13 +92,10 @@ class SharedDocument extends PureComponent<Props> {
  * @returns {Object}
  */
 export function _mapStateToProps(state: Object) {
-    const { editing } = state['features/etherpad'];
     const documentUrl = getSharedDocumentUrl(state);
 
     return {
-        _documentUrl: documentUrl,
-        _headerStyles: ColorSchemeRegistry.get(state, 'Header'),
-        _isOpen: editing
+        _documentUrl: documentUrl
     };
 }
 

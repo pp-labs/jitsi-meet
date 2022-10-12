@@ -1,11 +1,11 @@
 /* @flow */
 
-import { Checkbox } from '@atlaskit/checkbox';
 import Spinner from '@atlaskit/spinner';
 import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n';
 import { Platform } from '../../base/react';
+import Checkbox from '../../base/ui/components/web/Checkbox';
 
 import DesktopSourcePreview from './DesktopSourcePreview';
 
@@ -53,7 +53,7 @@ type Props = {
 /**
  * React component for showing a grid of DesktopSourcePreviews.
  *
- * @extends Component
+ * @augments Component
  */
 class DesktopPickerPane extends Component<Props> {
 

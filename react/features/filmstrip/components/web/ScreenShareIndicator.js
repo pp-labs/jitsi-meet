@@ -1,17 +1,15 @@
 // @flow
 
-import React from 'react';
+import React from "react";
 
-import { IconShareDesktopThumb } from '../../../base/icons';
-import { BaseIndicator } from '../../../base/react';
-
+import { IconShareDesktopThumb } from "../../../base/icons";
+import { BaseIndicator } from "../../../base/react";
 
 type Props = {
-
     /**
      * From which side of the indicator the tooltip should appear from.
      */
-    tooltipPosition: string
+    tooltipPosition: string,
 };
 
 /**
@@ -23,11 +21,11 @@ type Props = {
 export default function ScreenShareIndicator(props: Props) {
     return (
         <BaseIndicator
-            className = 'screenShare toolbar-icon'
-            icon = { IconShareDesktopThumb }
-            iconId = 'share-desktop'
-            iconSize = { 13 }
-            tooltipKey = 'videothumbnail.videomute'
-            tooltipPosition = { props.tooltipPosition } />
+            icon={IconShareDesktopThumb}
+            iconId="share-desktop"
+            iconSize={15}
+            tooltipKey="videothumbnail.screenSharing"
+            tooltipPosition={props.tooltipPosition}
+        />
     );
 }

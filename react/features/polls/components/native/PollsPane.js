@@ -1,11 +1,14 @@
 /* eslint-disable react-native/no-color-literals */
 // @flow
 
-import React from 'react';
-import { View } from 'react-native';
-import { Button } from 'react-native-paper';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
+import React, { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 
-import { BUTTON_MODES } from '../../../chat/constants';
+import JitsiScreen from '../../../base/modal/components/JitsiScreen';
+import Button from '../../../base/ui/components/native/Button';
+import { BUTTON_TYPES } from '../../../base/ui/constants';
+import { getUnreadPollCount } from '../../functions';
 import AbstractPollsPane from '../AbstractPollsPane';
 import type { AbstractProps } from '../AbstractPollsPane';
 
@@ -13,26 +16,44 @@ import PollCreate from './PollCreate';
 import PollsList from './PollsList';
 import { chatStyles } from './styles';
 
-const PollsPane = (props: AbstractProps) => {
 
+const PollsPane = (props: AbstractProps) => {
     const { createMode, onCreate, setCreateMode, t } = props;
+    const isPollsScreenFocused = useIsFocused();
+    const navigation = useNavigation();
+    const nbUnreadPolls = useSelector(getUnreadPollCount);
+
+    const nrUnreadPolls = !isPollsScreenFocused && nbUnreadPolls > 0
+        ? `(${nbUnreadPolls})`
+        : '';
+
+    useEffect(() => {
+        navigation.setOptions({
+            tabBarLabel: `${t('chat.tabs.polls')} ${nrUnreadPolls}`
+        });
+    }, [ nrUnreadPolls ]);
 
     return (
-        <View style = { chatStyles.PollPane }>
-            { createMode
-                ? <PollCreate setCreateMode = { setCreateMode } />
-                : <View style = { chatStyles.PollPaneContent }>
-                    {/* <View /> */}
-                    <PollsList />
-                    <Button
-                        color = '#17a0db'
-                        mode = { BUTTON_MODES.CONTAINED }
-                        onPress = { onCreate }
-                        style = { chatStyles.createPollButton } >
-                        {t('polls.create.create')}
-                    </Button>
-                </View>}
-        </View>
+        <JitsiScreen
+            contentContainerStyle = { chatStyles.pollPane }
+            disableForcedKeyboardDismiss = { !createMode }
+            hasTabNavigator = { true }
+            style = { chatStyles.pollPaneContainer }>
+            {
+                createMode
+                    ? <PollCreate setCreateMode = { setCreateMode } />
+                    : <PollsList />
+
+            }
+            {
+                !createMode && <Button
+                    accessibilityLabel = 'polls.create.create'
+                    labelKey = 'polls.create.create'
+                    onClick = { onCreate }
+                    style = { chatStyles.createPollButton }
+                    type = { BUTTON_TYPES.PRIMARY } />
+            }
+        </JitsiScreen>
     );
 };
 

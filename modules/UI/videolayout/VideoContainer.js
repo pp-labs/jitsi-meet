@@ -1,21 +1,31 @@
-/* global $, APP, interfaceConfig */
+/* global APP, interfaceConfig */
 
 /* eslint-disable no-unused-vars */
-import React from 'react';
-import ReactDOM from 'react-dom';
+import $ from "jquery";
+import React from "react";
+import ReactDOM from "react-dom";
 
-import { browser } from '../../../react/features/base/lib-jitsi-meet';
-import { isTestModeEnabled } from '../../../react/features/base/testing';
-import { ORIENTATION, LargeVideoBackground, updateLastLargeVideoMediaEvent } from '../../../react/features/large-video';
-import { LAYOUTS, getCurrentLayout } from '../../../react/features/video-layout';
+import { browser } from "../../../react/features/base/lib-jitsi-meet";
+import { isTestModeEnabled } from "../../../react/features/base/testing";
+import { FILMSTRIP_BREAKPOINT } from "../../../react/features/filmstrip";
+import {
+    LargeVideoBackground,
+    ORIENTATION,
+    updateLastLargeVideoMediaEvent,
+} from "../../../react/features/large-video";
+import { setLargeVideoDimensions } from "../../../react/features/large-video/actions.any";
+import {
+    LAYOUTS,
+    getCurrentLayout,
+} from "../../../react/features/video-layout";
 /* eslint-enable no-unused-vars */
-import UIUtil from '../util/UIUtil';
+import UIUtil from "../util/UIUtil";
 
-import Filmstrip from './Filmstrip';
-import LargeContainer from './LargeContainer';
+import Filmstrip from "./Filmstrip";
+import LargeContainer from "./LargeContainer";
 
 // FIXME should be 'video'
-export const VIDEO_CONTAINER_TYPE = 'camera';
+export const VIDEO_CONTAINER_TYPE = "camera";
 
 const FADE_DURATION_MS = 300;
 
@@ -24,8 +34,22 @@ const FADE_DURATION_MS = 300;
  * container for every event in the list. The latest event will be stored in redux.
  */
 const containerEvents = [
-    'abort', 'canplay', 'canplaythrough', 'emptied', 'ended', 'error', 'loadeddata', 'loadedmetadata', 'loadstart',
-    'pause', 'play', 'playing', 'ratechange', 'stalled', 'suspend', 'waiting'
+    "abort",
+    "canplay",
+    "canplaythrough",
+    "emptied",
+    "ended",
+    "error",
+    "loadeddata",
+    "loadedmetadata",
+    "loadstart",
+    "pause",
+    "play",
+    "playing",
+    "ratechange",
+    "stalled",
+    "suspend",
+    "waiting",
 ];
 
 /**
@@ -37,16 +61,24 @@ const containerEvents = [
  * @param videoHeight the height of the video to position
  * @param videoSpaceWidth the width of the available space
  * @param videoSpaceHeight the height of the available space
+ * @param subtractFilmstrip whether to subtract the filmstrip or not
  * @return an array with 2 elements, the video width and the video height
  */
 function computeDesktopVideoSize( // eslint-disable-line max-params
-        videoWidth,
-        videoHeight,
-        videoSpaceWidth,
-        videoSpaceHeight) {
-    if (videoWidth === 0 || videoHeight === 0 || videoSpaceWidth === 0 || videoSpaceHeight === 0) {
+    videoWidth,
+    videoHeight,
+    videoSpaceWidth,
+    videoSpaceHeight,
+    subtractFilmstrip
+) {
+    if (
+        videoWidth === 0 ||
+        videoHeight === 0 ||
+        videoSpaceWidth === 0 ||
+        videoSpaceHeight === 0
+    ) {
         // Avoid NaN values caused by division by 0.
-        return [ 0, 0 ];
+        return [0, 0];
     }
 
     const aspectRatio = videoWidth / videoHeight;
@@ -54,8 +86,10 @@ function computeDesktopVideoSize( // eslint-disable-line max-params
     let availableHeight = Math.max(videoHeight, videoSpaceHeight);
 
     if (interfaceConfig.VERTICAL_FILMSTRIP) {
-        // eslint-disable-next-line no-param-reassign
-        videoSpaceWidth -= Filmstrip.getVerticalFilmstripWidth();
+        if (subtractFilmstrip) {
+            // eslint-disable-next-line no-param-reassign
+            videoSpaceWidth -= Filmstrip.getVerticalFilmstripWidth();
+        }
     } else {
         // eslint-disable-next-line no-param-reassign
         videoSpaceHeight -= Filmstrip.getFilmstripHeight();
@@ -71,9 +105,8 @@ function computeDesktopVideoSize( // eslint-disable-line max-params
         availableHeight = availableWidth / aspectRatio;
     }
 
-    return [ availableWidth, availableHeight ];
+    return [availableWidth, availableHeight];
 }
-
 
 /**
  * Returns an array of the video dimensions. It respects the
@@ -87,60 +120,68 @@ function computeDesktopVideoSize( // eslint-disable-line max-params
  * @return an array with 2 elements, the video width and the video height
  */
 function computeCameraVideoSize( // eslint-disable-line max-params
-        videoWidth,
-        videoHeight,
-        videoSpaceWidth,
-        videoSpaceHeight,
-        videoLayoutFit) {
-    if (videoWidth === 0 || videoHeight === 0 || videoSpaceWidth === 0 || videoSpaceHeight === 0) {
+    videoWidth,
+    videoHeight,
+    videoSpaceWidth,
+    videoSpaceHeight,
+    videoLayoutFit
+) {
+    if (
+        videoWidth === 0 ||
+        videoHeight === 0 ||
+        videoSpaceWidth === 0 ||
+        videoSpaceHeight === 0
+    ) {
         // Avoid NaN values caused by division by 0.
-        return [ 0, 0 ];
+        return [0, 0];
     }
 
     const aspectRatio = videoWidth / videoHeight;
     const videoSpaceRatio = videoSpaceWidth / videoSpaceHeight;
 
     switch (videoLayoutFit) {
-    case 'height':
-        return [ videoSpaceHeight * aspectRatio, videoSpaceHeight ];
-    case 'width':
-        return [ videoSpaceWidth, videoSpaceWidth / aspectRatio ];
-    case 'nocrop':
-        return computeCameraVideoSize(
-            videoWidth,
-            videoHeight,
-            videoSpaceWidth,
-            videoSpaceHeight,
-            videoSpaceRatio < aspectRatio ? 'width' : 'height');
-    case 'both': {
-        const maxZoomCoefficient = interfaceConfig.MAXIMUM_ZOOMING_COEFFICIENT
-            || Infinity;
+        case "height":
+            return [videoSpaceHeight * aspectRatio, videoSpaceHeight];
+        case "width":
+            return [videoSpaceWidth, videoSpaceWidth / aspectRatio];
+        case "nocrop":
+            return computeCameraVideoSize(
+                videoWidth,
+                videoHeight,
+                videoSpaceWidth,
+                videoSpaceHeight,
+                videoSpaceRatio < aspectRatio ? "width" : "height"
+            );
+        case "both": {
+            const maxZoomCoefficient =
+                interfaceConfig.MAXIMUM_ZOOMING_COEFFICIENT || Infinity;
 
-        if (videoSpaceRatio === aspectRatio) {
-            return [ videoSpaceWidth, videoSpaceHeight ];
+            if (videoSpaceRatio === aspectRatio) {
+                return [videoSpaceWidth, videoSpaceHeight];
+            }
+
+            let [width, height] = computeCameraVideoSize(
+                videoWidth,
+                videoHeight,
+                videoSpaceWidth,
+                videoSpaceHeight,
+                videoSpaceRatio < aspectRatio ? "height" : "width"
+            );
+            const maxWidth = videoSpaceWidth * maxZoomCoefficient;
+            const maxHeight = videoSpaceHeight * maxZoomCoefficient;
+
+            if (width > maxWidth) {
+                width = maxWidth;
+                height = width / aspectRatio;
+            } else if (height > maxHeight) {
+                height = maxHeight;
+                width = height * aspectRatio;
+            }
+
+            return [width, height];
         }
-
-        let [ width, height ] = computeCameraVideoSize(
-            videoWidth,
-            videoHeight,
-            videoSpaceWidth,
-            videoSpaceHeight,
-            videoSpaceRatio < aspectRatio ? 'height' : 'width');
-        const maxWidth = videoSpaceWidth * maxZoomCoefficient;
-        const maxHeight = videoSpaceHeight * maxZoomCoefficient;
-
-        if (width > maxWidth) {
-            width = maxWidth;
-            height = width / aspectRatio;
-        } else if (height > maxHeight) {
-            height = maxHeight;
-            width = height * aspectRatio;
-        }
-
-        return [ width, height ];
-    }
-    default:
-        return [ videoWidth, videoHeight ];
+        default:
+            return [videoWidth, videoHeight];
     }
 }
 
@@ -152,10 +193,11 @@ function computeCameraVideoSize( // eslint-disable-line max-params
  * indent
  */
 function getCameraVideoPosition( // eslint-disable-line max-params
-        videoWidth,
-        videoHeight,
-        videoSpaceWidth,
-        videoSpaceHeight) {
+    videoWidth,
+    videoHeight,
+    videoSpaceWidth,
+    videoSpaceHeight
+) {
     // Parent height isn't completely calculated when we position the video in
     // full screen mode and this is why we use the screen height in this case.
     // Need to think it further at some point and implement it properly.
@@ -167,8 +209,7 @@ function getCameraVideoPosition( // eslint-disable-line max-params
     const horizontalIndent = (videoSpaceWidth - videoWidth) / 2;
     const verticalIndent = (videoSpaceHeight - videoHeight) / 2;
 
-    return { horizontalIndent,
-        verticalIndent };
+    return { horizontalIndent, verticalIndent };
 }
 
 /**
@@ -179,7 +220,7 @@ export class VideoContainer extends LargeContainer {
      *
      */
     get $video() {
-        return $('#largeVideo');
+        return $("#largeVideo");
     }
 
     /**
@@ -226,17 +267,17 @@ export class VideoContainer extends LargeContainer {
          * @type {boolean}
          */
         this.avatarDisplayed = false;
-        this.$avatar = $('#dominantSpeaker');
+        this.$avatar = $("#dominantSpeaker");
 
         /**
          * A jQuery selector of the remote connection message.
          * @type {jQuery|HTMLElement}
          */
-        this.$remoteConnectionMessage = $('#remoteConnectionMessage');
+        this.$remoteConnectionMessage = $("#remoteConnectionMessage");
 
-        this.$remotePresenceMessage = $('#remotePresenceMessage');
+        this.$remotePresenceMessage = $("#remotePresenceMessage");
 
-        this.$wrapper = $('#largeVideoWrapper');
+        this.$wrapper = $("#largeVideoWrapper");
 
         /**
          * FIXME: currently using parent() because I can't come up with name
@@ -244,9 +285,9 @@ export class VideoContainer extends LargeContainer {
          * video anyway.
          */
         this.$wrapperParent = this.$wrapper.parent();
-        this.avatarHeight = $('#dominantSpeakerAvatarContainer').height();
-        this.$video[0].onplaying = function(event) {
-            if (typeof resizeContainer === 'function') {
+        this.avatarHeight = $("#dominantSpeakerAvatarContainer").height();
+        this.$video[0].onplaying = function (event) {
+            if (typeof resizeContainer === "function") {
                 resizeContainer(event);
             }
         };
@@ -261,9 +302,10 @@ export class VideoContainer extends LargeContainer {
         this.$video[0].onresize = this._onResize.bind(this);
 
         if (isTestModeEnabled(APP.store.getState())) {
-            const cb = name => APP.store.dispatch(updateLastLargeVideoMediaEvent(name));
+            const cb = (name) =>
+                APP.store.dispatch(updateLastLargeVideoMediaEvent(name));
 
-            containerEvents.forEach(event => {
+            containerEvents.forEach((event) => {
                 this.$video[0].addEventListener(event, cb.bind(this, event));
             });
         }
@@ -296,10 +338,9 @@ export class VideoContainer extends LargeContainer {
     getStreamSize() {
         const video = this.$video[0];
 
-
         return {
             width: video.videoWidth,
-            height: video.videoHeight
+            height: video.videoHeight,
         };
     }
 
@@ -307,23 +348,29 @@ export class VideoContainer extends LargeContainer {
      * Calculate optimal video size for specified container size.
      * @param {number} containerWidth container width
      * @param {number} containerHeight container height
+     * @param {number} verticalFilmstripWidth current width of the vertical filmstrip
      * @returns {{availableWidth, availableHeight}}
      */
-    _getVideoSize(containerWidth, containerHeight) {
+    _getVideoSize(containerWidth, containerHeight, verticalFilmstripWidth) {
         const { width, height } = this.getStreamSize();
         // sally - minus 82 for the top toolbar
         if (this.stream) {
-            return computeDesktopVideoSize(width,
+            return computeDesktopVideoSize(
+                width,
                 height,
                 containerWidth,
-                containerHeight - 82);
+                containerHeight - 82,
+                verticalFilmstripWidth < FILMSTRIP_BREAKPOINT
+            );
         }
 
-        return computeCameraVideoSize(width,
+        return computeCameraVideoSize(
+            width,
             height,
             containerWidth,
             containerHeight,
-            interfaceConfig.VIDEO_LAYOUT_FIT);
+            interfaceConfig.VIDEO_LAYOUT_FIT
+        );
     }
 
     /* eslint-disable max-params */
@@ -334,28 +381,41 @@ export class VideoContainer extends LargeContainer {
      * @param {number} height video height
      * @param {number} containerWidth container width
      * @param {number} containerHeight container height
+     * @param {number} verticalFilmstripWidth current width of the vertical filmstrip
      * @returns {{horizontalIndent, verticalIndent}}
      */
-    getVideoPosition(width, height, containerWidth, containerHeight) {
+    getVideoPosition(
+        width,
+        height,
+        containerWidth,
+        containerHeight,
+        verticalFilmstripWidth
+    ) {
         let containerWidthToUse = containerWidth;
 
         /* eslint-enable max-params */
         if (this.stream) {
-            if (interfaceConfig.VERTICAL_FILMSTRIP) {
+            if (
+                interfaceConfig.VERTICAL_FILMSTRIP &&
+                verticalFilmstripWidth < FILMSTRIP_BREAKPOINT
+            ) {
                 containerWidthToUse -= Filmstrip.getVerticalFilmstripWidth();
             }
             // sally - minus 82 for the top toolbar
-            return getCameraVideoPosition(width,
+            return getCameraVideoPosition(
+                width,
                 height - 82,
                 containerWidthToUse,
-                containerHeight);
+                containerHeight
+            );
         }
 
-        return getCameraVideoPosition(width,
-                height,
-                containerWidthToUse,
-                containerHeight);
-
+        return getCameraVideoPosition(
+            width,
+            height,
+            containerWidthToUse,
+            containerHeight
+        );
     }
 
     /**
@@ -379,16 +439,17 @@ export class VideoContainer extends LargeContainer {
      */
     _positionParticipantStatus($element) {
         if (this.avatarDisplayed) {
-            const $avatarImage = $('#dominantSpeakerAvatarContainer');
+            const $avatarImage = $("#dominantSpeakerAvatarContainer");
 
             $element.css(
-                'top',
-                $avatarImage.offset().top + $avatarImage.height() + 10);
+                "top",
+                $avatarImage.offset().top + $avatarImage.height() + 10
+            );
         } else {
             const height = $element.height();
             const parentHeight = $element.parent().height();
 
-            $element.css('top', (parentHeight / 2) - (height / 2));
+            $element.css("top", parentHeight / 2 - height / 2);
         }
     }
 
@@ -401,9 +462,16 @@ export class VideoContainer extends LargeContainer {
         if (this.$video.length === 0) {
             return;
         }
-        const currentLayout = getCurrentLayout(APP.store.getState());
+        const state = APP.store.getState();
+        const currentLayout = getCurrentLayout(state);
 
-        if (currentLayout === LAYOUTS.TILE_VIEW) {
+        const verticalFilmstripWidth =
+            state["features/filmstrip"].width?.current;
+
+        if (
+            currentLayout === LAYOUTS.TILE_VIEW ||
+            currentLayout === LAYOUTS.STAGE_FILMSTRIP_VIEW
+        ) {
             // We don't need to resize the large video since it won't be displayed and we'll resize when returning back
             // to stage view.
             return;
@@ -411,7 +479,11 @@ export class VideoContainer extends LargeContainer {
 
         this.positionRemoteStatusMessages();
 
-        const [ width, height ] = this._getVideoSize(containerWidth, containerHeight);
+        const [width, height] = this._getVideoSize(
+            containerWidth,
+            containerHeight,
+            verticalFilmstripWidth
+        );
 
         if (width === 0 || height === 0) {
             // We don't need to set 0 for width or height since the visibility is controlled by the visibility css prop
@@ -422,9 +494,11 @@ export class VideoContainer extends LargeContainer {
             return;
         }
 
-
-        if ((containerWidth > width) || (containerHeight > height)) {
-            this._backgroundOrientation = containerWidth > width ? ORIENTATION.LANDSCAPE : ORIENTATION.PORTRAIT;
+        if (containerWidth > width || containerHeight > height) {
+            this._backgroundOrientation =
+                containerWidth > width
+                    ? ORIENTATION.LANDSCAPE
+                    : ORIENTATION.PORTRAIT;
             this._hideBackground = false;
         } else {
             this._hideBackground = true;
@@ -432,25 +506,32 @@ export class VideoContainer extends LargeContainer {
 
         this._updateBackground();
 
-        const { horizontalIndent, verticalIndent }
-            = this.getVideoPosition(width, height, containerWidth, containerHeight);
-
-        
-        
-
-        this.$wrapper.animate({
+        const { horizontalIndent, verticalIndent } = this.getVideoPosition(
             width,
             height,
+            containerWidth,
+            containerHeight,
+            verticalFilmstripWidth
+        );
 
-            top: verticalIndent,
-            bottom: verticalIndent,
+        APP.store.dispatch(setLargeVideoDimensions(height, width));
 
-            left: horizontalIndent,
-            right: horizontalIndent
-        }, {
-            queue: false,
-            duration: animate ? 500 : 0
-        });
+        this.$wrapper.animate(
+            {
+                width,
+                height,
+
+                top: verticalIndent,
+                bottom: verticalIndent,
+
+                left: horizontalIndent,
+                right: horizontalIndent,
+            },
+            {
+                queue: false,
+                duration: animate ? 500 : 0,
+            }
+        );
     }
 
     /**
@@ -473,7 +554,7 @@ export class VideoContainer extends LargeContainer {
      */
     setStream(userID, stream, videoType) {
         this.userId = userID;
-        if (this.stream === stream) {
+        if (this.stream === stream && !stream?.forceStreamToReattach) {
             // Handles the use case for the remote participants when the
             // videoType is received with delay after turning on/off the
             // desktop sharing.
@@ -485,8 +566,12 @@ export class VideoContainer extends LargeContainer {
             return;
         }
 
+        if (stream?.forceStreamToReattach) {
+            delete stream.forceStreamToReattach;
+        }
+
         // detach old stream
-        if (this.stream) {
+        if (this.stream && this.$video[0]) {
             this.stream.detach(this.$video[0]);
         }
 
@@ -497,15 +582,21 @@ export class VideoContainer extends LargeContainer {
             return;
         }
 
-        stream.attach(this.$video[0]);
+        if (this.$video[0]) {
+            stream.attach(this.$video[0]);
 
-        const flipX = stream.isLocal() && this.localFlipX && !this.isScreenSharing();
+            // Ensure large video gets play() called on it when a new stream is attached to it. This is necessary in the
+            // case of Safari as autoplay doesn't kick-in automatically on Safari 15 and newer versions.
+            browser.isWebKitBased() && this.$video[0].play();
 
-        this.$video.css({
-            transform: flipX ? 'scaleX(-1)' : 'none'
-        });
+            const flipX =
+                stream.isLocal() && this.localFlipX && !this.isScreenSharing();
 
-        this._updateBackground();
+            this.$video.css({
+                transform: flipX ? "scaleX(-1)" : "none",
+            });
+            this._updateBackground();
+        }
     }
 
     /**
@@ -518,19 +609,18 @@ export class VideoContainer extends LargeContainer {
             return;
         }
         this.$video.css({
-            transform: this.localFlipX ? 'scaleX(-1)' : 'none'
+            transform: this.localFlipX ? "scaleX(-1)" : "none",
         });
 
         this._updateBackground();
     }
-
 
     /**
      * Check if current video stream is screen sharing.
      * @returns {boolean}
      */
     isScreenSharing() {
-        return this.videoType === 'desktop';
+        return this.videoType === "desktop";
     }
 
     /**
@@ -538,7 +628,7 @@ export class VideoContainer extends LargeContainer {
      * @param {boolean} show
      */
     showAvatar(show) {
-        this.$avatar.css('visibility', show ? 'visible' : 'hidden');
+        this.$avatar.css("visibility", show ? "visible" : "hidden");
         this.avatarDisplayed = show;
 
         APP.API.notifyLargeVideoVisibilityChanged(show);
@@ -554,16 +644,14 @@ export class VideoContainer extends LargeContainer {
      * TODO: refactor this since Temasys is no longer supported.
      */
     show() {
-        return new Promise(resolve => {
-            this.$wrapperParent.css('visibility', 'visible').fadeTo(
-                FADE_DURATION_MS,
-                1,
-                () => {
+        return new Promise((resolve) => {
+            this.$wrapperParent
+                .css("visibility", "visible")
+                .fadeTo(FADE_DURATION_MS, 1, () => {
                     this._isHidden = false;
                     this._updateBackground();
                     resolve();
-                }
-            );
+                });
         });
     }
 
@@ -575,9 +663,9 @@ export class VideoContainer extends LargeContainer {
         // hide its avatar
         this.showAvatar(false);
 
-        return new Promise(resolve => {
+        return new Promise((resolve) => {
             this.$wrapperParent.fadeTo(FADE_DURATION_MS, 0, () => {
-                this.$wrapperParent.css('visibility', 'hidden');
+                this.$wrapperParent.css("visibility", "hidden");
                 this._isHidden = true;
                 this._updateBackground();
                 resolve();
@@ -599,7 +687,7 @@ export class VideoContainer extends LargeContainer {
      * @returns {void}
      */
     _onResize() {
-        this._resizeListeners.forEach(callback => callback());
+        this._resizeListeners.forEach((callback) => callback());
     }
 
     /**
@@ -614,24 +702,27 @@ export class VideoContainer extends LargeContainer {
         // Do not the background display on browsers that might experience
         // performance issues from the presence of the background or if
         // explicitly disabled.
-        if (interfaceConfig.DISABLE_VIDEO_BACKGROUND
-                || browser.isFirefox()
-                || browser.isWebKitBased()) {
+        if (
+            interfaceConfig.DISABLE_VIDEO_BACKGROUND ||
+            browser.isFirefox() ||
+            browser.isWebKitBased()
+        ) {
             return;
         }
         // sally - hide background if screenshare
         ReactDOM.render(
             <LargeVideoBackground
-                hidden = { this.isScreenSharing() || this._hideBackground || this._isHidden }
-                mirror = {
-                    this.stream
-                    && this.stream.isLocal()
-                    && this.localFlipX
+                hidden={
+                    this.isScreenSharing() ||
+                    this._hideBackground ||
+                    this._isHidden
                 }
-                orientationFit = { this._backgroundOrientation }
-                videoElement = { this.$video && this.$video[0] }
-                videoTrack = { this.stream } />,
-            document.getElementById('largeVideoBackgroundContainer')
+                mirror={this.stream && this.stream.isLocal() && this.localFlipX}
+                orientationFit={this._backgroundOrientation}
+                videoElement={this.$video && this.$video[0]}
+                videoTrack={this.stream}
+            />,
+            document.getElementById("largeVideoBackgroundContainer")
         );
     }
 }

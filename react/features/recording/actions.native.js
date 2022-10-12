@@ -1,9 +1,21 @@
-// @flow
-
+import { openSheet } from '../base/dialog';
 import JitsiMeetJS from '../base/lib-jitsi-meet';
-import { showNotification } from '../notifications';
+import { NOTIFICATION_TIMEOUT_TYPE, showNotification } from '../notifications';
+
+import HighlightDialog from './components/Recording/native/HighlightDialog';
 
 export * from './actions.any';
+
+/**
+ * Opens the highlight dialog.
+ *
+ * @returns {Function}
+ */
+export function openHighlightDialog() {
+    return (dispatch: Function) => {
+        dispatch(openSheet(HighlightDialog));
+    };
+}
 
 /**
  * Signals that a started recording notification should be shown on the
@@ -37,6 +49,6 @@ export function showRecordingLimitNotification(streamType: string) {
             descriptionKey,
             titleKey,
             maxLines: 2
-        }, 10000));
+        }, NOTIFICATION_TIMEOUT_TYPE.LONG));
     };
 }

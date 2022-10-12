@@ -1,17 +1,17 @@
 // @flow
 
 import {
-    NOTIFICATION_TIMEOUT,
+    NOTIFICATION_TIMEOUT_TYPE,
     hideNotification,
     showErrorNotification,
     showNotification
 } from '../notifications';
 
 import {
+    SET_PENDING_TRANSCRIBING_NOTIFICATION_UID,
     _POTENTIAL_TRANSCRIBER_JOINED,
     _TRANSCRIBER_JOINED,
-    _TRANSCRIBER_LEFT,
-    SET_PENDING_TRANSCRIBING_NOTIFICATION_UID
+    _TRANSCRIBER_LEFT
 } from './actionTypes';
 
 /**
@@ -72,9 +72,8 @@ export function showPendingTranscribingNotification() {
     return async (dispatch: Function) => {
         const notification = await dispatch(showNotification({
             descriptionKey: 'transcribing.pending',
-            isDismissAllowed: false,
             titleKey: 'dialog.transcribing'
-        }));
+        }, NOTIFICATION_TIMEOUT_TYPE.LONG));
 
         if (notification) {
             dispatch(setPendingTranscribingNotificationUid(notification.uid));
@@ -127,7 +126,7 @@ export function showStoppedTranscribingNotification() {
     return showNotification({
         descriptionKey: 'transcribing.off',
         titleKey: 'dialog.transcribing'
-    }, NOTIFICATION_TIMEOUT);
+    }, NOTIFICATION_TIMEOUT_TYPE.SHORT);
 }
 
 
@@ -140,5 +139,5 @@ export function showTranscribingError() {
     return showErrorNotification({
         descriptionKey: 'transcribing.error',
         titleKey: 'transcribing.failedToStart'
-    });
+    }, NOTIFICATION_TIMEOUT_TYPE.LONG);
 }
