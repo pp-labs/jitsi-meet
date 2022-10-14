@@ -27,13 +27,13 @@ if (subdomain.startsWith("<!--")) {
 
 var enableJaaS = false;
 
-var config = {
+export var config = {
     // Connection
     //
 
     hosts: {
         // XMPP domain.
-        domain: "jitsi-meet.example.com",
+        // domain: "jitsi-meet.example.com",
 
         // When using authentication, domain for guest users.
         // anonymousdomain: 'guest.example.com',
@@ -639,17 +639,17 @@ var config = {
     // enableCalendarIntegration: false,
 
     // Configs for prejoin page.
-    // prejoinConfig: {
-    //     // When 'true', it shows an intermediate page before joining, where the user can configure their devices.
-    //     // This replaces `prejoinPageEnabled`.
-    //     enabled: true,
-    //     // Hides the participant name editing field in the prejoin screen.
-    //     // If requireDisplayName is also set as true, a name should still be provided through
-    //     // either the jwt or the userInfo from the iframe api init object in order for this to have an effect.
-    //     hideDisplayName: false,
-    //     // List of buttons to hide from the extra join options dropdown.
-    //     hideExtraJoinButtons: ['no-audio', 'by-phone'],
-    // },
+    prejoinConfig: {
+        // When 'true', it shows an intermediate page before joining, where the user can configure their devices.
+        // This replaces `prejoinPageEnabled`.
+        enabled: false,
+        // Hides the participant name editing field in the prejoin screen.
+        // If requireDisplayName is also set as true, a name should still be provided through
+        // either the jwt or the userInfo from the iframe api init object in order for this to have an effect.
+        hideDisplayName: false,
+        // List of buttons to hide from the extra join options dropdown.
+        hideExtraJoinButtons: ["no-audio", "by-phone"],
+    },
 
     // When 'true', the user cannot edit the display name.
     // (Mainly useful when used in conjunction with the JWT so the JWT name becomes read only.)
@@ -739,19 +739,19 @@ var config = {
     // ],
 
     // Holds values related to toolbar visibility control.
-    // toolbarConfig: {
-    //     // Moved from interfaceConfig.INITIAL_TOOLBAR_TIMEOUT
-    //     // The initial number of milliseconds for the toolbar buttons to be visible on screen.
-    //     initialTimeout: 20000,
-    //     // Moved from interfaceConfig.TOOLBAR_TIMEOUT
-    //     // Number of milliseconds for the toolbar buttons to be visible on screen.
-    //     timeout: 4000,
-    //     // Moved from interfaceConfig.TOOLBAR_ALWAYS_VISIBLE
-    //     // Whether toolbar should be always visible or should hide after x milliseconds.
-    //     alwaysVisible: false,
-    //     // Indicates whether the toolbar should still autohide when chat is open
-    //     autoHideWhileChatIsOpen: false,
-    // },
+    toolbarConfig: {
+        // Moved from interfaceConfig.INITIAL_TOOLBAR_TIMEOUT
+        // The initial number of milliseconds for the toolbar buttons to be visible on screen.
+        initialTimeout: 20000,
+        // Moved from interfaceConfig.TOOLBAR_TIMEOUT
+        // Number of milliseconds for the toolbar buttons to be visible on screen.
+        timeout: 4000,
+        // Moved from interfaceConfig.TOOLBAR_ALWAYS_VISIBLE
+        // Whether toolbar should be always visible or should hide after x milliseconds.
+        alwaysVisible: true,
+        // Indicates whether the toolbar should still autohide when chat is open
+        autoHideWhileChatIsOpen: false,
+    },
 
     // Toolbar buttons which have their click/tap event exposed through the API on
     // `toolbarButtonClicked`. Passing a string for the button key will
@@ -813,14 +813,14 @@ var config = {
     toolbarButtons: [
         "microphone",
         "camera",
-        "desktop",
-        "profile",
-        "sharedvideo",
+        // "desktop",
+        // "profile",
+        // "sharedvideo",
         "settings",
-        "raisehand",
-        "videoquality",
+        // "raisehand",
+        // "videoquality",
         "filmstrip",
-        "tileview",
+        // "tileview",
     ],
 
     // List of pre meeting screens buttons to hide. The values must be one or more of the 5 allowed buttons:

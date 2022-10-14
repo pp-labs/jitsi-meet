@@ -8,12 +8,12 @@
  * config.js, and no new options should be added here.
  */
 
-var interfaceConfig = {
-    APP_NAME: 'Jitsi Meet',
+export var interfaceConfig = {
+    APP_NAME: "Jitsi Meet",
 
     //sally -aaudi red
-    AUDIO_LEVEL_PRIMARY_COLOR: 'rgba(245,5,55,0.4)',
-    AUDIO_LEVEL_SECONDARY_COLOR: 'rgba(245,5,55,0.2)',
+    AUDIO_LEVEL_PRIMARY_COLOR: "rgba(245,5,55,0.4)",
+    AUDIO_LEVEL_SECONDARY_COLOR: "rgba(245,5,55,0.2)",
 
     /**
      * A UX mode where the last screen share participant is automatically
@@ -23,13 +23,13 @@ var interfaceConfig = {
      *
      * Note: this mode is experimental and subject to breakage.
      */
-    AUTO_PIN_LATEST_SCREEN_SHARE: 'remote-only',
-    BRAND_WATERMARK_LINK: '',
+    AUTO_PIN_LATEST_SCREEN_SHARE: "remote-only",
+    BRAND_WATERMARK_LINK: "",
 
     CLOSE_PAGE_GUEST_HINT: false, // A html text to be shown to guests on the close page, false disables it
 
-    DEFAULT_BACKGROUND: '#040404',
-    DEFAULT_WELCOME_PAGE_LOGO_URL: 'images/watermark.svg',
+    DEFAULT_BACKGROUND: "#040404",
+    DEFAULT_WELCOME_PAGE_LOGO_URL: "images/watermark.svg",
 
     DISABLE_DOMINANT_SPEAKER_INDICATOR: false,
 
@@ -88,10 +88,9 @@ var interfaceConfig = {
      */
     HIDE_INVITE_MORE_HEADER: true,
 
-    JITSI_WATERMARK_LINK: '',
+    JITSI_WATERMARK_LINK: "",
 
     // JITSI_WATERMARK_LINK: 'https://jitsi.org',
-
 
     LANG_DETECTION: true, // Allow i18n to detect the system language
     LOCAL_THUMBNAIL_RATIO: 16 / 9, // 16:9
@@ -116,28 +115,38 @@ var interfaceConfig = {
     /**
      * Specify custom URL for downloading android mobile app.
      */
-    MOBILE_DOWNLOAD_LINK_ANDROID: 'https://play.google.com/store/apps/details?id=org.jitsi.meet',
+    MOBILE_DOWNLOAD_LINK_ANDROID:
+        "https://play.google.com/store/apps/details?id=org.jitsi.meet",
 
     /**
      * Specify custom URL for downloading f droid app.
      */
-    MOBILE_DOWNLOAD_LINK_F_DROID: 'https://f-droid.org/en/packages/org.jitsi.meet/',
+    MOBILE_DOWNLOAD_LINK_F_DROID:
+        "https://f-droid.org/en/packages/org.jitsi.meet/",
 
     /**
      * Specify URL for downloading ios mobile app.
      */
-    MOBILE_DOWNLOAD_LINK_IOS: 'https://itunes.apple.com/us/app/jitsi-meet/id1165103905',
+    MOBILE_DOWNLOAD_LINK_IOS:
+        "https://itunes.apple.com/us/app/jitsi-meet/id1165103905",
 
-    NATIVE_APP_NAME: 'Jitsi Meet',
+    NATIVE_APP_NAME: "Jitsi Meet",
 
     // Names of browsers which should show a warning stating the current browser
     // has a suboptimal experience. Browsers which are not listed as optimal or
     // unsupported are considered suboptimal. Valid values are:
     // chrome, chromium, edge, electron, firefox, nwjs, opera, safari
-    OPTIMAL_BROWSERS: [ 'chrome', 'chromium', 'firefox', 'nwjs', 'electron', 'safari' ],
+    OPTIMAL_BROWSERS: [
+        "chrome",
+        "chromium",
+        "firefox",
+        "nwjs",
+        "electron",
+        "safari",
+    ],
 
     POLICY_LOGO: null,
-    PROVIDER_NAME: 'Audi',
+    PROVIDER_NAME: "Audi",
 
     /**
      * If true, will display recent list
@@ -148,10 +157,9 @@ var interfaceConfig = {
     RECENT_LIST_ENABLED: false,
     REMOTE_THUMBNAIL_RATIO: 16 / 9, // 1:1
 
-
     // SETTINGS_SECTIONS: [ 'devices', 'language', 'moderator', 'profile', 'calendar', 'sounds' ],
 
-    SETTINGS_SECTIONS: [ 'devices', 'language'],
+    SETTINGS_SECTIONS: ["devices", "language"],
     /**
      * Specify which sharing features should be displayed. If the value is not set
      * all sharing features will be shown. You can set [] to disable all.
@@ -176,7 +184,7 @@ var interfaceConfig = {
      * If indicated some of the error dialogs may point to the support URL for
      * help.
      */
-    SUPPORT_URL: 'https://community.jitsi.org/',
+    SUPPORT_URL: "https://community.jitsi.org/",
 
     TOOLBAR_ALWAYS_VISIBLE: true,
 
@@ -208,7 +216,7 @@ var interfaceConfig = {
     // screen, 'width' would fit the original video width to the width of the
     // screen respecting ratio, 'nocrop' would make the video as large as
     // possible and preserve aspect ratio without cropping.
-    VIDEO_LAYOUT_FIT: 'both',
+    VIDEO_LAYOUT_FIT: "both",
 
     /**
      * If true, hides the video quality label indicating the resolution status
@@ -289,7 +297,7 @@ var interfaceConfig = {
     // Allow all above example options to include a trailing comma and
     // prevent fear when commenting out the last value.
     // eslint-disable-next-line sort-keys
-    makeJsonParserHappy: 'even if last key had a trailing comma'
+    makeJsonParserHappy: "even if last key had a trailing comma",
 
     // No configuration value should follow this line.
 };
