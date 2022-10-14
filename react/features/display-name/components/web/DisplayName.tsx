@@ -333,8 +333,10 @@ function _mapStateToProps(state: IState, ownProps: Partial<Props>) {
     const participant = getParticipantById(state, participantID ?? '');
 
     // sally - quick fix for encoded apostophe
-    let participantName = getParticipantDisplayName(state, participantID);
-    participantName = participantName.replace(/&#39;/g, "'");
+    let participantName = getParticipantDisplayName(state, participantID ?? '');
+
+    participantName = participantName.replace(/&#39;/g, '\'');
+
     return {
         _configuredDisplayName: participant?.name,
         _nameToDisplay: participantName

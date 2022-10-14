@@ -11,25 +11,26 @@ import {
     VIRTUAL_SCREENSHARE_REMOTE_PARTICIPANTS_UPDATED
 } from '../../video-layout/actionTypes';
 import { SET_AUDIO_ONLY } from '../audio-only/actionTypes';
+// eslint-disable-next-line import/order
 import { CONFERENCE_JOINED } from '../conference/actionTypes';
-import {
-    PARTICIPANT_JOINED,
-    PARTICIPANT_KICKED,
-    PARTICIPANT_LEFT
-} from '../participants/actionTypes';
-import {
-    getParticipantById,
-    getParticipantCount
-} from '../participants/functions';
+
+// @ts-ignore
+// eslint-disable-next-line import/order
+import { PARTICIPANT_JOINED, PARTICIPANT_KICKED, PARTICIPANT_LEFT } from '../participants/actionTypes';
+
+// @ts-ignore
+// eslint-disable-next-line import/order
+import { getParticipantById, getParticipantCount } from '../participants/functions';
+
+// @ts-ignore
+import { MiddlewareRegistry } from '../redux';
 import {
     CLIENT_RESIZED
 } from '../responsive-ui/actionTypes';
-import { MiddlewareRegistry } from '../redux';
 import { isLocalVideoTrackDesktop } from '../tracks/functions';
 
 import { setLastN } from './actions';
 import { limitLastN } from './functions';
-import { getCurrentLayout, getTileViewGridDimensions, shouldDisplayTileView, LAYOUTS } from '../../video-layout';
 import logger from './logger';
 
 /**
@@ -45,8 +46,8 @@ const _updateLastN = debounce(({ dispatch, getState }: IStore) => {
 
 
     // sally
-    const layout = getCurrentLayout(state)
-    const { clientHeight } = state['features/base/responsive-ui'];
+    // const layout = getCurrentLayout(state);
+    // const { clientHeight } = state['features/base/responsive-ui'];
 
     if (!conference) {
         logger.debug('There is no active conference, not updating last N');
@@ -110,9 +111,11 @@ const _updateLastN = debounce(({ dispatch, getState }: IStore) => {
 }, 1000); /* Don't send this more often than once a second. */
 
 
-MiddlewareRegistry.register(store => next => action => {
+MiddlewareRegistry.register((store: IStore) => (next: (arg0: any) => any) => (action: { type: any; }) => {
     const result = next(action);
-    //sally - set lastn on client resise
+
+
+    // sally - set lastn on client resise
     switch (action.type) {
     case CLIENT_RESIZED:
     case APP_STATE_CHANGED:

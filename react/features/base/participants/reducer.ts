@@ -560,41 +560,54 @@ function _participantJoined({ participant }: { participant: Participant; }) {
 }
 
 
-ReducerRegistry.register('features/base/participants/recentActive', (state = [], action) => {
+// eslint-disable-next-line max-len
+ReducerRegistry.register<any[]>('features/base/participants/recentActive', (state: any = [], action) => {
     // sally  -add state to track last 5 most recent active speakers
     switch (action.type) {
     case DOMINANT_SPEAKER_CHANGED:
         // sally keep state of last 5 active speakers
-        const { countVisbleActiveSpeakers } = action
-        let { conference, id } = action.participant;
-        let { participants } = conference;
-        let participant = participants[id];
+        // eslint-disable-next-line no-case-declarations
+        const { countVisbleActiveSpeakers } = action;
+        // eslint-disable-next-line no-case-declarations
+        const { conference, id } = action.participant;
+        // eslint-disable-next-line no-case-declarations
+        const { participants } = conference;
+        // eslint-disable-next-line no-case-declarations
+        const participant = participants[id];
 
         if (participant?.local || participant?._displayName.startsWith('Trainer')) {
             return state;
         }
-        let newState = [ ... state ]
-        const index = state.findIndex((p)=> p.id === participant._id)
+        // eslint-disable-next-line no-case-declarations
+        let newState = [ ...state ];
+        // eslint-disable-next-line no-case-declarations
+        const index = state.findIndex((p: { id: any; }) => p.id === participant._id);
 
         if (index === -1) {
-            newState.push({ 
+            newState.push({
                 id: participant._id,
                 timeStamp: Date.now()
-            })
+            });
         } else {
-            newState[index] = { 
+            newState[index] = {
                 id: participant._id,
                 timeStamp: Date.now()
-            }
+            };
         }
         // remove any inactive for more than 5 mins
-        const TIMEOUT_AFTER =1*60*1000;  // sally - 1min
-         newState = newState.filter((p) =>  Date.now() - p.timeStamp <= TIMEOUT_AFTER);
+        // eslint-disable-next-line no-case-declarations
+        const TIMEOUT_AFTER = 1 * 60 * 1000; // sally - 1min
+
+        newState = newState.filter(p => Date.now() - p.timeStamp <= TIMEOUT_AFTER);
 
         // remove least active if are to many based on number of visible activie speakers
-        while (newState.length >= countVisbleActiveSpeakers  && countVisbleActiveSpeakers > 0)  {
-            const toRemoveP = newState.reduce((minP, p) => p.timeStamp < minP.timeStamp ? p : minP, newState[0]);
-            newState = newState.filter((p) => p.id !== toRemoveP.id)
+        if (countVisbleActiveSpeakers > 0) {
+            while (newState.length >= countVisbleActiveSpeakers) {
+                // eslint-disable-next-line no-extra-parens
+                const toRemoveP = newState.reduce((minP, p) => (p.timeStamp < minP.timeStamp ? p : minP), newState[0]);
+
+                newState = newState.filter(p => p.id !== toRemoveP.id);
+            }
         }
 
         return newState;

@@ -1,7 +1,7 @@
-import { IStore } from "../../app/types";
-import { showNotification } from "../../notifications/actions";
-import { NOTIFICATION_TIMEOUT_TYPE } from "../../notifications/constants";
-import { set } from "../redux/functions";
+import { IStore } from '../../app/types';
+import { showNotification } from '../../notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
+import { set } from '../redux/functions';
 
 import {
     DOMINANT_SPEAKER_CHANGED,
@@ -23,19 +23,19 @@ import {
     RAISE_HAND_UPDATED,
     SCREENSHARE_PARTICIPANT_NAME_CHANGED,
     SET_LOADABLE_AVATAR_URL,
-    SET_LOCAL_PARTICIPANT_RECORDING_STATUS,
-} from "./actionTypes";
-import { DISCO_REMOTE_CONTROL_FEATURE } from "./constants";
+    SET_LOCAL_PARTICIPANT_RECORDING_STATUS
+} from './actionTypes';
+import { DISCO_REMOTE_CONTROL_FEATURE } from './constants';
 import {
+    getCntVisibileActiveSpeakers,
     getLocalParticipant,
     getNormalizedDisplayName,
     getParticipantById,
     getParticipantDisplayName,
-    getVirtualScreenshareParticipantOwnerId,
-    getCntVisibileActiveSpeakers,
-} from "./functions";
-import logger from "./logger";
-import { Participant } from "./types";
+    getVirtualScreenshareParticipantOwnerId
+} from './functions';
+import logger from './logger';
+import { Participant } from './types';
 
 /**
  * Create an action for when dominant speaker changes.
@@ -58,21 +58,22 @@ import { Participant } from "./types";
  * }}
  */
 export function dominantSpeakerChanged(
-    dominantSpeaker: string,
-    previousSpeakers: string[],
-    silence: boolean,
-    conference: any
+        dominantSpeaker: string,
+        previousSpeakers: string[],
+        silence: boolean,
+        conference: any
 ) {
-    const countVisbleActiveSpeakers = getCntVisibileActiveSpeakers(getState);
+    const countVisbleActiveSpeakers = getCntVisibileActiveSpeakers(APP.store.getState());
+
     return {
         type: DOMINANT_SPEAKER_CHANGED,
         participant: {
             conference,
             id: dominantSpeaker,
             previousSpeakers,
-            silence,
+            silence
         },
-        countVisbleActiveSpeakers,
+        countVisbleActiveSpeakers
     };
 }
 
@@ -88,7 +89,7 @@ export function dominantSpeakerChanged(
 export function grantModerator(id: string) {
     return {
         type: GRANT_MODERATOR,
-        id,
+        id
     };
 }
 
@@ -104,7 +105,7 @@ export function grantModerator(id: string) {
 export function kickParticipant(id: string) {
     return {
         type: KICK_PARTICIPANT,
-        id,
+        id
     };
 }
 
@@ -118,9 +119,9 @@ export function kickParticipant(id: string) {
  * @returns {Function}
  */
 export function localParticipantConnectionStatusChanged(
-    connectionStatus: string
+        connectionStatus: string
 ) {
-    return (dispatch: IStore["dispatch"], getState: IStore["getState"]) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const participant = getLocalParticipant(getState);
 
         if (participant) {
@@ -143,7 +144,7 @@ export function localParticipantConnectionStatusChanged(
  * @returns {Function}
  */
 export function localParticipantIdChanged(id: string) {
-    return (dispatch: IStore["dispatch"], getState: IStore["getState"]) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const participant = getLocalParticipant(getState);
 
         if (participant) {
@@ -154,7 +155,7 @@ export function localParticipantIdChanged(id: string) {
                 // Only the local participant is with an undefined conference.
                 conference: undefined,
                 newValue: id,
-                oldValue: participant.id,
+                oldValue: participant.id
             });
         }
     };
@@ -169,8 +170,8 @@ export function localParticipantIdChanged(id: string) {
  *     participant: Participant
  * }}
  */
-export function localParticipantJoined(participant: Participant = { id: "" }) {
-    return participantJoined(set(participant, "local", true));
+export function localParticipantJoined(participant: Participant = { id: '' }) {
+    return participantJoined(set(participant, 'local', true));
 }
 
 /**
@@ -179,7 +180,7 @@ export function localParticipantJoined(participant: Participant = { id: "" }) {
  * @returns {Function}
  */
 export function localParticipantLeft() {
-    return (dispatch: IStore["dispatch"], getState: IStore["getState"]) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const participant = getLocalParticipant(getState);
 
         if (participant) {
@@ -210,7 +211,7 @@ export function localParticipantLeft() {
  * @returns {Function}
  */
 export function localParticipantRoleChanged(role: string) {
-    return (dispatch: IStore["dispatch"], getState: IStore["getState"]) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const participant = getLocalParticipant(getState);
 
         if (participant) {
@@ -234,7 +235,7 @@ export function muteRemoteParticipant(id: string, mediaType: string) {
     return {
         type: MUTE_REMOTE_PARTICIPANT,
         id,
-        mediaType,
+        mediaType
     };
 }
 
@@ -253,15 +254,15 @@ export function muteRemoteParticipant(id: string, mediaType: string) {
  * }}
  */
 export function participantConnectionStatusChanged(
-    id: string,
-    connectionStatus: string
+        id: string,
+        connectionStatus: string
 ) {
     return {
         type: PARTICIPANT_UPDATED,
         participant: {
             connectionStatus,
-            id,
-        },
+            id
+        }
     };
 }
 
@@ -279,7 +280,7 @@ export function participantJoined(participant: Participant) {
     if (participant.local) {
         return {
             type: PARTICIPANT_JOINED,
-            participant,
+            participant
         };
     }
 
@@ -289,27 +290,27 @@ export function participantJoined(participant: Participant) {
 
     if (!conference) {
         throw Error(
-            "A remote participant must be associated with a JitsiConference!"
+            'A remote participant must be associated with a JitsiConference!'
         );
     }
 
-    return (dispatch: IStore["dispatch"], getState: IStore["getState"]) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         // A remote participant is only expected to join in a joined or joining
         // conference. The following check is really necessary because a
         // JitsiConference may have moved into leaving but may still manage to
         // sneak a PARTICIPANT_JOINED in if its leave is delayed for any purpose
         // (which is not outragous given that leaving involves network
         // requests.)
-        const stateFeaturesBaseConference =
-            getState()["features/base/conference"];
+        const stateFeaturesBaseConference
+            = getState()['features/base/conference'];
 
         if (
-            conference === stateFeaturesBaseConference.conference ||
-            conference === stateFeaturesBaseConference.joining
+            conference === stateFeaturesBaseConference.conference
+            || conference === stateFeaturesBaseConference.joining
         ) {
             return dispatch({
                 type: PARTICIPANT_JOINED,
-                participant,
+                participant
             });
         }
     };
@@ -325,7 +326,7 @@ export function participantJoined(participant: Participant) {
  * }}
  */
 export function updateRemoteParticipantFeatures(jitsiParticipant: any) {
-    return (dispatch: IStore["dispatch"], getState: IStore["getState"]) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         if (!jitsiParticipant) {
             return;
         }
@@ -351,8 +352,8 @@ export function updateRemoteParticipantFeatures(jitsiParticipant: any) {
                         type: PARTICIPANT_UPDATED,
                         participant: {
                             id,
-                            supportsRemoteControl,
-                        },
+                            supportsRemoteControl
+                        }
                     });
                 }
             })
@@ -381,7 +382,7 @@ export function hiddenParticipantJoined(id: string, displayName: string) {
     return {
         type: HIDDEN_PARTICIPANT_JOINED,
         id,
-        displayName,
+        displayName
     };
 }
 
@@ -397,7 +398,7 @@ export function hiddenParticipantJoined(id: string, displayName: string) {
 export function hiddenParticipantLeft(id: string) {
     return {
         type: HIDDEN_PARTICIPANT_LEFT,
-        id,
+        id
     };
 }
 
@@ -425,9 +426,9 @@ export function hiddenParticipantLeft(id: string) {
  * }}
  */
 export function participantLeft(
-    id: string,
-    conference: any,
-    participantLeftProps: any = {}
+        id: string,
+        conference: any,
+        participantLeftProps: any = {}
 ) {
     return {
         type: PARTICIPANT_LEFT,
@@ -438,8 +439,8 @@ export function participantLeft(
             isVirtualScreenshareParticipant:
                 participantLeftProps.isVirtualScreenshareParticipant,
             isWhiteboard: participantLeftProps.isWhiteboard,
-            isFakeParticipant: participantLeftProps.isFakeParticipant,
-        },
+            isFakeParticipant: participantLeftProps.isFakeParticipant
+        }
     };
 }
 
@@ -459,7 +460,7 @@ export function participantLeft(
 export function participantPresenceChanged(id: string, presence: string) {
     return participantUpdated({
         id,
-        presence,
+        presence
     });
 }
 
@@ -479,7 +480,7 @@ export function participantPresenceChanged(id: string, presence: string) {
 export function participantRoleChanged(id: string, role: string) {
     return participantUpdated({
         id,
-        role,
+        role
     });
 }
 
@@ -495,13 +496,13 @@ export function participantRoleChanged(id: string, role: string) {
  * }}
  */
 export function screenshareParticipantDisplayNameChanged(
-    id: string,
-    name: string
+        id: string,
+        name: string
 ) {
     return {
         type: SCREENSHARE_PARTICIPANT_NAME_CHANGED,
         id,
-        name,
+        name
     };
 }
 
@@ -517,9 +518,9 @@ export function screenshareParticipantDisplayNameChanged(
  *     participant: Participant
  * }}
  */
-export function participantUpdated(participant: Participant = { id: "" }) {
+export function participantUpdated(participant: Participant = { id: '' }) {
     const participantToUpdate = {
-        ...participant,
+        ...participant
     };
 
     if (participant.name) {
@@ -528,7 +529,7 @@ export function participantUpdated(participant: Participant = { id: "" }) {
 
     return {
         type: PARTICIPANT_UPDATED,
-        participant: participantToUpdate,
+        participant: participantToUpdate
     };
 }
 
@@ -540,7 +541,7 @@ export function participantUpdated(participant: Participant = { id: "" }) {
  * @returns {Promise}
  */
 export function participantMutedUs(participant: any, track: any) {
-    return (dispatch: IStore["dispatch"], getState: IStore["getState"]) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         if (!participant) {
             return;
         }
@@ -551,14 +552,14 @@ export function participantMutedUs(participant: any, track: any) {
             showNotification(
                 {
                     titleKey: isAudio
-                        ? "notify.mutedRemotelyTitle"
-                        : "notify.videoMutedRemotelyTitle",
+                        ? 'notify.mutedRemotelyTitle'
+                        : 'notify.videoMutedRemotelyTitle',
                     titleArguments: {
                         participantDisplayName: getParticipantDisplayName(
                             getState,
                             participant.getId()
-                        ),
-                    },
+                        )
+                    }
                 },
                 NOTIFICATION_TIMEOUT_TYPE.MEDIUM
             )
@@ -574,21 +575,21 @@ export function participantMutedUs(participant: any, track: any) {
  * @returns {Function}
  */
 export function createVirtualScreenshareParticipant(
-    sourceName: string,
-    local: boolean
+        sourceName: string,
+        local: boolean
 ) {
-    return (dispatch: IStore["dispatch"], getState: IStore["getState"]) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const ownerId = getVirtualScreenshareParticipantOwnerId(sourceName);
         const ownerName = getParticipantDisplayName(state, ownerId);
 
         dispatch(
             participantJoined({
-                conference: state["features/base/conference"].conference,
+                conference: state['features/base/conference'].conference,
                 id: sourceName,
                 isVirtualScreenshareParticipant: true,
                 isLocalScreenShare: local,
-                name: ownerName,
+                name: ownerName
             })
         );
     };
@@ -602,11 +603,11 @@ export function createVirtualScreenshareParticipant(
  * @returns {Promise}
  */
 export function participantKicked(kicker: any, kicked: any) {
-    return (dispatch: IStore["dispatch"], getState: IStore["getState"]) => {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         dispatch({
             type: PARTICIPANT_KICKED,
             kicked: kicked.getId(),
-            kicker: kicker?.getId(),
+            kicker: kicker?.getId()
         });
 
         if (kicked.isReplaced?.()) {
@@ -624,9 +625,9 @@ export function participantKicked(kicker: any, kicked: any) {
                         kicker: getParticipantDisplayName(
                             getState,
                             kicker.getId()
-                        ),
+                        )
                     },
-                    titleKey: "notify.kickParticipant",
+                    titleKey: 'notify.kickParticipant'
                 },
                 NOTIFICATION_TIMEOUT_TYPE.MEDIUM
             )
@@ -650,8 +651,8 @@ export function pinParticipant(id: string | null) {
     return {
         type: PIN_PARTICIPANT,
         participant: {
-            id,
-        },
+            id
+        }
     };
 }
 
@@ -671,17 +672,17 @@ export function pinParticipant(id: string | null) {
  * }}
  */
 export function setLoadableAvatarUrl(
-    participantId: string,
-    url: string,
-    useCORS: boolean
+        participantId: string,
+        url: string,
+        useCORS: boolean
 ) {
     return {
         type: SET_LOADABLE_AVATAR_URL,
         participant: {
             id: participantId,
             loadableAvatarUrl: url,
-            loadableAvatarUrlUseCORS: useCORS,
-        },
+            loadableAvatarUrlUseCORS: useCORS
+        }
     };
 }
 
@@ -697,7 +698,7 @@ export function setLoadableAvatarUrl(
 export function raiseHand(enabled: boolean) {
     return {
         type: LOCAL_PARTICIPANT_RAISE_HAND,
-        raisedHandTimestamp: enabled ? Date.now() : 0,
+        raisedHandTimestamp: enabled ? Date.now() : 0
     };
 }
 
@@ -713,7 +714,7 @@ export function raiseHand(enabled: boolean) {
 export function raiseHandUpdateQueue(participant: Participant) {
     return {
         type: RAISE_HAND_UPDATED,
-        participant,
+        participant
     };
 }
 
@@ -729,7 +730,7 @@ export function raiseHandUpdateQueue(participant: Participant) {
 export function localParticipantAudioLevelChanged(level: number) {
     return {
         type: LOCAL_PARTICIPANT_AUDIO_LEVEL_CHANGED,
-        level,
+        level
     };
 }
 
@@ -744,7 +745,7 @@ export function overwriteParticipantName(id: string, name: string) {
     return {
         type: OVERWRITE_PARTICIPANT_NAME,
         id,
-        name,
+        name
     };
 }
 
@@ -757,7 +758,7 @@ export function overwriteParticipantName(id: string, name: string) {
 export function overwriteParticipantsNames(participantList: Participant[]) {
     return {
         type: OVERWRITE_PARTICIPANTS_NAMES,
-        participantList,
+        participantList
     };
 }
 
@@ -772,12 +773,12 @@ export function overwriteParticipantsNames(participantList: Participant[]) {
  * }}
  */
 export function updateLocalRecordingStatus(
-    recording: boolean,
-    onlySelf: boolean
+        recording: boolean,
+        onlySelf: boolean
 ) {
     return {
         type: SET_LOCAL_PARTICIPANT_RECORDING_STATUS,
         recording,
-        onlySelf,
+        onlySelf
     };
 }

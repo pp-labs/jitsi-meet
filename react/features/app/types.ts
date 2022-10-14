@@ -104,6 +104,7 @@ export interface IState {
     'features/base/net-info': INetInfoState;
     'features/base/no-src-data': INoSrcDataState;
     'features/base/participants': IParticipantsState;
+    'features/base/participants/recentActive': any[];
     'features/base/responsive-ui': IResponsiveUIState;
     'features/base/settings': ISettingsState;
     'features/base/sounds': ISoundsState;

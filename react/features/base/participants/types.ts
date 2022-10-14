@@ -26,6 +26,7 @@ export interface Participant {
     local?: boolean;
     localRecording?: string;
     name?: string;
+    order?: number;
     pinned?: boolean;
     presence?: string;
     raisedHandTimestamp?: number;
