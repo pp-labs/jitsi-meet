@@ -1,4 +1,5 @@
-.vertical-filmstrip, .stage-filmstrip {
+.vertical-filmstrip,
+.stage-filmstrip {
     span:not(.tile-view) .filmstrip {
         &.hide-videos {
             .remote-videos {
@@ -69,7 +70,7 @@
          * any parent is also fixed.
          */
         position: fixed;
-        top: 0;
+        top: 60;
         right: 0;
         z-index: $filmstripVideosZ;
 
@@ -86,7 +87,7 @@
             @extend %align-right;
             bottom: 0;
             padding: 0;
-            position:relative;
+            position: relative;
             right: 0;
             width: auto;
 
@@ -138,8 +139,32 @@
         #filmstripRemoteVideosContainer {
             @include minHWAutoFix();
             flex-direction: column;
-            overflow: visible;
-            width: calc(100% - 8px); // 8px for margin + border of the thumbnails
+            flex-grow: 1;
+        }
+
+        .resizable-filmstrip #remoteVideos .videocontainer {
+            border-left: 0;
+            margin: 0;
+        }
+
+        &.reduce-height {
+            height: calc(
+                100% - calc(#{$newToolbarSizeWithPadding} + #{$scrollHeight})
+            );
+        }
+
+        .filmstrip__videos.vertical-view-grid#remoteVideos {
+            align-items: "center";
+            border: 0px;
+            padding-right: 7px;
+
+            &.has-scroll {
+                padding-right: 0px;
+            }
+
+            .remote-videos > div {
+                left: 0px; // fixes an issue on FF - the div is aligned to the right by default for some reason
+            }
 
             .videocontainer {
                 border: 0;
@@ -173,7 +198,7 @@
             overscroll-behavior: contain;
 
             &.height-transition {
-                transition: height .3s ease-in;
+                transition: height 0.3s ease-in;
             }
 
             & > div {
@@ -186,7 +211,7 @@
             }
         }
         .active-speaker > .videocontainer__background {
-            box-shadow: 0 0 0 3px $videoThumbnailSelected
+            box-shadow: 0 0 0 3px $videoThumbnailSelected;
         }
     }
 }

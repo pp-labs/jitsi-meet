@@ -611,10 +611,9 @@ export var config = {
     // defaultLocalDisplayName: 'me',
 
     // Default remote name to be displayed
-    // defaultRemoteDisplayName: 'Fellow Jitster',
 
     // Hides the display name from the participant thumbnail
-    // hideDisplayName: false,
+    hideDisplayName: true,
 
     // Hides the dominant speaker name badge that hovers above the toolbox
     // hideDominantSpeakerBadge: false,
@@ -823,6 +822,7 @@ export var config = {
         // "videoquality",
         "filmstrip",
         // "tileview",
+        "select-background",
     ],
 
     // List of pre meeting screens buttons to hide. The values must be one or more of the 5 allowed buttons:
