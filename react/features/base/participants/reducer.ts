@@ -560,7 +560,8 @@ function _participantJoined({ participant }: { participant: Participant; }) {
 }
 
 
-ReducerRegistry.register('features/base/participants/recentActive', (state = [], action) => {
+// eslint-disable-next-line max-len
+ReducerRegistry.register<any[]>('features/base/participants/recentActive', (state: any = [], action) => {
     // sally  -add state to track last 5 most recent active speakers
     switch (action.type) {
     case DOMINANT_SPEAKER_CHANGED:
@@ -573,8 +574,10 @@ ReducerRegistry.register('features/base/participants/recentActive', (state = [],
         if (participant?.local || participant?._displayName.startsWith('Trainer')) {
             return state;
         }
+        // eslint-disable-next-line no-case-declarations
         let newState = [ ...state ];
-        const index = state.findIndex(p => p.id === participant._id);
+        // eslint-disable-next-line no-case-declarations
+        const index = state.findIndex((p: { id: any; }) => p.id === participant._id);
 
         if (index === -1) {
             newState.push({

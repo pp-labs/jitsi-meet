@@ -29,6 +29,7 @@ import {
     DISCO_REMOTE_CONTROL_FEATURE
 } from './constants';
 import {
+    getCntVisibileActiveSpeakers,
     getLocalParticipant,
     getNormalizedDisplayName,
     getParticipantById,
@@ -59,7 +60,13 @@ import { Participant } from './types';
  * }}
  */
 export function dominantSpeakerChanged(
-        dominantSpeaker: string, previousSpeakers: string[], silence: boolean, conference: any) {
+        dominantSpeaker: string,
+        previousSpeakers: string[],
+        silence: boolean,
+        conference: any
+) {
+    const countVisbleActiveSpeakers = getCntVisibileActiveSpeakers(APP.store.getState());
+
     return {
         type: DOMINANT_SPEAKER_CHANGED,
         participant: {
@@ -67,7 +74,8 @@ export function dominantSpeakerChanged(
             id: dominantSpeaker,
             previousSpeakers,
             silence
-        }
+        },
+        countVisbleActiveSpeakers //TODO remove this ?
     };
 }
 
@@ -555,7 +563,6 @@ export function createVirtualScreenshareParticipant(sourceName: string, local: b
  */
 export function participantKicked(kicker: any, kicked: any) {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-
         dispatch({
             type: PARTICIPANT_KICKED,
             kicked: kicked.getId(),

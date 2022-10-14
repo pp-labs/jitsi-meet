@@ -12,6 +12,7 @@ import {
     VIRTUAL_SCREENSHARE_REMOTE_PARTICIPANTS_UPDATED
 } from '../../video-layout/actionTypes';
 import { SET_AUDIO_ONLY } from '../audio-only/actionTypes';
+// eslint-disable-next-line import/order
 import { CONFERENCE_JOINED } from '../conference/actionTypes';
 import {
     PARTICIPANT_JOINED,
@@ -97,7 +98,7 @@ const _updateLastN = debounce(({ dispatch, getState }: IStore) => {
 }, 1000); /* Don't send this more often than once a second. */
 
 
-MiddlewareRegistry.register(store => next => action => {
+MiddlewareRegistry.register((store: IStore) => (next: (arg0: any) => any) => (action: { type: any; }) => {
     const result = next(action);
 
 

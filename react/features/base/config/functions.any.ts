@@ -16,8 +16,6 @@ import INTERFACE_CONFIG_WHITELIST from './interfaceConfigWhitelist';
 import logger from './logger';
 
 // Sally - For local testing only  -- REMOVE
-import { interfaceConfig as interfaceConfigOverride } from "../../../../interface_config";
-import { config as configOverride } from "../../../../config";
 //     channelLastN: 3
 
 // var configOverride = {

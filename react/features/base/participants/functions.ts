@@ -1,41 +1,45 @@
 /* eslint-disable lines-around-comment */
 // @ts-ignore
-import { getGravatarURL } from "@jitsi/js-utils/avatar";
+import { getGravatarURL } from '@jitsi/js-utils/avatar';
 
-import { IStore } from "../../app/types";
+import { IStore } from '../../app/types';
 // @ts-ignore
-import { isStageFilmstripAvailable } from "../../filmstrip/functions";
-import { IStateful } from "../app/types";
-import { GRAVATAR_BASE_URL } from "../avatar/constants";
-import { isCORSAvatarURL } from "../avatar/functions";
+import { isStageFilmstripAvailable } from '../../filmstrip/functions';
+// @ts-ignore
+import { getCurrentLayout } from '../../video-layout';
+import { LAYOUTS } from '../../video-layout/constants';
+import { IStateful } from '../app/types';
+import { GRAVATAR_BASE_URL } from '../avatar/constants';
+import { isCORSAvatarURL } from '../avatar/functions';
 import {
     getMultipleVideoSupportFeatureFlag,
-    getSourceNameSignalingFeatureFlag,
-} from "../config/functions.any";
-import i18next from "../i18n/i18next";
+    getSourceNameSignalingFeatureFlag
+} from '../config/functions.any';
+import i18next from '../i18n/i18next';
 import {
     JitsiParticipantConnectionStatus,
-    JitsiTrackStreamingStatus,
-} from "../lib-jitsi-meet";
-import { shouldRenderVideoTrack } from "../media/functions";
-import { toState } from "../redux/functions";
+    JitsiTrackStreamingStatus
+} from '../lib-jitsi-meet';
+import { MEDIA_TYPE } from '../media/constants';
+import { shouldRenderVideoTrack } from '../media/functions';
+import { toState } from '../redux/functions';
 import {
     getScreenShareTrack,
-    getVideoTrackByParticipant,
-} from "../tracks/functions";
-import { createDeferred } from "../util/helpers";
+    getTrackByMediaTypeAndParticipant,
+    getVideoTrackByParticipant
+} from '../tracks/functions';
+import { createDeferred } from '../util/helpers';
 
 import {
     JIGASI_PARTICIPANT_ICON,
     MAX_DISPLAY_NAME_LENGTH,
     PARTICIPANT_ROLE,
-    WHITEBOARD_PARTICIPANT_ICON,
-} from "./constants";
+    WHITEBOARD_PARTICIPANT_ICON
+} from './constants';
 // @ts-ignore
-import { preloadImage } from "./preloadImage";
-import { Participant } from "./types";
+import { preloadImage } from './preloadImage';
+import { Participant } from './types';
 
-import { getCurrentLayout } from "../../video-layout";
 
 /**
  * Temp structures for avatar urls to be checked/preloaded.
@@ -54,20 +58,20 @@ const AVATAR_CHECKER_FUNCTIONS = [
         return participant?.avatarURL ? participant.avatarURL : null;
     },
     (participant: Participant, store: IStore) => {
-        const config = store.getState()["features/base/config"];
+        const config = store.getState()['features/base/config'];
         const isGravatarDisabled = config.gravatar?.disabled;
 
         if (participant?.email && !isGravatarDisabled) {
-            const gravatarBaseURL =
-                config.gravatar?.baseUrl ||
-                config.gravatarBaseURL ||
-                GRAVATAR_BASE_URL;
+            const gravatarBaseURL
+                = config.gravatar?.baseUrl
+                || config.gravatarBaseURL
+                || GRAVATAR_BASE_URL;
 
             return getGravatarURL(participant.email, gravatarBaseURL);
         }
 
         return null;
-    },
+    }
 ];
 /* eslint-enable arrow-body-style, no-unused-vars */
 
@@ -86,9 +90,9 @@ export function getActiveSpeakersToBeDisplayed(stateful: IStateful) {
         fakeParticipants,
         sortedRemoteScreenshares,
         sortedRemoteVirtualScreenshareParticipants,
-        speakersList,
-    } = state["features/base/participants"];
-    const { visibleRemoteParticipants } = state["features/filmstrip"];
+        speakersList
+    } = state['features/base/participants'];
+    const { visibleRemoteParticipants } = state['features/filmstrip'];
     let activeSpeakers = new Map(speakersList);
 
     // Do not re-sort the active speakers if dominant speaker is currently visible.
@@ -97,8 +101,8 @@ export function getActiveSpeakersToBeDisplayed(stateful: IStateful) {
     }
     let availableSlotsForActiveSpeakers = visibleRemoteParticipants.size;
 
-    if (activeSpeakers.has(dominantSpeaker ?? "")) {
-        activeSpeakers.delete(dominantSpeaker ?? "");
+    if (activeSpeakers.has(dominantSpeaker ?? '')) {
+        activeSpeakers.delete(dominantSpeaker ?? '');
     }
 
     // Add dominant speaker to the beginning of the list (not including self) since the active speaker list is always
@@ -108,7 +112,7 @@ export function getActiveSpeakersToBeDisplayed(stateful: IStateful) {
 
         updatedSpeakers.splice(0, 0, [
             dominantSpeaker,
-            getParticipantById(state, dominantSpeaker)?.name ?? "",
+            getParticipantById(state, dominantSpeaker)?.name ?? ''
         ]);
         activeSpeakers = new Map(updatedSpeakers);
     }
@@ -116,8 +120,8 @@ export function getActiveSpeakersToBeDisplayed(stateful: IStateful) {
     // Remove screenshares from the count.
     if (getMultipleVideoSupportFeatureFlag(state)) {
         if (sortedRemoteVirtualScreenshareParticipants) {
-            availableSlotsForActiveSpeakers -=
-                sortedRemoteVirtualScreenshareParticipants.size * 2;
+            availableSlotsForActiveSpeakers
+                -= sortedRemoteVirtualScreenshareParticipants.size * 2;
             for (const screenshare of Array.from(
                 sortedRemoteVirtualScreenshareParticipants.keys()
             )) {
@@ -157,8 +161,8 @@ export function getActiveSpeakersToBeDisplayed(stateful: IStateful) {
  * @returns {Promise}
  */
 export function getFirstLoadableAvatarUrl(
-    participant: Participant,
-    store: IStore
+        participant: Participant,
+        store: IStore
 ) {
     const deferred: any = createDeferred();
     const fullPromise = deferred.promise
@@ -191,7 +195,7 @@ export function getFirstLoadableAvatarUrl(
  * @returns {(Participant|undefined)}
  */
 export function getLocalParticipant(stateful: IStateful) {
-    const state = toState(stateful)["features/base/participants"];
+    const state = toState(stateful)['features/base/participants'];
 
     return state.local;
 }
@@ -204,7 +208,7 @@ export function getLocalParticipant(stateful: IStateful) {
  * @returns {(Participant|undefined)}
  */
 export function getLocalScreenShareParticipant(stateful: IStateful) {
-    const state = toState(stateful)["features/base/participants"];
+    const state = toState(stateful)['features/base/participants'];
 
     return state.localScreenShare;
 }
@@ -218,13 +222,13 @@ export function getLocalScreenShareParticipant(stateful: IStateful) {
  * @returns {(Participant|undefined)}
  */
 export function getVirtualScreenshareParticipantByOwnerId(
-    stateful: IStateful,
-    id: string
+        stateful: IStateful,
+        id: string
 ) {
     const state = toState(stateful);
 
     if (getMultipleVideoSupportFeatureFlag(state)) {
-        const track = getScreenShareTrack(state["features/base/tracks"], id);
+        const track = getScreenShareTrack(state['features/base/tracks'], id);
 
         return getParticipantById(stateful, track?.jitsiTrack.getSourceName());
     }
@@ -258,16 +262,16 @@ export function getNormalizedDisplayName(name: string) {
  * @returns {(Participant|undefined)}
  */
 export function getParticipantById(
-    stateful: IStateful,
-    id: string
+        stateful: IStateful,
+        id: string
 ): Participant | undefined {
-    const state = toState(stateful)["features/base/participants"];
+    const state = toState(stateful)['features/base/participants'];
     const { local, localScreenShare, remote } = state;
 
     return (
-        remote.get(id) ||
-        (local?.id === id ? local : undefined) ||
-        (localScreenShare?.id === id ? localScreenShare : undefined)
+        remote.get(id)
+        || (local?.id === id ? local : undefined)
+        || (localScreenShare?.id === id ? localScreenShare : undefined)
     );
 }
 
@@ -282,8 +286,8 @@ export function getParticipantById(
  * @returns {Participant|undefined}
  */
 export function getParticipantByIdOrUndefined(
-    stateful: IStateful,
-    participantID?: string
+        stateful: IStateful,
+        participantID?: string
 ) {
     return participantID
         ? getParticipantById(stateful, participantID)
@@ -305,15 +309,15 @@ export function getParticipantCount(stateful: IStateful) {
         local,
         remote,
         fakeParticipants,
-        sortedRemoteVirtualScreenshareParticipants,
-    } = state["features/base/participants"];
+        sortedRemoteVirtualScreenshareParticipants
+    } = state['features/base/participants'];
 
     if (getMultipleVideoSupportFeatureFlag(state)) {
         return (
-            remote.size -
-            fakeParticipants.size -
-            sortedRemoteVirtualScreenshareParticipants.size +
-            (local ? 1 : 0)
+            remote.size
+            - fakeParticipants.size
+            - sortedRemoteVirtualScreenshareParticipants.size
+            + (local ? 1 : 0)
         );
     }
 
@@ -328,7 +332,7 @@ export function getParticipantCount(stateful: IStateful) {
  * @returns {(string|undefined)}
  */
 export function getVirtualScreenshareParticipantOwnerId(id: string) {
-    return id.split("-")[0];
+    return id.split('-')[0];
 }
 
 /**
@@ -340,7 +344,7 @@ export function getVirtualScreenshareParticipantOwnerId(id: string) {
  * @returns {Map<string, Participant>} - The Map with fake participants.
  */
 export function getFakeParticipants(stateful: IStateful) {
-    return toState(stateful)["features/base/participants"].fakeParticipants;
+    return toState(stateful)['features/base/participants'].fakeParticipants;
 }
 
 /**
@@ -353,12 +357,12 @@ export function getFakeParticipants(stateful: IStateful) {
  */
 export function getRemoteParticipantCount(stateful: IStateful) {
     const state = toState(stateful);
-    const participantsState = state["features/base/participants"];
+    const participantsState = state['features/base/participants'];
 
     if (getMultipleVideoSupportFeatureFlag(state)) {
         return (
-            participantsState.remote.size -
-            participantsState.sortedRemoteVirtualScreenshareParticipants.size
+            participantsState.remote.size
+            - participantsState.sortedRemoteVirtualScreenshareParticipants.size
         );
     }
 
@@ -376,8 +380,8 @@ export function getRemoteParticipantCount(stateful: IStateful) {
  */
 export function getParticipantCountWithFake(stateful: IStateful) {
     const state = toState(stateful);
-    const { local, localScreenShare, remote } =
-        state["features/base/participants"];
+    const { local, localScreenShare, remote }
+        = state['features/base/participants'];
 
     if (getMultipleVideoSupportFeatureFlag(state)) {
         return remote.size + (local ? 1 : 0) + (localScreenShare ? 1 : 0);
@@ -395,12 +399,12 @@ export function getParticipantCountWithFake(stateful: IStateful) {
  * @returns {string}
  */
 export function getParticipantDisplayName(
-    stateful: IStateful,
-    id: string
+        stateful: IStateful,
+        id: string
 ): string {
     const participant = getParticipantById(stateful, id);
-    const { defaultLocalDisplayName, defaultRemoteDisplayName } =
-        toState(stateful)["features/base/config"];
+    const { defaultLocalDisplayName, defaultRemoteDisplayName }
+        = toState(stateful)['features/base/config'];
 
     if (participant) {
         if (participant.isVirtualScreenshareParticipant) {
@@ -412,11 +416,11 @@ export function getParticipantDisplayName(
         }
 
         if (participant.local) {
-            return defaultLocalDisplayName ?? "";
+            return defaultLocalDisplayName ?? '';
         }
     }
 
-    return defaultRemoteDisplayName ?? "";
+    return defaultRemoteDisplayName ?? '';
 }
 
 /**
@@ -428,15 +432,15 @@ export function getParticipantDisplayName(
  * @returns {string}
  */
 export function getScreenshareParticipantDisplayName(
-    stateful: IStateful,
-    id: string
+        stateful: IStateful,
+        id: string
 ) {
     const ownerDisplayName = getParticipantDisplayName(
         stateful,
         getVirtualScreenshareParticipantOwnerId(id)
     );
 
-    return i18next.t("screenshareDisplayName", { name: ownerDisplayName });
+    return i18next.t('screenshareDisplayName', { name: ownerDisplayName });
 }
 
 /**
@@ -469,9 +473,9 @@ export function getParticipantPresenceStatus(stateful: IStateful, id: string) {
  * @returns {Map<string, Object>}
  */
 export function getRemoteParticipants(
-    stateful: IStateful
+        stateful: IStateful
 ): Map<string, Participant> {
-    return toState(stateful)["features/base/participants"].remote;
+    return toState(stateful)['features/base/participants'].remote;
 }
 
 /**
@@ -482,7 +486,7 @@ export function getRemoteParticipants(
  * @returns {Array<string>}
  */
 export function getRemoteParticipantsSorted(stateful: IStateful) {
-    return toState(stateful)["features/filmstrip"].remoteParticipants;
+    return toState(stateful)['features/filmstrip'].remoteParticipants;
 }
 
 /**
@@ -495,12 +499,12 @@ export function getRemoteParticipantsSorted(stateful: IStateful) {
  */
 export function getPinnedParticipant(stateful: IStateful) {
     const state = toState(stateful);
-    const { pinnedParticipant } = state["features/base/participants"];
+    const { pinnedParticipant } = state['features/base/participants'];
     const stageFilmstrip = isStageFilmstripAvailable(state);
 
     if (stageFilmstrip) {
-        const { activeParticipants } = state["features/filmstrip"];
-        const id = activeParticipants.find((p) => p.pinned)?.participantId;
+        const { activeParticipants } = state['features/filmstrip'];
+        const id = activeParticipants.find(p => p.pinned)?.participantId;
 
         return id ? getParticipantById(stateful, id) : undefined;
     }
@@ -530,7 +534,7 @@ export function isParticipantModerator(participant?: Participant) {
  * @returns {Participant} - The participant from the redux store.
  */
 export function getDominantSpeakerParticipant(stateful: IStateful) {
-    const state = toState(stateful)["features/base/participants"];
+    const state = toState(stateful)['features/base/participants'];
     const { dominantSpeaker } = state;
 
     if (!dominantSpeaker) {
@@ -548,7 +552,7 @@ export function getDominantSpeakerParticipant(stateful: IStateful) {
  * @returns {boolean}
  */
 export function isEveryoneModerator(stateful: IStateful) {
-    const state = toState(stateful)["features/base/participants"];
+    const state = toState(stateful)['features/base/participants'];
 
     return state.everyoneIsModerator === true;
 }
@@ -561,8 +565,8 @@ export function isEveryoneModerator(stateful: IStateful) {
  */
 export function isIconUrl(icon?: string | Object) {
     return (
-        Boolean(icon) &&
-        (typeof icon === "object" || typeof icon === "function")
+        Boolean(icon)
+        && (typeof icon === 'object' || typeof icon === 'function')
     );
 }
 
@@ -575,7 +579,7 @@ export function isIconUrl(icon?: string | Object) {
  * @returns {boolean}
  */
 export function isLocalParticipantModerator(stateful: IStateful) {
-    const state = toState(stateful)["features/base/participants"];
+    const state = toState(stateful)['features/base/participants'];
 
     const { local } = state;
 
@@ -605,7 +609,7 @@ export function shouldRenderParticipantVideo(stateful: IStateful, id: string) {
 
     /* First check if we have an unmuted video track. */
     const videoTrack = getVideoTrackByParticipant(
-        state["features/base/tracks"],
+        state['features/base/tracks'],
         participant
     );
 
@@ -618,17 +622,17 @@ export function shouldRenderParticipantVideo(stateful: IStateful, id: string) {
         // Note that this will work only if a listener is registered for the track's TrackStreamingStatus.
         // The associated TrackStreamingStatusImpl instance is not created or disposed when there are zero listeners.
         if (
-            videoTrack &&
-            !videoTrack.local &&
-            videoTrack.jitsiTrack?.getTrackStreamingStatus() !==
-                JitsiTrackStreamingStatus.ACTIVE
+            videoTrack
+            && !videoTrack.local
+            && videoTrack.jitsiTrack?.getTrackStreamingStatus()
+                !== JitsiTrackStreamingStatus.ACTIVE
         ) {
             return false;
         }
     } else {
-        const connectionStatus =
-            participant.connectionStatus ||
-            JitsiParticipantConnectionStatus.ACTIVE;
+        const connectionStatus
+            = participant.connectionStatus
+            || JitsiParticipantConnectionStatus.ACTIVE;
 
         if (connectionStatus !== JitsiParticipantConnectionStatus.ACTIVE) {
             return false;
@@ -636,19 +640,19 @@ export function shouldRenderParticipantVideo(stateful: IStateful, id: string) {
     }
 
     /* Then check if audio-only mode is not active. */
-    const audioOnly = state["features/base/audio-only"].enabled;
+    const audioOnly = state['features/base/audio-only'].enabled;
 
     if (!audioOnly) {
         return true;
     }
 
     /* Last, check if the participant is sharing their screen and they are on stage. */
-    const remoteScreenShares =
-        state["features/video-layout"].remoteScreenShares || [];
-    const largeVideoParticipantId = state["features/large-video"].participantId;
-    const participantIsInLargeVideoWithScreen =
-        participant.id === largeVideoParticipantId &&
-        remoteScreenShares.includes(participant.id);
+    const remoteScreenShares
+        = state['features/video-layout'].remoteScreenShares || [];
+    const largeVideoParticipantId = state['features/large-video'].participantId;
+    const participantIsInLargeVideoWithScreen
+        = participant.id === largeVideoParticipantId
+        && remoteScreenShares.includes(participant.id);
 
     return participantIsInLargeVideoWithScreen;
 }
@@ -661,27 +665,27 @@ export function shouldRenderParticipantVideo(stateful: IStateful, id: string) {
  * @returns {?string}
  */
 async function _getFirstLoadableAvatarUrl(
-    participant: Participant,
-    store: IStore
+        participant: Participant,
+        store: IStore
 ) {
     for (let i = 0; i < AVATAR_CHECKER_FUNCTIONS.length; i++) {
         const url = AVATAR_CHECKER_FUNCTIONS[i](participant, store);
 
         if (url !== null) {
             if (AVATAR_CHECKED_URLS.has(url)) {
-                const { isLoadable, isUsingCORS } =
-                    AVATAR_CHECKED_URLS.get(url) || {};
+                const { isLoadable, isUsingCORS }
+                    = AVATAR_CHECKED_URLS.get(url) || {};
 
                 if (isLoadable) {
                     return {
                         isUsingCORS,
-                        src: url,
+                        src: url
                     };
                 }
             } else {
                 try {
-                    const { corsAvatarURLs } =
-                        store.getState()["features/base/config"];
+                    const { corsAvatarURLs }
+                        = store.getState()['features/base/config'];
                     const useCORS = isIconUrl(url)
                         ? false
                         : isCORSAvatarURL(url, corsAvatarURLs);
@@ -692,17 +696,17 @@ async function _getFirstLoadableAvatarUrl(
 
                     AVATAR_CHECKED_URLS.set(src, {
                         isLoadable: true,
-                        isUsingCORS,
+                        isUsingCORS
                     });
 
                     return {
                         isUsingCORS,
-                        src,
+                        src
                     };
                 } catch (e) {
                     AVATAR_CHECKED_URLS.set(url, {
                         isLoadable: false,
-                        isUsingCORS: false,
+                        isUsingCORS: false
                     });
                 }
             }
@@ -721,10 +725,10 @@ async function _getFirstLoadableAvatarUrl(
  * @returns {Array<Object>}
  */
 export function getRaiseHandsQueue(
-    stateful: IStateful
-): Array<{ id: string; raisedHandTimestamp: number }> {
-    const { raisedHandsQueue } =
-        toState(stateful)["features/base/participants"];
+        stateful: IStateful
+): Array<{ id: string; raisedHandTimestamp: number; }> {
+    const { raisedHandsQueue }
+        = toState(stateful)['features/base/participants'];
 
     return raisedHandsQueue;
 }
@@ -741,32 +745,34 @@ export function hasRaisedHand(participant?: Participant): boolean {
 
 // BEGIN SALLY CUSTOM FUNCTIONS
 
+// eslint-disable-next-line
 export function getCustomRemoteParticipants(
-    stateful: Object | Function,
-    id: string
+        stateful: Object | Function
 ) {
-    const state = toState(stateful);
-    const _currentLayout = getCurrentLayout(state);
+    const state = toState(stateful as Function);
+    // const _currentLayout = getCurrentLayout(state);
     // let { remoteParticipants } = state['features/filmstrip'];
 
-    const { remote } = state["features/base/participants"];
+    const { remote } = state['features/base/participants'];
 
-    let remoteParticipants = Array.from(remote.values()).filter(
-        (p) => !p.local
+    const remoteParticipants = Array.from(remote.values()).filter(
+        p => !p.local
     );
 
     return remoteParticipants;
 }
 
+// eslint-disable-next-line
 export function getCustomTrainers(stateful: Object | Function, id: string) {
-    const state = toState(stateful);
-    const { remote } = state["features/base/participants"];
+    const state = toState(stateful as Function);
+    const { remote } = state['features/base/participants'];
 
-    const trainers = Array.from(remote.values()).filter((p) =>
-        p?.name?.startsWith("Trainer")
+    const trainers = Array.from(remote.values()).filter(p =>
+        p?.name?.startsWith('Trainer')
     );
     const localParticipant = getLocalParticipant(state);
-    if (localParticipant?.name.startsWith("Trainer")) {
+
+    if (localParticipant?.name?.startsWith('Trainer')) {
         trainers.unshift(localParticipant);
     }
 
@@ -774,13 +780,13 @@ export function getCustomTrainers(stateful: Object | Function, id: string) {
 }
 
 // sally - custom functiont to get max remtoe participants based on tile/vertical view and client height
+// eslint-disable-next-line
 export function getMaxVisibleRemoteParticipants(
-    stateful: Object | Function,
-    id: string
+        stateful: Object | Function
 ) {
-    const state = toState(stateful);
+    const state = toState(stateful as Function);
     const _currentLayout = getCurrentLayout(state);
-    const { clientHeight } = state["features/base/responsive-ui"];
+    const { clientHeight } = state['features/base/responsive-ui'];
 
     const tileViewActive = _currentLayout === LAYOUTS.TILE_VIEW;
     // tile view - max videos = 6 (icluding one local video)
@@ -795,46 +801,47 @@ export function getMaxVisibleRemoteParticipants(
     return maxVisibleRemoteParticipants;
 }
 
+// eslint-disable-next-line
 export function getCntVisibileActiveSpeakers(
-    stateful: Object | Function,
-    id: string
+        stateful: Object | Function
 ) {
-    const state = toState(stateful);
+    const state = toState(stateful as Function);
     const _currentLayout = getCurrentLayout(state);
-    let remoteParticipants = getCustomRemoteParticipants(state);
+    const remoteParticipants = getCustomRemoteParticipants(state);
     const maxVisibleRemoteParticipants = getMaxVisibleRemoteParticipants(state);
     const tileViewActive = _currentLayout === LAYOUTS.TILE_VIEW;
 
-    const cntTrainers = remoteParticipants.filter((p) =>
-        p.name?.startsWith("Trainer")
+    const cntTrainers = remoteParticipants.filter(p =>
+        p.name?.startsWith('Trainer')
     ).length;
 
     if (tileViewActive) {
         return (
-            Math.min(remoteParticipants.length, maxVisibleRemoteParticipants) -
-            cntTrainers
-        );
-    } else {
-        return Math.min(
-            remoteParticipants.length - cntTrainers,
-            maxVisibleRemoteParticipants
+            Math.min(remoteParticipants.length, maxVisibleRemoteParticipants)
+            - cntTrainers
         );
     }
+
+    return Math.min(
+            remoteParticipants.length - cntTrainers,
+            maxVisibleRemoteParticipants
+    );
+
 }
 
 // sally = function to get order remote participants
 
+// eslint-disable-next-line
 export function getCustomOrderedRemoteParticipants(
-    stateful: Object | Function,
-    id: string
+        stateful: Object | Function
 ) {
-    const state = toState(stateful);
+    const state = toState(stateful as Function);
     const _currentLayout = getCurrentLayout(state);
     // let { remoteParticipants } = state['features/filmstrip'];
 
-    //const { remote } = state["features/base/participants"];
-    const recentActiveParticipants =
-        state["features/base/participants/recentActive"];
+    // const { remote } = state["features/base/participants"];
+    const recentActiveParticipants
+        = state['features/base/participants/recentActive'];
 
     let remoteParticipants = getCustomRemoteParticipants(state);
     const maxVisibleRemoteParticipants = getMaxVisibleRemoteParticipants(state);
@@ -846,15 +853,17 @@ export function getCustomOrderedRemoteParticipants(
     // sally - no trainer in left side
     if (!tileViewActive) {
         remoteParticipants = remoteParticipants.filter(
-            (p) => !p.name?.startsWith("Trainer") && !p.local
+            p => !p.name?.startsWith('Trainer') && !p.local
         );
     }
 
-    const tracks = state["features/base/tracks"];
-    //sally order participants
-    remoteParticipants = remoteParticipants.map((p) => {
-        if (p.name?.startsWith("Trainer")) {
+    const tracks = state['features/base/tracks'];
+
+    // sally order participants
+    remoteParticipants = remoteParticipants.map(p => {
+        if (p.name?.startsWith('Trainer')) {
             p.order = 1;
+
             return p;
         }
         // const isLocal = p?.local ?? true;
@@ -863,10 +872,12 @@ export function getCustomOrderedRemoteParticipants(
         //     return p;
         // }
         const recentParticipantIndex = recentActiveParticipants.findIndex(
-            (part) => part.id === p.id
+            part => part.id === p.id
         );
-        if (p?.connectionStatus !== "active") {
+
+        if (p?.connectionStatus !== 'active') {
             p.order = 100 + recentParticipantIndex;
+
             return p;
         }
         const isRemoteParticipant = !p?.isFakeParticipant && !p?.local;
@@ -876,10 +887,12 @@ export function getCustomOrderedRemoteParticipants(
             MEDIA_TYPE.VIDEO,
             participantID
         );
-        const videoStreamMuted = _videoTrack ? _videoTrack.muted : "no stream";
-        const isScreenSharing = _videoTrack?.videoType === "desktop";
+        const videoStreamMuted = _videoTrack ? _videoTrack.muted : 'no stream';
+        const isScreenSharing = _videoTrack?.videoType === 'desktop';
+
         if (isRemoteParticipant && isScreenSharing) {
             p.order = 2;
+
             return p;
         }
 
@@ -887,14 +900,17 @@ export function getCustomOrderedRemoteParticipants(
 
         if (recentParticipantIndex > -1) {
             p.order = 10 + recentParticipantIndex;
+
             return p;
         }
 
         if (isRemoteParticipant && !videoStreamMuted) {
             p.order = 20;
+
             return p;
         }
         // const _audioTrack = isLocal
+        // eslint-disable-next-line max-len
         //     ? getLocalAudioTrack(_tracks) : getTrackByMediaTypeAndParticipant(_tracks, MEDIA_TYPE.AUDIO, participantID);
 
         // sally - don't prioritize audio only to prevent jumping
@@ -904,21 +920,25 @@ export function getCustomOrderedRemoteParticipants(
         // }
 
         p.order = 30;
+
         return p;
         // const isRemoteParticipant: !participant?.isFakeParticipant && !participant?.local;
         // const { id } = participant;
         // const isLocal = participant?.local ?? true;
         // const tracks = state['features/base/tracks'];
         // const _videoTrack = isLocal
+        // eslint-disable-next-line max-len
         //     ? getLocalVideoTrack(tracks) : getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, participantID);
         // const _audioTrack = isLocal
+        // eslint-disable-next-line max-len
         //     ? getLocalAudioTrack(tracks) : getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.AUDIO, participantID);
         // if (isRemoteParticipant && (dmInput.isVideoPlayable && !dmInput.videoStreamMuted)
     });
     remoteParticipants.sort((a, b) => {
-        if (a.order === b.order) {
+        if (a.order === b.order || a.order === undefined || b.order === undefined) {
             return 0;
         }
+
         return a.order > b.order ? 1 : -1;
     });
 
@@ -926,15 +946,16 @@ export function getCustomOrderedRemoteParticipants(
 
     try {
         if (remoteParticipants.length > maxVisibleRemoteParticipants) {
-            let i = remoteParticipants.findIndex((p) => p?.dominantSpeaker);
+            const i = remoteParticipants.findIndex(p => p?.dominantSpeaker);
 
             if (i !== -1 && i >= maxVisibleRemoteParticipants) {
                 remoteParticipants[i].order = 3;
             }
             remoteParticipants.sort((a, b) => {
-                if (a.order === b.order) {
+                if (a.order === b.order || a.order === undefined || b.order === undefined) {
                     return 0;
                 }
+
                 return a.order > b.order ? 1 : -1;
             });
         }
@@ -976,33 +997,35 @@ export function getCustomOrderedRemoteParticipants(
     //     }
 
     remoteParticipants = remoteParticipants
-        .map((p) => p.id)
         .slice(0, maxVisibleRemoteParticipants);
+
     return remoteParticipants;
 }
 
 // sally = function to get all hidden remote participants
 
+// eslint-disable-next-line
 export function getHiddenRemoteParticipants(
-    stateful: Object | Function,
-    id: string
+        stateful: Object | Function
 ) {
-    const state = toState(stateful);
-    const _currentLayout = getCurrentLayout(state);
+    const state = toState(stateful as Function);
+    // const _currentLayout = getCurrentLayout(state);
     const remoteParticipants = getCustomRemoteParticipants(state);
-    const orderedVisibleParticipants =
-        getCustomOrderedRemoteParticipants(state);
+    const orderedVisibleParticipants
+        = getCustomOrderedRemoteParticipants(state);
 
     const hiddenparticipants = remoteParticipants
-        .filter((p) => !orderedVisibleParticipants.includes(p.id))
-        .map((p) => p.id);
+        .filter(p => !orderedVisibleParticipants.includes(p))
+        .map(p => p.id);
 
     return hiddenparticipants;
 }
 
+// eslint-disable-next-line
 export function getIsLocalTrainer(stateful: Object | Function): boolean {
-    const { name } = getLocalParticipant(stateful);
-    return name?.startsWith("Trainer");
+    const name = getLocalParticipant(stateful as Function)?.name;
+
+    return Boolean(name?.startsWith('Trainer'));
 }
 
 // END SALLY CUSTOM FUNCTIONS
