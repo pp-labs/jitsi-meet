@@ -35,6 +35,8 @@ import {
 import { preloadImage } from "./preloadImage";
 import { Participant } from "./types";
 
+import { getCurrentLayout } from "../../video-layout";
+
 /**
  * Temp structures for avatar urls to be checked/preloaded.
  */
