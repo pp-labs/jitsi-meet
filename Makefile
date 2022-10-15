@@ -22,7 +22,7 @@ WEBPACK_DEV_SERVER = ./node_modules/.bin/webpack serve --mode development
 all: compile deploy clean
 
 compile:
-	NODE_OPTIONS=--max-old-space-size=8192 \
+	NODE_OPTIONS="--max-old-space-size=8192 --openssl-legacy-provider" \
 	$(WEBPACK)
 
 clean:
