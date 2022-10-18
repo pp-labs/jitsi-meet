@@ -9,25 +9,25 @@ var subdir = '<!--# echo var="subdir" default="" -->';
 var subdomain = '<!--# echo var="subdomain" default="" -->';
 
 if (subdomain) {
-    subdomain =
-        subdomain
+    subdomain
+        = subdomain
             .substr(0, subdomain.length - 1)
-            .split(".")
-            .join("_")
-            .toLowerCase() + ".";
+            .split('.')
+            .join('_')
+            .toLowerCase() + '.';
 }
 
 // In case of no ssi provided by the webserver, use empty strings
-if (subdir.startsWith("<!--")) {
-    subdir = "";
+if (subdir.startsWith('<!--')) {
+    subdir = '';
 }
-if (subdomain.startsWith("<!--")) {
-    subdomain = "";
+if (subdomain.startsWith('<!--')) {
+    subdomain = '';
 }
 
 var enableJaaS = false;
 
-//export var config = { //Dev testing only
+// export var config = { //Dev testing only
 var config = {
 
     // Connection
@@ -35,7 +35,7 @@ var config = {
 
     hosts: {
         // XMPP domain.
-        domain: "jitsi-meet.example.com",
+        domain: 'jitsi-meet.example.com',
 
         // When using authentication, domain for guest users.
         // anonymousdomain: 'guest.example.com',
@@ -47,14 +47,14 @@ var config = {
         // focus: 'focus.jitsi-meet.example.com',
 
         // XMPP MUC domain. FIXME: use XEP-0030 to discover it.
-        muc: "conference." + subdomain + "jitsi-meet.example.com",
+        muc: 'conference.' + subdomain + 'jitsi-meet.example.com',
     },
 
     // BOSH URL. FIXME: use XEP-0156 to discover it.
-    bosh: "//jitsi-meet.example.com/" + subdir + "http-bind",
+    bosh: '//jitsi-meet.example.com/' + subdir + 'http-bind',
 
     // Websocket URL
-    websocket: "wss://jitsi-meet.example.com/" + subdir + "xmpp-websocket",
+    websocket: 'wss://jitsi-meet.example.com/' + subdir + 'xmpp-websocket',
 
     // The real JID of focus participant - can be overridden here
     // Do not change username - FIXME: Make focus username configurable
@@ -166,6 +166,7 @@ var config = {
 
     // Disable measuring of audio levels.
     disableAudioLevels: true,
+
     // audioLevelsInterval: 200,
 
     // Enabling this will run the lib-jitsi-meet no audio detection module which
@@ -644,12 +645,14 @@ var config = {
         // When 'true', it shows an intermediate page before joining, where the user can configure their devices.
         // This replaces `prejoinPageEnabled`.
         enabled: false,
+
         // Hides the participant name editing field in the prejoin screen.
         // If requireDisplayName is also set as true, a name should still be provided through
         // either the jwt or the userInfo from the iframe api init object in order for this to have an effect.
         hideDisplayName: false,
+
         // List of buttons to hide from the extra join options dropdown.
-        hideExtraJoinButtons: ["no-audio", "by-phone"],
+        hideExtraJoinButtons: [ 'no-audio', 'by-phone' ],
     },
 
     // When 'true', the user cannot edit the display name.
@@ -744,12 +747,15 @@ var config = {
         // Moved from interfaceConfig.INITIAL_TOOLBAR_TIMEOUT
         // The initial number of milliseconds for the toolbar buttons to be visible on screen.
         initialTimeout: 20000,
+
         // Moved from interfaceConfig.TOOLBAR_TIMEOUT
         // Number of milliseconds for the toolbar buttons to be visible on screen.
         timeout: 4000,
+
         // Moved from interfaceConfig.TOOLBAR_ALWAYS_VISIBLE
         // Whether toolbar should be always visible or should hide after x milliseconds.
         alwaysVisible: true,
+
         // Indicates whether the toolbar should still autohide when chat is open
         autoHideWhileChatIsOpen: false,
     },
@@ -811,18 +817,8 @@ var config = {
     //     },
     // ],
 
-    toolbarButtons: [
-        "microphone",
-        "camera",
-        // "desktop",
-        // "profile",
-        // "sharedvideo",
-        "settings",
-        // "raisehand",
-        // "videoquality",
-        "filmstrip",
-         "tileview",
-        "select-background",
+    toolbarButtons: [ 'microphone', 'camera', 'desktop', 'profile', 'sharedvideo', 'settings', 'raisehand',
+        'videoquality', 'filmstrip', 'tileview', 'select-background',
     ],
 
     // List of pre meeting screens buttons to hide. The values must be one or more of the 5 allowed buttons:
@@ -951,8 +947,9 @@ var config = {
 
         // The STUN servers that will be used in the peer to peer connections
         stunServers: [
+
             // { urls: 'stun:jitsi-meet.example.com:3478' },
-            { urls: "stun:meet-jit-si-turnrelay.jitsi.net:443" },
+            { urls: 'stun:meet-jit-si-turnrelay.jitsi.net:443' },
         ],
     },
 
@@ -1377,65 +1374,65 @@ var config = {
         A falsy value for this prop will result in having all notifications enabled (e.g null, undefined, false)
     */
     notifications: [
-        "connection.CONNFAIL", // shown when the connection fails,
-        "dialog.cameraNotSendingData", // shown when there's no feed from user's camera
-        "dialog.kickTitle", // shown when user has been kicked
-        "dialog.liveStreaming", // livestreaming notifications (pending, on, off, limits)
-        "dialog.lockTitle", // shown when setting conference password fails
-        "dialog.maxUsersLimitReached", // shown when maximmum users limit has been reached
-        "dialog.micNotSendingData", // shown when user's mic is not sending any audio
-        "dialog.passwordNotSupportedTitle", // shown when setting conference password fails due to password format
-        "dialog.recording", // recording notifications (pending, on, off, limits)
-        "dialog.remoteControlTitle", // remote control notifications (allowed, denied, start, stop, error)
-        "dialog.reservationError",
-        "dialog.serviceUnavailable", // shown when server is not reachable
-        "dialog.sessTerminated", // shown when there is a failed conference session
-        "dialog.sessionRestarted", // show when a client reload is initiated because of bridge migration
-        "dialog.tokenAuthFailed", // show when an invalid jwt is used
-        "dialog.transcribing", // transcribing notifications (pending, off)
-        "dialOut.statusMessage", // shown when dial out status is updated.
-        "liveStreaming.busy", // shown when livestreaming service is busy
-        "liveStreaming.failedToStart", // shown when livestreaming fails to start
-        "liveStreaming.unavailableTitle", // shown when livestreaming service is not reachable
-        "lobby.joinRejectedMessage", // shown when while in a lobby, user's request to join is rejected
-        "lobby.notificationTitle", // shown when lobby is toggled and when join requests are allowed / denied
-        "localRecording.localRecording", // shown when a local recording is started
-        "notify.disconnected", // shown when a participant has left
-        "notify.connectedOneMember", // show when a participant joined
-        "notify.connectedTwoMembers", // show when two participants joined simultaneously
-        "notify.connectedThreePlusMembers", // show when more than 2 participants joined simultaneously
+        'connection.CONNFAIL', // shown when the connection fails,
+        'dialog.cameraNotSendingData', // shown when there's no feed from user's camera
+        'dialog.kickTitle', // shown when user has been kicked
+        'dialog.liveStreaming', // livestreaming notifications (pending, on, off, limits)
+        'dialog.lockTitle', // shown when setting conference password fails
+        'dialog.maxUsersLimitReached', // shown when maximmum users limit has been reached
+        'dialog.micNotSendingData', // shown when user's mic is not sending any audio
+        'dialog.passwordNotSupportedTitle', // shown when setting conference password fails due to password format
+        'dialog.recording', // recording notifications (pending, on, off, limits)
+        'dialog.remoteControlTitle', // remote control notifications (allowed, denied, start, stop, error)
+        'dialog.reservationError',
+        'dialog.serviceUnavailable', // shown when server is not reachable
+        'dialog.sessTerminated', // shown when there is a failed conference session
+        'dialog.sessionRestarted', // show when a client reload is initiated because of bridge migration
+        'dialog.tokenAuthFailed', // show when an invalid jwt is used
+        'dialog.transcribing', // transcribing notifications (pending, off)
+        'dialOut.statusMessage', // shown when dial out status is updated.
+        'liveStreaming.busy', // shown when livestreaming service is busy
+        'liveStreaming.failedToStart', // shown when livestreaming fails to start
+        'liveStreaming.unavailableTitle', // shown when livestreaming service is not reachable
+        'lobby.joinRejectedMessage', // shown when while in a lobby, user's request to join is rejected
+        'lobby.notificationTitle', // shown when lobby is toggled and when join requests are allowed / denied
+        'localRecording.localRecording', // shown when a local recording is started
+        'notify.disconnected', // shown when a participant has left
+        'notify.connectedOneMember', // show when a participant joined
+        'notify.connectedTwoMembers', // show when two participants joined simultaneously
+        'notify.connectedThreePlusMembers', // show when more than 2 participants joined simultaneously
         // 'notify.grantedTo', // shown when moderator rights were granted to a participant
-        "notify.invitedOneMember", // shown when 1 participant has been invited
-        "notify.invitedThreePlusMembers", // shown when 3+ participants have been invited
-        "notify.invitedTwoMembers", // shown when 2 participants have been invited
-        "notify.kickParticipant", // shown when a participant is kicked
-        "notify.moderationStartedTitle", // shown when AV moderation is activated
-        "notify.moderationStoppedTitle", // shown when AV moderation is deactivated
-        "notify.moderationInEffectTitle", // shown when user attempts to unmute audio during AV moderation
-        "notify.moderationInEffectVideoTitle", // shown when user attempts to enable video during AV moderation
-        "notify.moderationInEffectCSTitle", // shown when user attempts to share content during AV moderation
-        "notify.mutedRemotelyTitle", // shown when user is muted by a remote party
-        "notify.mutedTitle", // shown when user has been muted upon joining,
-        "notify.newDeviceAudioTitle", // prompts the user to use a newly detected audio device
-        "notify.newDeviceCameraTitle", // prompts the user to use a newly detected camera
-        "notify.passwordRemovedRemotely", // shown when a password has been removed remotely
-        "notify.passwordSetRemotely", // shown when a password has been set remotely
-        "notify.raisedHand", // shown when a partcipant used raise hand,
-        "notify.startSilentTitle", // shown when user joined with no audio
-        "notify.unmute", // shown to moderator when user raises hand during AV moderation
-        "prejoin.errorDialOut",
-        "prejoin.errorDialOutDisconnected",
-        "prejoin.errorDialOutFailed",
-        "prejoin.errorDialOutStatus",
-        "prejoin.errorStatusCode",
-        "prejoin.errorValidation",
-        "recording.busy", // shown when recording service is busy
-        "recording.failedToStart", // shown when recording fails to start
-        "recording.unavailableTitle", // shown when recording service is not reachable
-        "toolbar.noAudioSignalTitle", // shown when a broken mic is detected
-        "toolbar.noisyAudioInputTitle", // shown when noise is detected for the current microphone
-        "toolbar.talkWhileMutedPopup", // shown when user tries to speak while muted
-        "transcribing.failedToStart", // shown when transcribing fails to start
+        'notify.invitedOneMember', // shown when 1 participant has been invited
+        'notify.invitedThreePlusMembers', // shown when 3+ participants have been invited
+        'notify.invitedTwoMembers', // shown when 2 participants have been invited
+        'notify.kickParticipant', // shown when a participant is kicked
+        'notify.moderationStartedTitle', // shown when AV moderation is activated
+        'notify.moderationStoppedTitle', // shown when AV moderation is deactivated
+        'notify.moderationInEffectTitle', // shown when user attempts to unmute audio during AV moderation
+        'notify.moderationInEffectVideoTitle', // shown when user attempts to enable video during AV moderation
+        'notify.moderationInEffectCSTitle', // shown when user attempts to share content during AV moderation
+        'notify.mutedRemotelyTitle', // shown when user is muted by a remote party
+        'notify.mutedTitle', // shown when user has been muted upon joining,
+        'notify.newDeviceAudioTitle', // prompts the user to use a newly detected audio device
+        'notify.newDeviceCameraTitle', // prompts the user to use a newly detected camera
+        'notify.passwordRemovedRemotely', // shown when a password has been removed remotely
+        'notify.passwordSetRemotely', // shown when a password has been set remotely
+        'notify.raisedHand', // shown when a partcipant used raise hand,
+        'notify.startSilentTitle', // shown when user joined with no audio
+        'notify.unmute', // shown to moderator when user raises hand during AV moderation
+        'prejoin.errorDialOut',
+        'prejoin.errorDialOutDisconnected',
+        'prejoin.errorDialOutFailed',
+        'prejoin.errorDialOutStatus',
+        'prejoin.errorStatusCode',
+        'prejoin.errorValidation',
+        'recording.busy', // shown when recording service is busy
+        'recording.failedToStart', // shown when recording fails to start
+        'recording.unavailableTitle', // shown when recording service is not reachable
+        'toolbar.noAudioSignalTitle', // shown when a broken mic is detected
+        'toolbar.noisyAudioInputTitle', // shown when noise is detected for the current microphone
+        'toolbar.talkWhileMutedPopup', // shown when user tries to speak while muted
+        'transcribing.failedToStart', // shown when transcribing fails to start
     ],
 
     // List of notifications to be disabled. Works in tandem with the above setting.
@@ -1519,9 +1516,9 @@ var config = {
 
 // Set the default values for JaaS customers
 if (enableJaaS) {
-    config.dialInNumbersUrl =
-        "https://conference-mapper.jitsi.net/v1/access/dids";
-    config.dialInConfCodeUrl = "https://conference-mapper.jitsi.net/v1/access";
+    config.dialInNumbersUrl
+        = 'https://conference-mapper.jitsi.net/v1/access/dids';
+    config.dialInConfCodeUrl = 'https://conference-mapper.jitsi.net/v1/access';
     config.roomPasswordNumberOfDigits = 10; // skip re-adding it (do not remove comment)
 }
 
