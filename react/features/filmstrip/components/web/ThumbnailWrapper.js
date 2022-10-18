@@ -3,7 +3,8 @@ import React, { Component } from 'react';
 import { shouldComponentUpdate } from 'react-window';
 
 import { getSourceNameSignalingFeatureFlag } from '../../../base/config';
-import { getLocalParticipant } from '../../../base/participants';
+import { MEDIA_TYPE, VideoTrack } from '../../../base/media';
+import { getCustomOrderedRemoteParticipants, getIsLocalTrainer, getLocalParticipant } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { shouldHideSelfView } from '../../../base/settings/functions.any';
 import { LAYOUTS, getCurrentLayout } from '../../../video-layout';
@@ -12,10 +13,8 @@ import { getActiveParticipantsIds, showGridInVerticalView } from '../../function
 
 import Thumbnail from './Thumbnail';
 
-import { MEDIA_TYPE, VideoTrack } from "../../../base/media";
 
 // sally = custom remote participants ordering / filtering
-import { getCustomOrderedRemoteParticipants, getIsLocalTrainer } from "../../../base/participants"
 
 
 /**
@@ -157,26 +156,19 @@ class ThumbnailWrapper extends Component<Props> {
  */
 function _mapStateToProps(state, ownProps) {
     const _currentLayout = getCurrentLayout(state);
-    const { remote } = state["features/base/participants"];
-    const { recentActiveParticipants } =
-            state["features/base/participants/recentActive"];
-
-    const { testing = {} } = state['features/base/config'];
-    //const enableThumbnailReordering = testing.enableThumbnailReordering ?? true;
-    // sally - ensure enabletumbnailreoderdering is false
-    const enableThumbnailReordering = false;
-    // sally = get custom ordered remote participants (visible)
-
-    const remoteParticipants = getCustomOrderedRemoteParticipants(state);
-    let remoteParticipantsLength = remoteParticipants.length;
+    const { remoteParticipants: remote } = state['features/filmstrip'];
 
     const activeParticipants = getActiveParticipantsIds(state);
+    const { testing = {} } = state['features/base/config'];
     const disableSelfView = shouldHideSelfView(state);
+    const enableThumbnailReordering = false; // testing.enableThumbnailReordering ?? true;
     const sourceNameSignalingEnabled = getSourceNameSignalingFeatureFlag(state);
     const _verticalViewGrid = showGridInVerticalView(state);
     const filmstripType = ownProps.data?.filmstripType;
     const stageFilmstrip = filmstripType === FILMSTRIP_TYPE.STAGE;
-    const sortedActiveParticipants = activeParticipants.sort();
+    const sortedActiveParticipants = getCustomOrderedRemoteParticipants(state);
+    const remoteParticipants = stageFilmstrip ? sortedActiveParticipants : remote;
+    const remoteParticipantsLength = remoteParticipants.length;
     const localId = getLocalParticipant(state).id;
 
     if (_currentLayout === LAYOUTS.TILE_VIEW || _verticalViewGrid || stageFilmstrip) {
@@ -258,14 +250,21 @@ function _mapStateToProps(state, ownProps) {
         }
 
         // When the thumbnails are reordered, local participant is inserted at index 0.
-        // Sally = thumbnailreorder is disabled, but this is also true if the local participant is Trainer
-        //const localIndex = enableThumbnailReordering || isLocalTrainer ? 0 : remoteParticipantsLength;
-        //const remoteIndex = (enableThumbnailReordering && !iAmRecorder) || isLocalTrainer ? index - 1 : index;
+        // const localIndex = enableThumbnailReordering && !disableSelfView ? 0 : remoteParticipantsLength;
 
-        // sally  - undo trianer local reorder
+        // // Local screen share is inserted at index 1 after the local camera.
+        // const localScreenShareIndex = enableThumbnailReordering && !disableSelfView ? 1 : remoteParticipantsLength;
+
+        // let remoteIndex;
+
+        // if (sourceNameSignalingEnabled) {
+        //     remoteIndex = enableThumbnailReordering && !iAmRecorder && !disableSelfView
+        //         ? index - localParticipantsLength : index;
+        // } else {
+        //     remoteIndex = enableThumbnailReordering && !iAmRecorder && !disableSelfView ? index - 1 : index;
+        // }
         const localIndex = enableThumbnailReordering ? 0 : remoteParticipantsLength;
         const remoteIndex = enableThumbnailReordering && !iAmRecorder ? index - 1 : index;
-
 
         if (!iAmRecorder && index === localIndex) {
             return {
@@ -287,8 +286,6 @@ function _mapStateToProps(state, ownProps) {
                 _thumbnailWidth: thumbnailWidth
             };
         }
-
-
 
         return {
             _filmstripType: filmstripType,
