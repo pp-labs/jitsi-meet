@@ -24,13 +24,13 @@ if (subdomain.startsWith('<!--')) {
 
 var enableJaaS = false;
 
-var config = {
+export var config = {
     // Connection
     //
 
     hosts: {
         // XMPP domain.
-        domain: 'jitsi-meet.example.com',
+        //domain: 'jitsi-meet.example.com',
 
         // When using authentication, domain for guest users.
         // anonymousdomain: 'guest.example.com',
@@ -42,11 +42,11 @@ var config = {
         // focus: 'focus.jitsi-meet.example.com',
 
         // XMPP MUC domain. FIXME: use XEP-0030 to discover it.
-        muc: 'conference.' + subdomain + 'jitsi-meet.example.com',
+        //muc: 'conference.' + subdomain + 'jitsi-meet.example.com',
     },
 
     // BOSH URL. FIXME: use XEP-0156 to discover it.
-    bosh: '//jitsi-meet.example.com/' + subdir + 'http-bind',
+    //bosh: '//jitsi-meet.example.com/' + subdir + 'http-bind',
 
     // Websocket URL
     // websocket: 'wss://jitsi-meet.example.com/' + subdir + 'xmpp-websocket',
@@ -1533,5 +1533,4 @@ if (enableJaaS) {
     config.dialInConfCodeUrl = 'https://conference-mapper.jitsi.net/v1/access';
     config.roomPasswordNumberOfDigits = 10; // skip re-adding it (do not remove comment)
 }
-export default config;
 /* eslint-enable no-unused-vars, no-var */
