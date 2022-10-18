@@ -111,7 +111,7 @@
         position: absolute;
         left: 0;
         pointer-events: none;
-        z-index: $zindex10;
+        //z-index: $zindex10;
         width: 100%;
         box-sizing: border-box; // Includes the padding in the 100% width.
 
@@ -493,7 +493,7 @@
     height: 13px;
     color: #FFF;
     font-size: 10pt;
-    margin-right: $remoteVideoMenuIconMargin;
+    //margin-right: $remoteVideoMenuIconMargin;
     
     // gregor - remove hand cursor
     /*

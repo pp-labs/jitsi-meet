@@ -40,7 +40,7 @@ import logger from './logger';
  * @private
  * @returns {void}
  */
-const _updateLastN = debounce(({ dispatch, getState }: IStore) => {
+const _updateLastNold = debounce(({ dispatch, getState }: IStore) => {
     const state = getState();
     const { conference } = state['features/base/conference'];
 

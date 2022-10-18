@@ -50,10 +50,10 @@
         width: 100%;
 
         &.collapse {
-            #remoteVideos {
-                height: calc(100% - #{$newToolbarSizeMobile}) !important;
-                margin-bottom: $newToolbarSizeMobile;
-            }
+            // #remoteVideos {
+            //     height: calc(100% - #{$newToolbarSizeMobile}) !important;
+            //     margin-bottom: $newToolbarSizeMobile;
+            // }
 
             .remote-videos {
                 // !important is needed here as overflow is set via element.style in a FixedSizeGrid.
@@ -159,4 +159,4 @@
             object-fit: cover;
         }
     }
-}
+}}
