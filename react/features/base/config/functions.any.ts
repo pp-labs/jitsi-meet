@@ -7,7 +7,7 @@ import _ from 'lodash';
 
 // @ts-ignore
 // eslint-disable-next-line import/order
-import { config as configOverride } from '../../../../config';
+import { config as configOverride } from '../../../../config'; //dev testing only
 
 // @ts-ignore
 import { interfaceConfig as interfaceConfigOverride } from '../../../../interface_config';
@@ -366,14 +366,14 @@ export function setConfigFromURLParams(
     // // end testing only
 
     // Sally  local testing only...remove later
+    if (configOverride) {
+        const j = {
+            config: configOverride,
+            interfaceConfig: interfaceConfigOverride
+        };
 
-    const j = {
-        config: configOverride,
-        interfaceConfig: interfaceConfigOverride
-    };
-
-    overrideConfigJSON(config, interfaceConfig, j);
-
+        overrideConfigJSON(config, interfaceConfig, j);
+    }
     overrideConfigJSON(config, interfaceConfig, json);
 
     // end testing only

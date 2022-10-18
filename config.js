@@ -27,13 +27,15 @@ if (subdomain.startsWith("<!--")) {
 
 var enableJaaS = false;
 
-var config = {
+export var config = { //Dev testing only
+//var config = {
+
     // Connection
     //
 
     hosts: {
         // XMPP domain.
-        domain: "jitsi-meet.example.com",
+        //domain: "jitsi-meet.example.com",
 
         // When using authentication, domain for guest users.
         // anonymousdomain: 'guest.example.com',
@@ -45,14 +47,14 @@ var config = {
         // focus: 'focus.jitsi-meet.example.com',
 
         // XMPP MUC domain. FIXME: use XEP-0030 to discover it.
-        muc: "conference." + subdomain + "jitsi-meet.example.com",
+        //muc: "conference." + subdomain + "jitsi-meet.example.com",
     },
 
     // BOSH URL. FIXME: use XEP-0156 to discover it.
     //bosh: "//jitsi-meet.example.com/" + subdir + "http-bind",
 
     // Websocket URL
-    websocket: "wss://jitsi-meet.example.com/" + subdir + "xmpp-websocket",
+    //websocket: "wss://jitsi-meet.example.com/" + subdir + "xmpp-websocket",
 
     // The real JID of focus participant - can be overridden here
     // Do not change username - FIXME: Make focus username configurable
@@ -1523,4 +1525,3 @@ if (enableJaaS) {
     config.roomPasswordNumberOfDigits = 10; // skip re-adding it (do not remove comment)
 }
 
-export default config;
