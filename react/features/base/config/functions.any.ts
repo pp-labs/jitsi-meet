@@ -21,6 +21,10 @@ import { FEATURE_FLAGS, _CONFIG_STORE_PREFIX } from './constants';
 import INTERFACE_CONFIG_WHITELIST from './interfaceConfigWhitelist';
 import logger from './logger';
 
+import { interfaceConfig as interfaceConfigOverride } from "../../../../interface_config";
+import { config as configOverride } from "../../../../config";
+
+
 // Sally - For local testing only  -- REMOVE
 //     channelLastN: 3
 
