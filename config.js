@@ -1522,3 +1522,5 @@ if (enableJaaS) {
     config.dialInConfCodeUrl = "https://conference-mapper.jitsi.net/v1/access";
     config.roomPasswordNumberOfDigits = 10; // skip re-adding it (do not remove comment)
 }
+
+export default config;
