@@ -11,22 +11,17 @@ import {
     VIRTUAL_SCREENSHARE_REMOTE_PARTICIPANTS_UPDATED
 } from '../../video-layout/actionTypes';
 import { SET_AUDIO_ONLY } from '../audio-only/actionTypes';
-// eslint-disable-next-line import/order
 import { CONFERENCE_JOINED } from '../conference/actionTypes';
-
-// @ts-ignore
-// eslint-disable-next-line import/order
-import { PARTICIPANT_JOINED, PARTICIPANT_KICKED, PARTICIPANT_LEFT } from '../participants/actionTypes';
-
-// @ts-ignore
-// eslint-disable-next-line import/order
-import { getParticipantById, getParticipantCount } from '../participants/functions';
-
-// @ts-ignore
-import { MiddlewareRegistry } from '../redux';
 import {
-    CLIENT_RESIZED
-} from '../responsive-ui/actionTypes';
+    PARTICIPANT_JOINED,
+    PARTICIPANT_KICKED,
+    PARTICIPANT_LEFT
+} from '../participants/actionTypes';
+import {
+    getParticipantById,
+    getParticipantCount
+} from '../participants/functions';
+import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 import { isLocalVideoTrackDesktop } from '../tracks/functions';
 
 import { setLastN } from './actions';
@@ -43,11 +38,6 @@ import logger from './logger';
 const _updateLastN = debounce(({ dispatch, getState }: IStore) => {
     const state = getState();
     const { conference } = state['features/base/conference'];
-
-
-    // sally
-    // const layout = getCurrentLayout(state);
-    // const { clientHeight } = state['features/base/responsive-ui'];
 
     if (!conference) {
         logger.debug('There is no active conference, not updating last N');
@@ -77,14 +67,6 @@ const _updateLastN = debounce(({ dispatch, getState }: IStore) => {
         lastNSelected = lastNSelected === -1 ? limitedLastN : Math.min(limitedLastN, lastNSelected);
     }
 
-    // // sally  - hard code lastn to 6 for Tile View
-    // if (layout === LAYOUTS.TILE_VIEW) {
-    //     lastN = 6;
-    // } else {
-    //     // dynamically set lastN when not in tile view based on client height
-    //     lastN = Math.round((clientHeight / 200))  + 2
-    // }
-
     if (typeof appState !== 'undefined' && appState !== 'active') {
         lastNSelected = isLocalVideoTrackDesktop(state) ? 1 : 0;
     } else if (carMode) {
@@ -111,13 +93,10 @@ const _updateLastN = debounce(({ dispatch, getState }: IStore) => {
 }, 1000); /* Don't send this more often than once a second. */
 
 
-MiddlewareRegistry.register((store: IStore) => (next: (arg0: any) => any) => (action: { type: any; }) => {
+MiddlewareRegistry.register(store => next => action => {
     const result = next(action);
 
-
-    // sally - set lastn on client resise
     switch (action.type) {
-    case CLIENT_RESIZED:
     case APP_STATE_CHANGED:
     case CONFERENCE_JOINED:
     case PARTICIPANT_JOINED:
