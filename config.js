@@ -24,7 +24,7 @@ if (subdomain.startsWith('<!--')) {
 
 var enableJaaS = false;
 
-export var config = {
+var config = {
     // Connection
     //
 
