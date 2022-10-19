@@ -817,8 +817,8 @@ var config = {
     //     },
     // ],
 
-    toolbarButtons: [ 'microphone', 'camera', 'desktop', 'profile', 'sharedvideo', 'settings', 'raisehand',
-        'videoquality', 'filmstrip', 'select-background',
+    toolbarButtons: [ 'microphone', 'camera', 'desktop', 'profile', 'settings',
+        'filmstrip', 'select-background',
     ],
 
     // List of pre meeting screens buttons to hide. The values must be one or more of the 5 allowed buttons:

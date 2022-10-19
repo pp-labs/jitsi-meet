@@ -46,7 +46,8 @@
     justify-content: flex-end;
     box-sizing: border-box;
     display: flex;
-    margin-bottom: 16px;
+    padding-top: 10px;
+    height: 82px;
     position: relative;
     z-index: $toolbarZ;
     pointer-events: none;
