@@ -818,7 +818,7 @@ var config = {
     // ],
 
     toolbarButtons: [ 'microphone', 'camera', 'desktop', 'profile', 'sharedvideo', 'settings', 'raisehand',
-        'videoquality', 'filmstrip', 'tileview', 'select-background',
+        'videoquality', 'filmstrip', 'select-background',
     ],
 
     // List of pre meeting screens buttons to hide. The values must be one or more of the 5 allowed buttons:
@@ -1245,7 +1245,7 @@ var config = {
     // moderatedRoomServiceUrl: 'https://moderated.jitsi-meet.example.com',
 
     // If true, tile view will not be enabled automatically when the participants count threshold is reached.
-    // disableTileView: true,
+    disableTileView: true,
 
     // If true, the tiles will be displayed contained within the available space rather than enlarged to cover it,
     // with a 16:9 aspect ratio (old behaviour).
