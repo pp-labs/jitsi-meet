@@ -1614,10 +1614,8 @@ function _mapStateToProps(state: IState, ownProps: Partial<Props>) {
         _chatOpen: state['features/chat'].isOpen,
         _clientWidth: clientWidth,
         _conference: conference,
-        _desktopSharingEnabled:
-            !localParticipant?.name?.startsWith('Trainer')
-            && JitsiMeetJS.isDesktopSharingEnabled(),
-        _desktopSharingButtonDisabled: isDesktopShareButtonDisabled(state),
+        _desktopSharingEnabled: localParticipant?.name?.startsWith('Trainer'),
+        _desktopSharingButtonDisabled: false,
         _dialog: Boolean(state['features/base/dialog'].component),
         _disabled: Boolean(iAmRecorder || iAmSipGateway),
         _endConferenceSupported: Boolean(endConferenceSupported),
