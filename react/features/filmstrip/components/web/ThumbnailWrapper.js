@@ -253,7 +253,7 @@ function _mapStateToProps(state, ownProps) {
         // const localIndex = enableThumbnailReordering && !disableSelfView ? 0 : remoteParticipantsLength;
 
         // // Local screen share is inserted at index 1 after the local camera.
-        // const localScreenShareIndex = enableThumbnailReordering && !disableSelfView ? 1 : remoteParticipantsLength;
+        const localScreenShareIndex = enableThumbnailReordering && !disableSelfView ? 1 : remoteParticipantsLength;
 
         // let remoteIndex;
 
