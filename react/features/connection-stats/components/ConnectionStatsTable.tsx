@@ -277,8 +277,9 @@ class ConnectionStatsTable extends Component<Props> {
                     onClick = { onClick }>
                     { this._renderStatistics() }
                     <div className = { classes.actions }>
-                        { isLocalVideo && enableSaveLogs ? this._renderSaveLogs() : null}
-                        { !disableShowMoreStats && this._renderShowMoreLink() }
+                        {isLocalVideo && enableSaveLogs ? this._renderSaveLogs() : null}
+                        {/* nino - disable show more link */}
+                        {/* { !disableShowMoreStats && this._renderShowMoreLink() } */}
                     </div>
                     { this.props.shouldShowMore ? this._renderAdditionalStats() : null }
                 </div>
