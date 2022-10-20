@@ -730,7 +730,8 @@ class Thumbnail extends Component<Props, State> {
         const { id, pinned } = _participant;
 
         if (_stageFilmstripLayout) {
-            dispatch(togglePinStageParticipant(id));
+            // nino - remove click tileView Participants
+            //dispatch(togglePinStageParticipant(id));
         } else {
             dispatch(pinParticipant(pinned ? null : id));
         }
