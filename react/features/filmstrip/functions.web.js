@@ -425,7 +425,7 @@ export function calculateThumbnailSizeForTileView({
     const viewWidth = clientWidth - (columns * TILE_HORIZONTAL_MARGIN)
         - (noHorizontalContainerMargin ? SCROLL_SIZE : TILE_VIEW_GRID_HORIZONTAL_MARGIN);
     const availableHeight = clientHeight - TILE_VIEW_GRID_VERTICAL_MARGIN;
-    const viewHeight = availableHeight - (minVisibleRows * TILE_VERTICAL_MARGIN);
+    const viewHeight = availableHeight - (minVisibleRows * TILE_VERTICAL_MARGIN) - 82; // nino - fix tileView too big
     const initialWidth = viewWidth / columns;
     let initialHeight = viewHeight / minVisibleRows;
     let minHeightEnforced = false;
