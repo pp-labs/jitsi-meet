@@ -707,7 +707,7 @@ class Filmstrip extends PureComponent <Props, State> {
                     className = 'filmstrip__videos remote-videos'
                     columnCount = { _columns }
                     columnWidth = { _thumbnailWidth + TILE_HORIZONTAL_MARGIN }
-                    height = { _filmstripHeight }
+                    height = { _filmstripHeight - 82 } // nino - fix overlapp, 82 is the height of the toolbar
                     initialScrollLeft = { 0 }
                     initialScrollTop = { 0 }
                     itemData = {{ filmstripType }}
