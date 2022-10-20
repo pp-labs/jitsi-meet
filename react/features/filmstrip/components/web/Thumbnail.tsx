@@ -346,12 +346,12 @@ const defaultStyles = (theme: Theme) => {
         borderIndicatorOnTop: {
             zIndex: 11
         },
-
-        activeSpeaker: {
-            '& .active-speaker-indicator': {
-                boxShadow: `inset 0px 0px 0px 4px ${theme.palette.link01Active} !important`
-            }
-        },
+        // nino - disable blue border indicator
+        // activeSpeaker: {
+        //     '& .active-speaker-indicator': {
+        //         boxShadow: `inset 0px 0px 0px 4px ${theme.palette.link01Active} !important`
+        //     }
+        // },
 
         raisedHand: {
             '& .raised-hand-border': {
