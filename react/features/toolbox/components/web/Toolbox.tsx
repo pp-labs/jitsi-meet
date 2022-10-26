@@ -1608,13 +1608,14 @@ function _mapStateToProps(state: IState, ownProps: Partial<Props>) {
     const { clientWidth } = state['features/base/responsive-ui'];
     const toolbarButtons = ownProps.toolbarButtons || getToolbarButtons(state);
 
+
     return {
         _backgroundType: state['features/virtual-background'].backgroundType,
         _buttonsWithNotifyClick: buttonsWithNotifyClick,
         _chatOpen: state['features/chat'].isOpen,
         _clientWidth: clientWidth,
         _conference: conference,
-        _desktopSharingEnabled: localParticipant?.name?.startsWith('Trainer'),
+        _desktopSharingEnabled: JitsiMeetJS.isDesktopSharingEnabled(),
         _desktopSharingButtonDisabled: false,
         _dialog: Boolean(state['features/base/dialog'].component),
         _disabled: Boolean(iAmRecorder || iAmSipGateway),

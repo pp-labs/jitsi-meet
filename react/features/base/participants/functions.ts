@@ -768,11 +768,11 @@ export function getCustomTrainers(stateful: Object | Function, id: string) {
     const { remote } = state['features/base/participants'];
 
     const trainers = Array.from(remote.values()).filter(p =>
-        p?.name?.startsWith('Trainer')
+        p?.name?.startsWith('Moderator')
     );
     const localParticipant = getLocalParticipant(state);
 
-    if (localParticipant?.name?.startsWith('Trainer')) {
+    if (localParticipant?.name?.startsWith('Moderator')) {
         trainers.unshift(localParticipant);
     }
 
@@ -812,7 +812,7 @@ export function getCntVisibileActiveSpeakers(
     const tileViewActive = _currentLayout === LAYOUTS.TILE_VIEW;
 
     const cntTrainers = remoteParticipants.filter(p =>
-        p.name?.startsWith('Trainer')
+        p.name?.startsWith('Moderator')
     ).length;
 
     if (tileViewActive) {
@@ -853,7 +853,7 @@ export function getCustomOrderedRemoteParticipants(
     // sally - no trainer in left side
     if (!tileViewActive) {
         remoteParticipants = remoteParticipants.filter(
-            p => !p.name?.startsWith('Trainer') && !p.local
+            p => !p.name?.startsWith('Moderator') && !p.local
         );
     }
 
@@ -861,7 +861,7 @@ export function getCustomOrderedRemoteParticipants(
 
     // sally order participants
     remoteParticipants = remoteParticipants.map(p => {
-        if (p.name?.startsWith('Trainer')) {
+        if (p.name?.startsWith('Moderator')) {
             p.order = 1;
 
             return p;
@@ -1025,7 +1025,7 @@ export function getHiddenRemoteParticipants(
 export function getIsLocalTrainer(stateful: Object | Function): boolean {
     const name = getLocalParticipant(stateful as Function)?.name;
 
-    return Boolean(name?.startsWith('Trainer'));
+    return Boolean(name?.startsWith('Moderator'));
 }
 
 // END SALLY CUSTOM FUNCTIONS
