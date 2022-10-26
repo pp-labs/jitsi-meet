@@ -2,18 +2,22 @@
 import type { Dispatch } from 'redux';
 
 import { TILE_VIEW_ENABLED, getFeatureFlag } from '../base/flags';
+import { MEDIA_TYPE } from '../base/media';
 import {
+    getCustomOrderedRemoteParticipants,
     getParticipantCount,
     getParticipantCountWithFake,
-    getCustomOrderedRemoteParticipants,
     getPinnedParticipant,
     pinParticipant
 } from '../base/participants';
+import { getLocalVideoTrack } from '../base/tracks';
 import { isStageFilmstripAvailable } from '../filmstrip/functions';
 import { isVideoPlaying } from '../shared-video/functions';
 import { VIDEO_QUALITY_LEVELS } from '../video-quality/constants';
 import { getReceiverVideoQualityLevel } from '../video-quality/functions';
 import { getMinHeightForQualityLvlMap } from '../video-quality/selector';
+
+// sally for local screenshare
 
 import { LAYOUTS } from './constants';
 
@@ -67,7 +71,36 @@ export function getCurrentLayout(state: Object) {
  * @returns {boolean} True if tile view should be displayed.
  */
 export function shouldDisplayTileView(state: Object = {}) {
-    const { tileViewEnabled } = state['features/video-layout'];
+    const participantCount = getParticipantCount(state);
+
+    const tileViewEnabledFeatureFlag = getFeatureFlag(state, TILE_VIEW_ENABLED, true);
+    const { disableTileView } = state['features/base/config'];
+    const { tileViewEnabled, remoteScreenShares } = state['features/video-layout'];
+    const tracks = state['features/base/tracks'];
+    const p = state['features/base/participants'];
+    const _videoTrack = getLocalVideoTrack(
+                tracks,
+                MEDIA_TYPE.VIDEO
+    );
+
+    const isScreenSharing = _videoTrack?.videoType === 'desktop';
+
+    // sally - if screen sharting do not use tile view
+    if (isScreenSharing) {
+        return false;
+    }
+
+    // sally - if any remote is screen sharing, do not use tile view.
+    if ((remoteScreenShares || []).length > 0) {
+        return false;
+    }
+
+    // // sally - use disabled tile view to stay in tile view or not
+    // return !disableTileView
+
+    if (disableTileView || !tileViewEnabledFeatureFlag) {
+        return false;
+    }
 
     if (tileViewEnabled !== undefined) {
         // If the user explicitly requested a view mode, we
@@ -75,14 +108,11 @@ export function shouldDisplayTileView(state: Object = {}) {
         return tileViewEnabled;
     }
 
-    const tileViewEnabledFeatureFlag = getFeatureFlag(state, TILE_VIEW_ENABLED, true);
-    const { disableTileView } = state['features/base/config'];
 
     if (disableTileView || !tileViewEnabledFeatureFlag) {
         return false;
     }
 
-    const participantCount = getParticipantCount(state);
     const { iAmRecorder } = state['features/base/config'];
 
     // None tile view mode is easier to calculate (no need for many negations), so we do

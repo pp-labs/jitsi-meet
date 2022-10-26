@@ -742,11 +742,25 @@ var config = {
     //    'videoquality',
     // ],
 
+    toolbarButtons: [
+       'microphone', 'camera', 'desktop', 'profile', 'settings', 'filmstrip'
+    ],
+
+
     // Holds values related to toolbar visibility control.
     toolbarConfig: {
         // Moved from interfaceConfig.INITIAL_TOOLBAR_TIMEOUT
         // The initial number of milliseconds for the toolbar buttons to be visible on screen.
         initialTimeout: 20000,
+        // The initial numer of miliseconds for the toolbar buttons to be visible on screen.
+        //initialTimeout: 20000,
+        // Moved from interfaceConfig.TOOLBAR_TIMEOUT
+        // Number of miliseconds for the toolbar buttons to be visible on screen.
+        //timeout: 4000,
+        // Moved from interfaceConfig.TOOLBAR_ALWAYS_VISIBLE
+        // Whether toolbar should be always visible or should hide after x miliseconds.
+        alwaysVisible: true
+    },
 
         // Moved from interfaceConfig.TOOLBAR_TIMEOUT
         // Number of milliseconds for the toolbar buttons to be visible on screen.

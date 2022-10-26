@@ -125,6 +125,8 @@ export default class AbstractNotification<P: Props> extends Component<P> {
 
         // Bind event handler so it is only bound once for every instance.
         this._onDismissed = this._onDismissed.bind(this);
+       
+
     }
 
     _getDescription: () => Array<string>;

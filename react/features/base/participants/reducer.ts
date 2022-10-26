@@ -575,7 +575,7 @@ ReducerRegistry.register<any[]>('features/base/participants/recentActive', (stat
         // eslint-disable-next-line no-case-declarations
         const participant = participants[id];
 
-        if (participant?.local || participant?._displayName.startsWith('Trainer')) {
+        if (participant?.local || participant?._displayName.startsWith('Moderator')) {
             return state;
         }
         // eslint-disable-next-line no-case-declarations

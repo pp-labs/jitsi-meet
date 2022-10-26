@@ -151,9 +151,8 @@ export function isVideoPlayable(stateful: Object | Function, id: String) {
  * @returns {{local: {height, width}, remote: {height, width}}}
  */
 export function calculateThumbnailSizeForHorizontalView(clientHeight: number = 0) {
-    const topBottomMargin = 15;
-    const availableHeight = Math.min(clientHeight,
-        (interfaceConfig.FILM_STRIP_MAX_HEIGHT || DEFAULT_FILMSTRIP_WIDTH) + topBottomMargin);
+    const topBottomMargin = 0;
+    const availableHeight = Math.min(clientHeight, (interfaceConfig.FILM_STRIP_MAX_HEIGHT || 120) + topBottomMargin);
     const height = availableHeight - topBottomMargin;
 
     return {

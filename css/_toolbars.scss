@@ -43,7 +43,8 @@
 
 .toolbox-content {
     background-color: $newToolbarBackgroundColor;
-    justify-content: flex-end;
+    // sally - align toolbox right
+    justify-content: flex-start;
     box-sizing: border-box;
     display: flex;
     padding-top: 10px;
@@ -191,14 +192,16 @@
         margin-bottom: 0;
 
         .toolbox-content-wrapper {
-            width: 100%;
+            // sally  - disable toobar button centering on mobiles
+            //width: 100%;
         }
 
         .toolbox-content-items {
             @include ltr;
+            // sally  - disable toobar button centering on mobiles
             border-radius: 0;
             display: flex;
-            justify-content: space-evenly;
+            //justify-content: space-evenly;
             padding: 8px 0;
             width: 100%;
         }
@@ -210,5 +213,15 @@
         .invite-more-container.elevated {
             margin-bottom: 52px;
         }
+
+        // sally - toolbox item width smaller in mobile
+        .toolbox-icon {
+            width: 45px;
+            height: 45px;
+            svg {
+                zoom: 0.75;
+            }
+        }
+
     }
 }

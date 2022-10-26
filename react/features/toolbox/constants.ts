@@ -4,27 +4,27 @@
 export const THRESHOLDS = [
     {
         width: 520,
-        order: [ 'microphone', 'camera', 'desktop', 'chat', 'raisehand', 'participants', 'tileview' ]
+        order: [ 'camera','microphone', 'desktop', 'chat', 'raisehand', 'participants', 'tileview' ]
     },
     {
         width: 470,
-        order: [ 'microphone', 'camera', 'desktop', 'chat', 'raisehand', 'participants' ]
+        order: [ 'camera','microphone', 'desktop', 'chat', 'raisehand', 'participants' ]
     },
     {
         width: 420,
-        order: [ 'microphone', 'camera', 'desktop', 'chat', 'participants' ]
+        order: [ 'camera','microphone', 'desktop', 'chat', 'participants' ]
     },
     {
         width: 370,
-        order: [ 'microphone', 'camera', 'chat', 'participants' ]
+        order: [ 'camera','microphone', 'chat', 'participants' ]
     },
     {
-        width: 225,
-        order: [ 'microphone', 'camera', 'chat' ]
+        width: 320,
+        order: [ 'camera','microphone', 'chat' ]
     },
     {
-        width: 200,
-        order: [ 'microphone', 'camera' ]
+        width: 270,
+        order: [ 'camera','microphone', ]
     }
 ];
 

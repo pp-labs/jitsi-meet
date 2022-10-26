@@ -27,6 +27,19 @@ export const SQUARE_TILE_ASPECT_RATIO = 1;
 export const DISPLAY_DRAWER_THRESHOLD = 512;
 
 /**
+ * Breakpoint past which a single column view is enforced in tile view.
+ */
+export const SINGLE_COLUMN_BREAKPOINT = 300;
+
+/**
+ * Breakpoint past which a two column view is enforced in tile view.
+ */
+
+// reduce two column breakpoint to show 3 columns on mobiles
+// export const TWO_COLUMN_BREAKPOINT = 1000;
+export const TWO_COLUMN_BREAKPOINT = 700;
+
+/**
  * Breakpoint past which the aspect ratio is switched in tile view.
  * Also, past this breakpoint, if there are two participants in the conference, we enforce
  * single column view.
@@ -190,7 +203,11 @@ export const SCROLL_SIZE = 7;
  *
  * @type {number}
  */
-export const VERTICAL_FILMSTRIP_VERTICAL_MARGIN = 26;
+
+// sally - reduce verticle filmstrip margin
+export const VERTICAL_FILMSTRIP_VERTICAL_MARGIN = 0;
+
+// export const VERTICAL_FILMSTRIP_VERTICAL_MARGIN = 60;
 
 /**
  * The min horizontal space between the thumbnails container and the edges of the window.
