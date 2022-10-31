@@ -53,6 +53,9 @@ import {
     // @ts-ignore
 } from '../../functions';
 
+// sally
+import { getCustomOrderedRemoteParticipants, getHiddenRemoteParticipants, getIsLocalTrainer } from "../../../base/participants"
+
 // @ts-ignore
 import AudioTracksContainer from './AudioTracksContainer';
 // @ts-ignore
@@ -148,6 +151,21 @@ interface Props extends WithTranslation {
      * The participants in the call.
      */
     _remoteParticipants: Array<Object>;
+
+    /**
+     * Sally = The trainrs in the call (non tile view - hidden!)
+     */
+    _hiddenRemoteParticipants: Array<Object>;
+
+    /**
+     * Sally - Whether local participant is the traier
+     */
+    _isLocalTrainer: boolean;
+
+    _clientHeight: number;
+
+    _tracks: Array<Object>;
+    _recentActiveParticipants: Array<Object>;
 
     /**
      * The length of the remote participants array.
@@ -402,6 +420,8 @@ class Filmstrip extends PureComponent <Props, State> {
             toolbar = this._renderToggleButton();
         }
 
+
+
         const filmstrip = (<>
             <div
                 className = { clsx(this.props._videosClassName,
@@ -440,6 +460,12 @@ class Filmstrip extends PureComponent <Props, State> {
                 {
                     this._renderRemoteParticipants()
                 }
+                {/*{ Sally - render hidden remote participants audio tracks }*/}
+                {
+                   this._renderHiddenRemoteParticipants()
+                }
+                {/*{ Sally - moved toolbar button }*/}
+                {toolbar}
             </div>
         </>);
 
@@ -451,7 +477,8 @@ class Filmstrip extends PureComponent <Props, State> {
                     _verticalViewGrid && 'no-vertical-padding',
                     _verticalViewBackground && classes.filmstripBackground) }
                 style = { filmstripStyle }>
-                { toolbar }
+                {/*sally - move tooldbar button*/}
+                {/*{ toolbar }*/}
                 {_resizableFilmstrip
                     ? <div
                         className = { clsx('resizable-filmstrip', classes.resizableFilmstripContainer,
@@ -615,13 +642,19 @@ class Filmstrip extends PureComponent <Props, State> {
             _iAmRecorder,
             _remoteParticipants,
             _remoteParticipantsLength,
-            _thumbnailsReordered
+            _thumbnailsReordered,
+            _isLocalTrainer
         } = this.props;
         const index = (rowIndex * _columns) + columnIndex;
 
         // When the thumbnails are reordered, local participant is inserted at index 0.
-        const localIndex = _thumbnailsReordered && !_disableSelfView ? 0 : _remoteParticipantsLength;
-        const remoteIndex = _thumbnailsReordered && !_iAmRecorder && !_disableSelfView ? index - 1 : index;
+        // Sally = thumbnailreorder is disabled, but this is also true if the local participant is Trainer
+        // const localIndex = _thumbnailsReordered && !_disableSelfView ? 0 : _remoteParticipantsLength;
+        // const remoteIndex = _thumbnailsReordered && !_iAmRecorder && !_disableSelfView ? index - 1 : index;
+
+          // undo local trainer reorder
+        const localIndex = _thumbnailsReordered ? 0 : _remoteParticipantsLength;
+        const remoteIndex = _thumbnailsReordered && !_iAmRecorder ? index - 1 : index;
 
         if (index > _remoteParticipantsLength - (_iAmRecorder ? 1 : 0)) {
             return `empty-${index}`;
@@ -672,6 +705,31 @@ class Filmstrip extends PureComponent <Props, State> {
 
         dispatch(setVisibleRemoteParticipants(startIndex, stopIndex));
     }
+
+
+
+    /**
+     * Renders the thumbnails for remote participants.
+     *
+     * @returns {ReactElement}
+     */
+    _renderHiddenRemoteParticipants() {
+        const {
+            _currentLayout,
+            _hiddenRemoteParticipants,
+        } = this.props;
+
+      return (
+          <div id='hiddenRemoteVideos'>
+            {_hiddenRemoteParticipants.map(p=> (
+              <Thumbnail
+                key={`remote_${p}`}
+                participantID={p}
+              />
+            ))}
+          </div>
+      )
+    };
 
     /**
      * Renders the thumbnails for remote participants.
@@ -769,6 +827,8 @@ class Filmstrip extends PureComponent <Props, State> {
             </FixedSizeList>
         );
     }
+
+
 
     /**
      * Dispatches an action to change the visibility of the filmstrip.
@@ -889,7 +949,16 @@ function _mapStateToProps(state: IState, ownProps: Partial<Props>) {
     const { _hasScroll = false, filmstripType, _topPanelFilmstrip, _remoteParticipants } = ownProps;
     const toolbarButtons = getToolbarButtons(state);
     const { testing = {}, iAmRecorder } = state['features/base/config'];
-    const enableThumbnailReordering = testing.enableThumbnailReordering ?? true;
+    // sally disable thumbnail reodering
+    // const enableThumbnailReordering = testing.enableThumbnailReordering ?? true;
+    const enableThumbnailReordering = false;
+
+    // sally = get custom remote participants ordering
+
+    const remoteParticipants = getCustomOrderedRemoteParticipants(state);
+    const hiddenRemoteParticipants = getHiddenRemoteParticipants(state);
+    const isLocalTrainer = getIsLocalTrainer(state);
+
     const { topPanelHeight, topPanelVisible, visible, width: verticalFilmstripWidth } = state['features/filmstrip'];
     const { localScreenShare } = state['features/base/participants'];
     const reduceHeight = state['features/toolbox'].visible && toolbarButtons.length;
@@ -933,14 +1002,19 @@ function _mapStateToProps(state: IState, ownProps: Partial<Props>) {
         _mainFilmstripVisible: visible,
         _maxFilmstripWidth: clientWidth - MIN_STAGE_VIEW_WIDTH,
         _maxTopPanelHeight: clientHeight - MIN_STAGE_VIEW_HEIGHT,
-        _remoteParticipantsLength: _remoteParticipants?.length,
+        //_remoteParticipantsLength: _remoteParticipants?.length,
+        _remoteParticipantsLength: remoteParticipants?.length,
         _thumbnailsReordered: enableThumbnailReordering,
         _topPanelHeight: topPanelHeight.current,
         _topPanelMaxHeight: topPanelHeight.current || TOP_FILMSTRIP_HEIGHT,
         _topPanelVisible,
         _verticalFilmstripWidth: verticalFilmstripWidth.current,
         _verticalViewMaxWidth: getVerticalViewMaxWidth(state),
-        _videosClassName: videosClassName
+        _videosClassName: videosClassName,
+        _clientHeight: clientHeight,
+        _hiddenRemoteParticipants: hiddenRemoteParticipants,
+        _isLocalTrainer: isLocalTrainer,
+        _remoteParticipants: remoteParticipants
     };
 }
 

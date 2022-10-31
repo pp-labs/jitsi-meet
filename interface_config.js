@@ -304,3 +304,4 @@ var interfaceConfig = {
     // No configuration value should follow this line.
 };
 /* eslint-enable no-unused-vars, no-var, max-len */
+export default interfaceConfig

@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { shouldComponentUpdate } from 'react-window';
 
 import { getSourceNameSignalingFeatureFlag } from '../../../base/config';
+// sally
 import { MEDIA_TYPE, VideoTrack } from '../../../base/media';
 import { getCustomOrderedRemoteParticipants, getIsLocalTrainer, getLocalParticipant } from '../../../base/participants';
 import { connect } from '../../../base/redux';
@@ -10,6 +11,7 @@ import { shouldHideSelfView } from '../../../base/settings/functions.any';
 import { LAYOUTS, getCurrentLayout } from '../../../video-layout';
 import { FILMSTRIP_TYPE, TILE_ASPECT_RATIO, TILE_HORIZONTAL_MARGIN } from '../../constants';
 import { getActiveParticipantsIds, showGridInVerticalView } from '../../functions';
+
 
 import Thumbnail from './Thumbnail';
 
@@ -156,19 +158,33 @@ class ThumbnailWrapper extends Component<Props> {
  */
 function _mapStateToProps(state, ownProps) {
     const _currentLayout = getCurrentLayout(state);
-    const { remoteParticipants: remote } = state['features/filmstrip'];
+    //let { remoteParticipants } = state['features/filmstrip'];
+
+    const { remote } = state["features/base/participants"];
+    const { recentActiveParticipants } =
+            state["features/base/participants/recentActive"];
 
     const activeParticipants = getActiveParticipantsIds(state);
     const { testing = {} } = state['features/base/config'];
     const disableSelfView = shouldHideSelfView(state);
-    const enableThumbnailReordering = false; // testing.enableThumbnailReordering ?? true;
+     //const enableThumbnailReordering = testing.enableThumbnailReordering ?? true;
+    // sally - ensure enabletumbnailreoderdering is false
+    const enableThumbnailReordering = false;
+    // sally = get custom ordered remote participants (visible)
+
+   
+
     const sourceNameSignalingEnabled = getSourceNameSignalingFeatureFlag(state);
     const _verticalViewGrid = showGridInVerticalView(state);
     const filmstripType = ownProps.data?.filmstripType;
     const stageFilmstrip = filmstripType === FILMSTRIP_TYPE.STAGE;
     const sortedActiveParticipants = getCustomOrderedRemoteParticipants(state);
-    const remoteParticipants = stageFilmstrip ? sortedActiveParticipants : remote;
-    const remoteParticipantsLength = remoteParticipants.length;
+    // const remoteParticipants = stageFilmstrip ? sortedActiveParticipants : remote;
+    //const remoteParticipantsLength = remoteParticipants.length;
+
+    const remoteParticipants = getCustomOrderedRemoteParticipants(state);
+    let remoteParticipantsLength = remoteParticipants.length;
+    //const isLocalTrainer = getIsLocalTrainer(state);
     const localId = getLocalParticipant(state).id;
 
     if (_currentLayout === LAYOUTS.TILE_VIEW || _verticalViewGrid || stageFilmstrip) {
@@ -263,6 +279,8 @@ function _mapStateToProps(state, ownProps) {
         // } else {
         //     remoteIndex = enableThumbnailReordering && !iAmRecorder && !disableSelfView ? index - 1 : index;
         // }
+
+        // sally undo trainer local reorder
         const localIndex = enableThumbnailReordering ? 0 : remoteParticipantsLength;
         const remoteIndex = enableThumbnailReordering && !iAmRecorder ? index - 1 : index;
 

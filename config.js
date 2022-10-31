@@ -742,6 +742,10 @@ var config = {
     //    'videoquality',
     // ],
 
+    toolbarButtons: [ 'microphone', 'camera', 'desktop', 'profile', 'settings',
+        'filmstrip', 'select-background',
+    ],
+
     // Holds values related to toolbar visibility control.
     toolbarConfig: {
         // Moved from interfaceConfig.INITIAL_TOOLBAR_TIMEOUT
@@ -816,10 +820,6 @@ var config = {
     //         preventExecution: false
     //     },
     // ],
-
-    toolbarButtons: [ 'microphone', 'camera', 'desktop', 'profile', 'settings',
-        'filmstrip', 'select-background',
-    ],
 
     // List of pre meeting screens buttons to hide. The values must be one or more of the 5 allowed buttons:
     // 'microphone', 'camera', 'select-background', 'invite', 'settings'

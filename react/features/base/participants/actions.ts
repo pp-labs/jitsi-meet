@@ -57,6 +57,8 @@ import { Participant } from './types';
  *     }
  * }}
  */
+
+ // sally pass count visible active speakers in with dominant speaker changed for sorting activeSpeakers
 export function dominantSpeakerChanged(
         dominantSpeaker: string,
         previousSpeakers: string[],

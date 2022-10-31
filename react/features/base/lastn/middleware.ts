@@ -21,11 +21,15 @@ import {
     getParticipantById,
     getParticipantCount
 } from '../participants/functions';
+import {
+    CLIENT_RESIZED
+} from '../responsive-ui/actionTypes';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 import { isLocalVideoTrackDesktop } from '../tracks/functions';
 
 import { setLastN } from './actions';
 import { limitLastN } from './functions';
+import { getCurrentLayout, getTileViewGridDimensions, shouldDisplayTileView, LAYOUTS } from '../../video-layout';
 import logger from './logger';
 
 /**
@@ -38,6 +42,10 @@ import logger from './logger';
 const _updateLastN = debounce(({ dispatch, getState }: IStore) => {
     const state = getState();
     const { conference } = state['features/base/conference'];
+
+    // sally
+    const layout = getCurrentLayout(state)
+    const { clientHeight } = state['features/base/responsive-ui'];
 
     if (!conference) {
         logger.debug('There is no active conference, not updating last N');
@@ -66,6 +74,13 @@ const _updateLastN = debounce(({ dispatch, getState }: IStore) => {
     if (limitedLastN !== undefined) {
         lastNSelected = lastNSelected === -1 ? limitedLastN : Math.min(limitedLastN, lastNSelected);
     }
+    // sally  - hard code lastn to 6 for Tile View
+    // if (layout === LAYOUTS.TILE_VIEW) {
+    //     lastN = 6;
+    // } else {
+    //     // dynamically set lastN when not in tile view based on client height
+    //     lastN = Math.round((clientHeight / 200))  + 2
+    // }
 
     if (typeof appState !== 'undefined' && appState !== 'active') {
         lastNSelected = isLocalVideoTrackDesktop(state) ? 1 : 0;
@@ -95,7 +110,7 @@ const _updateLastN = debounce(({ dispatch, getState }: IStore) => {
 
 MiddlewareRegistry.register(store => next => action => {
     const result = next(action);
-
+    //sally - set lastn on client resize == add case CLIENT_RESIZED:
     switch (action.type) {
     case APP_STATE_CHANGED:
     case CONFERENCE_JOINED:
@@ -108,6 +123,7 @@ MiddlewareRegistry.register(store => next => action => {
     case SET_CAR_MODE:
     case SET_FILMSTRIP_ENABLED:
     case SET_TILE_VIEW:
+    case CLIENT_RESIZED:
     case VIRTUAL_SCREENSHARE_REMOTE_PARTICIPANTS_UPDATED:
         _updateLastN(store);
         break;
