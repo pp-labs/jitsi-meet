@@ -161,8 +161,6 @@ function _mapStateToProps(state, ownProps) {
     //let { remoteParticipants } = state['features/filmstrip'];
 
     const { remote } = state["features/base/participants"];
-    const { recentActiveParticipants } =
-            state["features/base/participants/recentActive"];
 
     const activeParticipants = getActiveParticipantsIds(state);
     const { testing = {} } = state['features/base/config'];
@@ -182,7 +180,10 @@ function _mapStateToProps(state, ownProps) {
     // const remoteParticipants = stageFilmstrip ? sortedActiveParticipants : remote;
     //const remoteParticipantsLength = remoteParticipants.length;
 
-    const remoteParticipants = getCustomOrderedRemoteParticipants(state);
+    const remoteParticipantObj = getCustomOrderedRemoteParticipants(state);
+    const remoteParticipants = remoteParticipantObj.map(p => p.id);
+    console.log('HERE2');
+    console.log(remoteParticipants);
     let remoteParticipantsLength = remoteParticipants.length;
     //const isLocalTrainer = getIsLocalTrainer(state);
     const localId = getLocalParticipant(state).id;
