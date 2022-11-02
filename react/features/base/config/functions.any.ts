@@ -21,8 +21,6 @@ import { FEATURE_FLAGS, _CONFIG_STORE_PREFIX } from './constants';
 import INTERFACE_CONFIG_WHITELIST from './interfaceConfigWhitelist';
 import logger from './logger';
 
-
-
 // Sally - For local testing only  -- REMOVE
 //     channelLastN: 3
 
@@ -34,6 +32,7 @@ var configOverride = {
         "camera",
         "desktop",
         "profile",
+        "select-background",
         "settings",
         "filmstrip",
     ],
