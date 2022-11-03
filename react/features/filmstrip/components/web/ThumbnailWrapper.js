@@ -182,8 +182,6 @@ function _mapStateToProps(state, ownProps) {
 
     const remoteParticipantObj = getCustomOrderedRemoteParticipants(state);
     const remoteParticipants = remoteParticipantObj.map(p => p.id);
-    console.log('HERE2');
-    console.log(remoteParticipants);
     let remoteParticipantsLength = remoteParticipants.length;
     //const isLocalTrainer = getIsLocalTrainer(state);
     const localId = getLocalParticipant(state).id;
