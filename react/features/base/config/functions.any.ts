@@ -37,6 +37,7 @@ var configOverride = {
         "filmstrip",
         "tileview",
     ],
+    disabledSounds: ['PARTICIPANT_JOINED_SOUND', 'PARTICIPANT_LEFT_SOUND'],
     testing: {
         enableThumbnailReordering: false,
     },
