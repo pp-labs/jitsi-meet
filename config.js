@@ -1031,7 +1031,7 @@ var config = {
     // - 'RECORDING_OFF_SOUND'
     // - 'RECORDING_ON_SOUND'
     // - 'TALK_WHILE_MUTED_SOUND'
-    // disabledSounds: [],
+    disabledSounds: ['PARTICIPANT_JOINED_SOUND', 'PARTICIPANT_LEFT_SOUND'],
 
     // DEPRECATED! Use `disabledSounds` instead.
     // Decides whether the start/stop recording audio notifications should play on record.
