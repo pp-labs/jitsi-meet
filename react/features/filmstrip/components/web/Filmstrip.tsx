@@ -16,6 +16,8 @@ import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
 import Icon from '../../../base/icons/components/Icon';
 import { IconMenuDown, IconMenuUp } from '../../../base/icons/svg';
+// eslint-disable-next-line max-len
+import { getCustomOrderedRemoteParticipants, getHiddenRemoteParticipants, getIsLocalTrainer } from '../../../base/participants/functions';
 import { Participant } from '../../../base/participants/types';
 import { connect } from '../../../base/redux/functions';
 // @ts-ignore
@@ -54,7 +56,6 @@ import {
 } from '../../functions';
 
 // sally
-import { getCustomOrderedRemoteParticipants, getHiddenRemoteParticipants, getIsLocalTrainer } from "../../../base/participants"
 
 // @ts-ignore
 import AudioTracksContainer from './AudioTracksContainer';
@@ -76,6 +77,8 @@ interface Props extends WithTranslation {
      * Additional CSS class names top add to the root.
      */
     _className: string;
+
+    _clientHeight: number;
 
     /**
      * The number of columns in tile view.
@@ -108,6 +111,11 @@ interface Props extends WithTranslation {
     _hasScroll: boolean;
 
     /**
+     * Sally = The trainrs in the call (non tile view - hidden!).
+     */
+    _hiddenRemoteParticipants: Array<Object>;
+
+    /**
      * Whether this is a recorder or not.
      */
     _iAmRecorder: boolean;
@@ -116,6 +124,11 @@ interface Props extends WithTranslation {
      * Whether the filmstrip button is enabled.
      */
     _isFilmstripButtonEnabled: boolean;
+
+    /**
+     * Sally - Whether local participant is the traier.
+     */
+    _isLocalTrainer: boolean;
 
     /**
     * Whether or not the toolbox is displayed.
@@ -147,26 +160,12 @@ interface Props extends WithTranslation {
      */
     _maxTopPanelHeight: number;
 
+    _recentActiveParticipants: Array<Object>;
+
     /**
      * The participants in the call.
      */
     _remoteParticipants: Array<Object>;
-
-    /**
-     * Sally = The trainrs in the call (non tile view - hidden!)
-     */
-    _hiddenRemoteParticipants: Array<Object>;
-
-    /**
-     * Sally - Whether local participant is the traier
-     */
-    _isLocalTrainer: boolean;
-
-    _clientHeight: number;
-
-    _tracks: Array<Object>;
-    _recentActiveParticipants: Array<Object>;
-
     /**
      * The length of the remote participants array.
      */
@@ -216,6 +215,8 @@ interface Props extends WithTranslation {
      * Whether or not the top panel is visible.
      */
     _topPanelVisible: boolean;
+
+    _tracks: Array<Object>;
 
     /**
      * The width of the vertical filmstrip (user resized).
@@ -421,7 +422,6 @@ class Filmstrip extends PureComponent <Props, State> {
         }
 
 
-
         const filmstrip = (<>
             <div
                 className = { clsx(this.props._videosClassName,
@@ -460,11 +460,11 @@ class Filmstrip extends PureComponent <Props, State> {
                 {
                     this._renderRemoteParticipants()
                 }
-                {/*{ Sally - render hidden remote participants audio tracks }*/}
+                {/* { Sally - render hidden remote participants audio tracks }*/}
                 {
-                   this._renderHiddenRemoteParticipants()
+                    this._renderHiddenRemoteParticipants()
                 }
-                {/*{ Sally - moved toolbar button }*/}
+                {/* { Sally - moved toolbar button }*/}
                 {toolbar}
             </div>
         </>);
@@ -477,8 +477,8 @@ class Filmstrip extends PureComponent <Props, State> {
                     _verticalViewGrid && 'no-vertical-padding',
                     _verticalViewBackground && classes.filmstripBackground) }
                 style = { filmstripStyle }>
-                {/*sally - move tooldbar button*/}
-                {/*{ toolbar }*/}
+                {/* sally - move tooldbar button*/}
+                {/* { toolbar }*/}
                 {_resizableFilmstrip
                     ? <div
                         className = { clsx('resizable-filmstrip', classes.resizableFilmstripContainer,
@@ -637,13 +637,11 @@ class Filmstrip extends PureComponent <Props, State> {
      */
     _gridItemKey({ columnIndex, rowIndex }: { columnIndex: number; rowIndex: number; }) {
         const {
-            _disableSelfView,
             _columns,
             _iAmRecorder,
             _remoteParticipants,
             _remoteParticipantsLength,
-            _thumbnailsReordered,
-            _isLocalTrainer
+            _thumbnailsReordered
         } = this.props;
         const index = (rowIndex * _columns) + columnIndex;
 
@@ -652,7 +650,7 @@ class Filmstrip extends PureComponent <Props, State> {
         // const localIndex = _thumbnailsReordered && !_disableSelfView ? 0 : _remoteParticipantsLength;
         // const remoteIndex = _thumbnailsReordered && !_iAmRecorder && !_disableSelfView ? index - 1 : index;
 
-          // undo local trainer reorder
+        // undo local trainer reorder
         const localIndex = _thumbnailsReordered ? 0 : _remoteParticipantsLength;
         const remoteIndex = _thumbnailsReordered && !_iAmRecorder ? index - 1 : index;
 
@@ -707,7 +705,6 @@ class Filmstrip extends PureComponent <Props, State> {
     }
 
 
-
     /**
      * Renders the thumbnails for remote participants.
      *
@@ -715,21 +712,19 @@ class Filmstrip extends PureComponent <Props, State> {
      */
     _renderHiddenRemoteParticipants() {
         const {
-            _currentLayout,
-            _hiddenRemoteParticipants,
+            _hiddenRemoteParticipants
         } = this.props;
 
-      return (
-          <div id='hiddenRemoteVideos'>
-            {_hiddenRemoteParticipants.map(p=> (
-              <Thumbnail
-                key={`remote_${p}`}
-                participantID={p}
-              />
-            ))}
-          </div>
-      )
-    };
+        return (
+            <div id = 'hiddenRemoteVideos'>
+                {_hiddenRemoteParticipants.map(p => (
+                    <Thumbnail
+                        key = { `remote_${p}` }
+                        participantID = { p } />
+                ))}
+            </div>
+        );
+    }
 
     /**
      * Renders the thumbnails for remote participants.
@@ -827,7 +822,6 @@ class Filmstrip extends PureComponent <Props, State> {
             </FixedSizeList>
         );
     }
-
 
 
     /**
@@ -946,9 +940,9 @@ class Filmstrip extends PureComponent <Props, State> {
  * @returns {Props}
  */
 function _mapStateToProps(state: IState, ownProps: Partial<Props>) {
-    const { _hasScroll = false, filmstripType, _topPanelFilmstrip, _remoteParticipants } = ownProps;
+    const { _hasScroll = false, filmstripType, _topPanelFilmstrip } = ownProps;
     const toolbarButtons = getToolbarButtons(state);
-    const { testing = {}, iAmRecorder } = state['features/base/config'];
+    const { iAmRecorder } = state['features/base/config'];
     // sally disable thumbnail reodering
     // const enableThumbnailReordering = testing.enableThumbnailReordering ?? true;
     const enableThumbnailReordering = false;
@@ -1002,7 +996,7 @@ function _mapStateToProps(state: IState, ownProps: Partial<Props>) {
         _mainFilmstripVisible: visible,
         _maxFilmstripWidth: clientWidth - MIN_STAGE_VIEW_WIDTH,
         _maxTopPanelHeight: clientHeight - MIN_STAGE_VIEW_HEIGHT,
-        //_remoteParticipantsLength: _remoteParticipants?.length,
+        // _remoteParticipantsLength: _remoteParticipants?.length,
         _remoteParticipantsLength: remoteParticipants?.length,
         _thumbnailsReordered: enableThumbnailReordering,
         _topPanelHeight: topPanelHeight.current,
