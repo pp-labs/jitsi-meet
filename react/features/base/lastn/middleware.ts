@@ -21,15 +21,12 @@ import {
     getParticipantById,
     getParticipantCount
 } from '../participants/functions';
-import {
-    CLIENT_RESIZED
-} from '../responsive-ui/actionTypes';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
+import { CLIENT_RESIZED } from '../responsive-ui/actionTypes';
 import { isLocalVideoTrackDesktop } from '../tracks/functions';
 
 import { setLastN } from './actions';
 import { limitLastN } from './functions';
-import { getCurrentLayout, getTileViewGridDimensions, shouldDisplayTileView, LAYOUTS } from '../../video-layout';
 import logger from './logger';
 
 /**
@@ -44,8 +41,8 @@ const _updateLastN = debounce(({ dispatch, getState }: IStore) => {
     const { conference } = state['features/base/conference'];
 
     // sally
-    const layout = getCurrentLayout(state)
-    const { clientHeight } = state['features/base/responsive-ui'];
+    // const layout = getCurrentLayout(state);
+    // const { clientHeight } = state['features/base/responsive-ui'];
 
     if (!conference) {
         logger.debug('There is no active conference, not updating last N');
@@ -65,15 +62,19 @@ const _updateLastN = debounce(({ dispatch, getState }: IStore) => {
     // 1. The last-n value from 'startLastN' if it is specified in config.js
     // 2. The last-n value from 'channelLastN' if specified in config.js.
     // 3. -1 as the default value.
-    let lastNSelected = config.startLastN ?? (config.channelLastN ?? -1);
+    let lastNSelected = config.startLastN ?? config.channelLastN ?? -1;
 
     // Apply last N limit based on the # of participants and config settings.
     // @ts-ignore
     const limitedLastN = limitLastN(participantCount, lastNLimits);
 
     if (limitedLastN !== undefined) {
-        lastNSelected = lastNSelected === -1 ? limitedLastN : Math.min(limitedLastN, lastNSelected);
+        lastNSelected
+            = lastNSelected === -1
+                ? limitedLastN
+                : Math.min(limitedLastN, lastNSelected);
     }
+
     // sally  - hard code lastn to 6 for Tile View
     // if (layout === LAYOUTS.TILE_VIEW) {
     //     lastN = 6;
@@ -87,16 +88,27 @@ const _updateLastN = debounce(({ dispatch, getState }: IStore) => {
     } else if (carMode) {
         lastNSelected = 0;
     } else if (audioOnly) {
-        const { remoteScreenShares, tileViewEnabled } = state['features/video-layout'];
-        const largeVideoParticipantId = state['features/large-video'].participantId;
-        const largeVideoParticipant
-            = largeVideoParticipantId ? getParticipantById(state, largeVideoParticipantId) : undefined;
+        const { remoteScreenShares, tileViewEnabled }
+            = state['features/video-layout'];
+        const largeVideoParticipantId
+            = state['features/large-video'].participantId;
+        const largeVideoParticipant = largeVideoParticipantId
+            ? getParticipantById(state, largeVideoParticipantId)
+            : undefined;
 
         // Use tileViewEnabled state from redux here instead of determining if client should be in tile
         // view since we make an exception only for screenshare when in audio-only mode. If the user unpins
         // the screenshare, lastN will be set to 0 here. It will be set to 1 if screenshare has been auto pinned.
-        if (!tileViewEnabled && largeVideoParticipant && !largeVideoParticipant.local) {
-            lastNSelected = (remoteScreenShares || []).includes(largeVideoParticipantId ?? '') ? 1 : 0;
+        if (
+            !tileViewEnabled
+            && largeVideoParticipant
+            && !largeVideoParticipant.local
+        ) {
+            lastNSelected = (remoteScreenShares || []).includes(
+                largeVideoParticipantId ?? ''
+            )
+                ? 1
+                : 0;
         } else {
             lastNSelected = 0;
         }
@@ -107,10 +119,10 @@ const _updateLastN = debounce(({ dispatch, getState }: IStore) => {
     dispatch(setLastN(lastNSelected));
 }, 1000); /* Don't send this more often than once a second. */
 
-
 MiddlewareRegistry.register(store => next => action => {
     const result = next(action);
-    //sally - set lastn on client resize == add case CLIENT_RESIZED:
+
+    // sally - set lastn on client resize == add case CLIENT_RESIZED:
     switch (action.type) {
     case APP_STATE_CHANGED:
     case CONFERENCE_JOINED:

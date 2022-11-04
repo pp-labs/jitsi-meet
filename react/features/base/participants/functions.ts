@@ -40,7 +40,6 @@ import {
 import { preloadImage } from './preloadImage';
 import { Participant } from './types';
 
-
 /**
  * Temp structures for avatar urls to be checked/preloaded.
  */
@@ -746,9 +745,7 @@ export function hasRaisedHand(participant?: Participant): boolean {
 // BEGIN SALLY CUSTOM FUNCTIONS
 
 // eslint-disable-next-line
-export function getCustomRemoteParticipants(
-        stateful: Object | Function
-) {
+export function getCustomRemoteParticipants(stateful: Object | Function) {
     const state = toState(stateful as Function);
     // const _currentLayout = getCurrentLayout(state);
     // let { remoteParticipants } = state['features/filmstrip'];
@@ -781,30 +778,26 @@ export function getCustomTrainers(stateful: Object | Function, id: string) {
 
 // sally - custom functiont to get max remtoe participants based on tile/vertical view and client height
 // eslint-disable-next-line
-export function getMaxVisibleRemoteParticipants(
-        stateful: Object | Function
-) {
-    const state = toState(stateful as Function);
-    const _currentLayout = getCurrentLayout(state);
-    const { clientHeight } = state['features/base/responsive-ui'];
+export function getMaxVisibleRemoteParticipants(stateful: Object | Function) {
+    // const state = toState(stateful as Function);
+    // const _currentLayout = getCurrentLayout(state);
+    // const { clientHeight } = state['features/base/responsive-ui'];
 
-    const tileViewActive = _currentLayout === LAYOUTS.TILE_VIEW;
+    // const tileViewActive = _currentLayout === LAYOUTS.TILE_VIEW;
     // tile view - max videos = 6 (icluding one local video)
-    let maxVisibleRemoteParticipants = 5;
+    const maxVisibleRemoteParticipants = 5;
 
     // sally - set max viewable participants without srollbar
-    if (!tileViewActive) {
-        // sally - height minus toolbar (80) minus local video (120), divide by thumb height
-        maxVisibleRemoteParticipants = Math.floor((clientHeight - 200) / 120);
-    }
+    // if (!tileViewActive) {
+    //     // sally - height minus toolbar (80) minus local video (120), divide by thumb height
+    //     maxVisibleRemoteParticipants = Math.floor((clientHeight - 200) / 120);
+    // }
 
     return maxVisibleRemoteParticipants;
 }
 
 // eslint-disable-next-line
-export function getCntVisibileActiveSpeakers(
-        stateful: Object | Function
-) {
+export function getCntVisibileActiveSpeakers(stateful: Object | Function) {
     const state = toState(stateful as Function);
     const _currentLayout = getCurrentLayout(state);
     const remoteParticipants = getCustomRemoteParticipants(state);
@@ -823,10 +816,9 @@ export function getCntVisibileActiveSpeakers(
     }
 
     return Math.min(
-            remoteParticipants.length - cntTrainers,
-            maxVisibleRemoteParticipants
+        remoteParticipants.length - cntTrainers,
+        maxVisibleRemoteParticipants
     );
-
 }
 
 // sally = function to get order remote participants
@@ -849,11 +841,21 @@ export function getCustomOrderedRemoteParticipants(
     // const localParticipant = getLocalParticipant(_participants);
 
     const tileViewActive = _currentLayout === LAYOUTS.TILE_VIEW;
+    const isTrainerScreensharing = remoteParticipants.some(
+        p =>
+            p?.name?.startsWith('Trainer') && p?.isVirtualScreenshareParticipant
+    );
 
     // sally - no trainer in left side
+    // nino - Trainer cam when screensharing, otherwise no trainer cam
     if (!tileViewActive) {
         remoteParticipants = remoteParticipants.filter(
-            p => !p.name?.startsWith('Trainer') && !p.local
+            p =>
+                !(
+                    p.name?.startsWith('Trainer')
+                    && (!isTrainerScreensharing
+                        || p.isVirtualScreenshareParticipant)
+                ) && !p.local
         );
     }
 
@@ -935,7 +937,11 @@ export function getCustomOrderedRemoteParticipants(
         // if (isRemoteParticipant && (dmInput.isVideoPlayable && !dmInput.videoStreamMuted)
     });
     remoteParticipants.sort((a, b) => {
-        if (a.order === b.order || a.order === undefined || b.order === undefined) {
+        if (
+            a.order === b.order
+            || a.order === undefined
+            || b.order === undefined
+        ) {
             return 0;
         }
 
@@ -952,7 +958,11 @@ export function getCustomOrderedRemoteParticipants(
                 remoteParticipants[i].order = 3;
             }
             remoteParticipants.sort((a, b) => {
-                if (a.order === b.order || a.order === undefined || b.order === undefined) {
+                if (
+                    a.order === b.order
+                    || a.order === undefined
+                    || b.order === undefined
+                ) {
                     return 0;
                 }
 
@@ -996,8 +1006,10 @@ export function getCustomOrderedRemoteParticipants(
     //         className += ' local-participant'
     //     }
 
-    remoteParticipants = remoteParticipants
-        .slice(0, maxVisibleRemoteParticipants);
+    remoteParticipants = remoteParticipants.slice(
+        0,
+        maxVisibleRemoteParticipants
+    );
 
     return remoteParticipants;
 }
@@ -1005,9 +1017,7 @@ export function getCustomOrderedRemoteParticipants(
 // sally = function to get all hidden remote participants
 
 // eslint-disable-next-line
-export function getHiddenRemoteParticipants(
-        stateful: Object | Function
-) {
+export function getHiddenRemoteParticipants(stateful: Object | Function) {
     const state = toState(stateful as Function);
     // const _currentLayout = getCurrentLayout(state);
     const remoteParticipants = getCustomRemoteParticipants(state);

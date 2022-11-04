@@ -733,7 +733,8 @@ class Thumbnail extends Component<Props, State> {
             // nino - remove click tileView Participants
             //dispatch(togglePinStageParticipant(id));
         } else {
-            dispatch(pinParticipant(pinned ? null : id));
+            // nino - remove click pin
+            // dispatch(pinParticipant(pinned ? null : id));
         }
     }
 

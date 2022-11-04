@@ -177,13 +177,14 @@ class Thumbnail extends PureComponent<Props> {
      * @returns {void}
      */
     _onClick() {
-        const { _participantId, _pinned, dispatch, tileView } = this.props;
+        //nino remove click interactions
+        // const { _participantId, _pinned, dispatch, tileView } = this.props;
 
-        if (tileView) {
-            dispatch(toggleToolboxVisible());
-        } else {
-            dispatch(pinParticipant(_pinned ? null : _participantId));
-        }
+        // if (tileView) {
+        //     dispatch(toggleToolboxVisible());
+        // } else {
+        //     dispatch(pinParticipant(_pinned ? null : _participantId));
+        // }
     }
 
     _onThumbnailLongPress: () => void;

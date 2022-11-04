@@ -24,22 +24,25 @@ import logger from './logger';
 // Sally - For local testing only  -- REMOVE
 //     channelLastN: 3
 
-var configOverride = {
-    startWithAudioMuted: true,
-    startWithVideoMuted: true,
-    toolbarButtons: [
-        "microphone",
-        "camera",
-        "desktop",
-        "profile",
-        "select-background",
-        "settings",
-        "filmstrip",
-    ],
-    testing: {
-        enableThumbnailReordering: false,
-    },
-};
+const configOverride = undefined;
+// var configOverride = {
+//     startWithAudioMuted: true,
+//     startWithVideoMuted: true,
+//     toolbarButtons: [
+//         "microphone",
+//         "camera",
+//         "desktop",
+//         "profile",
+//         "select-background",
+//         "settings",
+//         "filmstrip",
+//         "tileview",
+//     ],
+//     disabledSounds: ['PARTICIPANT_JOINED_SOUND', 'PARTICIPANT_LEFT_SOUND'],
+//     testing: {
+//         enableThumbnailReordering: false,
+//     },
+// };
 
 // XXX The function getRoomName is split out of
 // functions.any.js because it is bundled in both app.bundle and

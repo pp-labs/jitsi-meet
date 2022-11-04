@@ -364,25 +364,25 @@ export function setStageFilmstripViewDimensions() {
  * @returns {Function}
  */
 export function clickOnVideo(n: number) {
-    return (dispatch: Function, getState: Function) => {
-        const state = getState();
-        const { id: localId } = getLocalParticipant(state);
+    // return (dispatch: Function, getState: Function) => {
+    //     const state = getState();
+    //     const { id: localId } = getLocalParticipant(state);
 
-        // Use the list that correctly represents the current order of the participants as visible in the UI.
-        const { remoteParticipants } = state['features/filmstrip'];
-        const participants = [ localId, ...remoteParticipants ];
+    //     // Use the list that correctly represents the current order of the participants as visible in the UI.
+    //     const { remoteParticipants } = state['features/filmstrip'];
+    //     const participants = [ localId, ...remoteParticipants ];
 
-        if (participants.length - 1 < n) {
-            return;
-        }
-        const { id, pinned } = getParticipantById(state, participants[n]);
+    //     if (participants.length - 1 < n) {
+    //         return;
+    //     }
+    //     const { id, pinned } = getParticipantById(state, participants[n]);
 
-        if (isStageFilmstripAvailable(state)) {
-            dispatch(togglePinStageParticipant(id));
-        } else {
-            dispatch(pinParticipant(pinned ? null : id));
-        }
-    };
+    //     if (isStageFilmstripAvailable(state)) {
+    //         dispatch(togglePinStageParticipant(id));
+    //     } else {
+    //         dispatch(pinParticipant(pinned ? null : id));
+    //     }
+    // };
 }
 
 /**

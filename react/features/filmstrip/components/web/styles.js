@@ -51,7 +51,7 @@ export const styles = (theme) => {
 
         toggleVerticalFilmstripContainer: {
             transform: "rotate(-90deg)",
-            left: "calc(-24px - 3px - 4px)",
+            left: "-40px",
             top: "calc(50% - 12px)",
         },
 
