@@ -160,6 +160,7 @@ interface Props extends WithTranslation {
      */
     _maxTopPanelHeight: number;
 
+    _remoteParticipants: Array<Object>;
     /**
      * The length of the remote participants array.
      */
@@ -1001,7 +1002,7 @@ function _mapStateToProps(state: IState, ownProps: Partial<Props>) {
         _videosClassName: videosClassName,
         _clientHeight: clientHeight,
         _hiddenRemoteParticipants: hiddenRemoteParticipants,
-        _isLocalTrainer: isLocalTrainer,
+        _isLocalTrainer: isLocalTrainer
     };
 }
 

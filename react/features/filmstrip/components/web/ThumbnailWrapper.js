@@ -227,7 +227,7 @@ function _mapStateToProps(state, ownProps) {
         }
 
         // sally
-        participantsLength = remoteParticipantsLength + 1;
+       // participantsLength = remoteParticipantsLength + 1;
 
         if (rowIndex === rows - 1) { // center the last row
             const partialLastRowParticipantsNumber = participantsLength % columns;

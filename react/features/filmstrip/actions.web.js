@@ -3,11 +3,11 @@ import type { Dispatch } from 'redux';
 
 import { getSourceNameSignalingFeatureFlag } from '../base/config';
 import {
+    getCustomOrderedRemoteParticipants,
     getLocalParticipant,
     getParticipantById,
     getRemoteParticipantCount,
-    pinParticipant,
-    getCustomOrderedRemoteParticipants
+    pinParticipant
 } from '../base/participants';
 import { shouldHideSelfView } from '../base/settings/functions.any';
 import { getMaxColumnCount } from '../video-layout';
@@ -94,15 +94,17 @@ export function setTileViewDimensions() {
             disableTileEnlargement,
             tileView = {}
         } = state['features/base/config'];
+
         // sally
-        //const { numberOfVisibleTiles = TILE_VIEW_DEFAULT_NUMBER_OF_VISIBLE_TILES } = tileView;
+        // const { numberOfVisibleTiles = TILE_VIEW_DEFAULT_NUMBER_OF_VISIBLE_TILES } = tileView;
         // const numberOfParticipants = getNumberOfPartipantsForTileView(state);
         const remoteVisableParticipants = getCustomOrderedRemoteParticipants(state);
-        const numberOfParticipants = (remoteVisableParticipants?.length || 0) + 1;
+        const numberOfParticipants = remoteVisableParticipants?.length || 0 + 1;
         const numberOfVisibleTiles = numberOfParticipants;
 
-        //const maxColumns = getMaxColumnCount(state);
+        // const maxColumns = getMaxColumnCount(state);
         const maxColumns = 3;
+
         // end sally
 
 
