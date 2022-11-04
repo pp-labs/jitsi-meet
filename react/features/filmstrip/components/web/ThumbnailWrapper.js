@@ -5,7 +5,7 @@ import { shouldComponentUpdate } from 'react-window';
 import { getSourceNameSignalingFeatureFlag } from '../../../base/config';
 // sally
 import { MEDIA_TYPE, VideoTrack } from '../../../base/media';
-import { getCustomOrderedRemoteParticipants, getIsLocalTrainer, getLocalParticipant } from '../../../base/participants';
+import { getCustomOrderedRemoteParticipants, getIsLocalTrainer, getLocalParticipant, getCntVisibileActiveSpeakers } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { shouldHideSelfView } from '../../../base/settings/functions.any';
 import { LAYOUTS, getCurrentLayout } from '../../../video-layout';
@@ -163,6 +163,7 @@ function _mapStateToProps(state, ownProps) {
     const { remote } = state["features/base/participants"];
 
     const activeParticipants = getActiveParticipantsIds(state);
+    const cntVisibileActiveSpeakers = getCntVisibileActiveSpeakers(state);
     const { testing = {} } = state['features/base/config'];
     const disableSelfView = shouldHideSelfView(state);
      //const enableThumbnailReordering = testing.enableThumbnailReordering ?? true;
@@ -182,8 +183,6 @@ function _mapStateToProps(state, ownProps) {
 
     const remoteParticipantObj = getCustomOrderedRemoteParticipants(state);
     const remoteParticipants = remoteParticipantObj.map(p => p.id);
-    console.log('HERE2');
-    console.log(remoteParticipants);
     let remoteParticipantsLength = remoteParticipants.length;
     //const isLocalTrainer = getIsLocalTrainer(state);
     const localId = getLocalParticipant(state).id;
@@ -226,6 +225,9 @@ function _mapStateToProps(state, ownProps) {
         } else {
             participantsLength = remoteParticipantsLength + (iAmRecorder ? 0 : 1) - (disableSelfView ? 1 : 0);
         }
+
+        // sally
+        participantsLength = remoteParticipantsLength + 1;
 
         if (rowIndex === rows - 1) { // center the last row
             const partialLastRowParticipantsNumber = participantsLength % columns;

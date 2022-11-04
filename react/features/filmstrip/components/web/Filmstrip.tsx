@@ -148,11 +148,6 @@ interface Props extends WithTranslation {
     _maxTopPanelHeight: number;
 
     /**
-     * The participants in the call.
-     */
-    _remoteParticipants: Array<Object>;
-
-    /**
      * Sally = The trainrs in the call (non tile view - hidden!)
      */
     _hiddenRemoteParticipants: Array<Object>;
@@ -1014,7 +1009,6 @@ function _mapStateToProps(state: IState, ownProps: Partial<Props>) {
         _clientHeight: clientHeight,
         _hiddenRemoteParticipants: hiddenRemoteParticipants,
         _isLocalTrainer: isLocalTrainer,
-        _remoteParticipants: remoteParticipants
     };
 }
 

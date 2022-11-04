@@ -6,7 +6,8 @@ import {
     getLocalParticipant,
     getParticipantById,
     getRemoteParticipantCount,
-    pinParticipant
+    pinParticipant,
+    getCustomOrderedRemoteParticipants
 } from '../base/participants';
 import { shouldHideSelfView } from '../base/settings/functions.any';
 import { getMaxColumnCount } from '../video-layout';
@@ -93,9 +94,17 @@ export function setTileViewDimensions() {
             disableTileEnlargement,
             tileView = {}
         } = state['features/base/config'];
-        const { numberOfVisibleTiles = TILE_VIEW_DEFAULT_NUMBER_OF_VISIBLE_TILES } = tileView;
-        const numberOfParticipants = getNumberOfPartipantsForTileView(state);
-        const maxColumns = getMaxColumnCount(state);
+        // sally
+        //const { numberOfVisibleTiles = TILE_VIEW_DEFAULT_NUMBER_OF_VISIBLE_TILES } = tileView;
+        // const numberOfParticipants = getNumberOfPartipantsForTileView(state);
+        const remoteVisableParticipants = getCustomOrderedRemoteParticipants(state);
+        const numberOfParticipants = (remoteVisableParticipants?.length || 0) + 1;
+        const numberOfVisibleTiles = numberOfParticipants;
+
+        //const maxColumns = getMaxColumnCount(state);
+        const maxColumns = 3;
+        // end sally
+
 
         const {
             height,
