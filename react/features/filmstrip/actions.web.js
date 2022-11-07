@@ -99,7 +99,7 @@ export function setTileViewDimensions() {
         // const { numberOfVisibleTiles = TILE_VIEW_DEFAULT_NUMBER_OF_VISIBLE_TILES } = tileView;
         // const numberOfParticipants = getNumberOfPartipantsForTileView(state);
         const remoteVisableParticipants = getCustomOrderedRemoteParticipants(state);
-        const numberOfParticipants = remoteVisableParticipants?.length || 0 + 1;
+        const numberOfParticipants = (remoteVisableParticipants?.length || 0) + 1;
         const numberOfVisibleTiles = numberOfParticipants;
 
         // const maxColumns = getMaxColumnCount(state);
