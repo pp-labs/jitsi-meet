@@ -132,7 +132,7 @@ var config = {
     // disablePolls: false,
 
     // Disables self-view tile. (hides it from tile view and from filmstrip)
-    // disableSelfView: false,
+    disableSelfView: false,
 
     // Disables self-view settings in UI
     // disableSelfViewSettings: false,

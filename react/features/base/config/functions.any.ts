@@ -1,31 +1,33 @@
 /* eslint-disable lines-around-comment */
 // @ts-ignore
-import Bourne from '@hapi/bourne';
+import Bourne from "@hapi/bourne";
 // @ts-ignore
-import { jitsiLocalStorage } from '@jitsi/js-utils';
-import _ from 'lodash';
+import { jitsiLocalStorage } from "@jitsi/js-utils";
+import _ from "lodash";
 
 // @ts-ignore
 // eslint-disable-next-line import/order
 // import { config as configOverride } from '../../../../config'; //dev testing only
 
 // @ts-ignore
-import { interfaceConfig as interfaceConfigOverride } from '../../../../interface_config';
-import { IState } from '../../app/types';
-import { browser } from '../lib-jitsi-meet';
-import { parseURLParams } from '../util/parseURLParams';
+import { interfaceConfig as interfaceConfigOverride } from "../../../../interface_config";
+import { IState } from "../../app/types";
+import { browser } from "../lib-jitsi-meet";
+import { parseURLParams } from "../util/parseURLParams";
 
-import { IConfig } from './configType';
-import CONFIG_WHITELIST from './configWhitelist';
-import { FEATURE_FLAGS, _CONFIG_STORE_PREFIX } from './constants';
-import INTERFACE_CONFIG_WHITELIST from './interfaceConfigWhitelist';
-import logger from './logger';
+import { IConfig } from "./configType";
+import CONFIG_WHITELIST from "./configWhitelist";
+import { FEATURE_FLAGS, _CONFIG_STORE_PREFIX } from "./constants";
+import INTERFACE_CONFIG_WHITELIST from "./interfaceConfigWhitelist";
+import logger from "./logger";
 
 // Sally - For local testing only  -- REMOVE
 //     channelLastN: 3
 
 const configOverride = undefined;
 // var configOverride = {
+//     disableSelfView: false,
+
 //     startWithAudioMuted: true,
 //     startWithVideoMuted: true,
 //     toolbarButtons: [
@@ -38,7 +40,7 @@ const configOverride = undefined;
 //         "filmstrip",
 //         "tileview",
 //     ],
-//     disabledSounds: ['PARTICIPANT_JOINED_SOUND', 'PARTICIPANT_LEFT_SOUND'],
+//     disabledSounds: ["PARTICIPANT_JOINED_SOUND", "PARTICIPANT_LEFT_SOUND"],
 //     testing: {
 //         enableThumbnailReordering: false,
 //     },
@@ -48,7 +50,7 @@ const configOverride = undefined;
 // functions.any.js because it is bundled in both app.bundle and
 // do_external_connect, webpack 1 does not support tree shaking, and we don't
 // want all functions to be bundled in do_external_connect.
-export { default as getRoomName } from './getRoomName';
+export { default as getRoomName } from "./getRoomName";
 
 /**
  * Create a "fake" configuration object for the given base URL. This is used in case the config
@@ -63,12 +65,12 @@ export function createFakeConfig(baseURL: string) {
     return {
         hosts: {
             domain: url.hostname,
-            muc: `conference.${url.hostname}`
+            muc: `conference.${url.hostname}`,
         },
         bosh: `${baseURL}http-bind`,
         p2p: {
-            enabled: true
-        }
+            enabled: true,
+        },
     };
 }
 
@@ -79,7 +81,7 @@ export function createFakeConfig(baseURL: string) {
  * @returns {string}
  */
 export function getMeetingRegion(state: IState) {
-    return state['features/base/config']?.deploymentInfo?.region || '';
+    return state["features/base/config"]?.deploymentInfo?.region || "";
 }
 
 /**
@@ -90,9 +92,9 @@ export function getMeetingRegion(state: IState) {
  */
 export function getMultipleVideoSupportFeatureFlag(state: IState) {
     return (
-        (getFeatureFlag(state, FEATURE_FLAGS.MULTIPLE_VIDEO_STREAMS_SUPPORT)
-            && getSourceNameSignalingFeatureFlag(state))
-        ?? true
+        (getFeatureFlag(state, FEATURE_FLAGS.MULTIPLE_VIDEO_STREAMS_SUPPORT) &&
+            getSourceNameSignalingFeatureFlag(state)) ??
+        true
     );
 }
 
@@ -104,9 +106,9 @@ export function getMultipleVideoSupportFeatureFlag(state: IState) {
  */
 export function getMultipleVideoSendingSupportFeatureFlag(state: IState) {
     return (
-        navigator.product !== 'ReactNative'
-        && (getMultipleVideoSupportFeatureFlag(state) ?? true)
-        && isUnifiedPlanEnabled(state)
+        navigator.product !== "ReactNative" &&
+        (getMultipleVideoSupportFeatureFlag(state) ?? true) &&
+        isUnifiedPlanEnabled(state)
     );
 }
 
@@ -128,7 +130,7 @@ export function getSourceNameSignalingFeatureFlag(state: IState) {
  * @returns {boolean}
  */
 export function getFeatureFlag(state: IState, featureFlag: string) {
-    const featureFlags = state['features/base/config']?.flags || {};
+    const featureFlags = state["features/base/config"]?.flags || {};
 
     return featureFlags[featureFlag as keyof typeof featureFlags];
 }
@@ -141,7 +143,7 @@ export function getFeatureFlag(state: IState, featureFlag: string) {
  */
 export function getDisableRemoveRaisedHandOnFocus(state: IState) {
     return (
-        state['features/base/config']?.disableRemoveRaisedHandOnFocus || false
+        state["features/base/config"]?.disableRemoveRaisedHandOnFocus || false
     );
 }
 
@@ -152,7 +154,7 @@ export function getDisableRemoveRaisedHandOnFocus(state: IState) {
  * @returns {string}
  */
 export function getRecordingSharingUrl(state: IState) {
-    return state['features/base/config'].recordingSharingUrl;
+    return state["features/base/config"].recordingSharingUrl;
 }
 
 /**
@@ -177,21 +179,21 @@ export function getRecordingSharingUrl(state: IState) {
  * @returns {void}
  */
 export function overrideConfigJSON(
-        config: IConfig,
-        interfaceConfig: any,
-        json: any
+    config: IConfig,
+    interfaceConfig: any,
+    json: any
 ) {
     for (const configName of Object.keys(json)) {
         let configObj;
 
-        if (configName === 'config') {
+        if (configName === "config") {
             configObj = config;
-        } else if (configName === 'interfaceConfig') {
+        } else if (configName === "interfaceConfig") {
             configObj = interfaceConfig;
         }
         if (configObj) {
             const configJSON = getWhitelistedJSON(
-                configName as 'interfaceConfig' | 'config',
+                configName as "interfaceConfig" | "config",
                 json[configName]
             );
 
@@ -225,12 +227,12 @@ export function overrideConfigJSON(
  * that are whitelisted.
  */
 export function getWhitelistedJSON(
-        configName: 'interfaceConfig' | 'config',
-        configJSON: any
+    configName: "interfaceConfig" | "config",
+    configJSON: any
 ): Object {
-    if (configName === 'interfaceConfig') {
+    if (configName === "interfaceConfig") {
         return _.pick(configJSON, INTERFACE_CONFIG_WHITELIST);
-    } else if (configName === 'config') {
+    } else if (configName === "config") {
         return _.pick(configJSON, CONFIG_WHITELIST);
     }
 
@@ -245,8 +247,8 @@ export function getWhitelistedJSON(
  */
 export function isNameReadOnly(state: IState): boolean {
     return Boolean(
-        state['features/base/config'].disableProfile
-            || state['features/base/config'].readOnlyName
+        state["features/base/config"].disableProfile ||
+            state["features/base/config"].readOnlyName
     );
 }
 
@@ -257,7 +259,7 @@ export function isNameReadOnly(state: IState): boolean {
  * @returns {boolean}
  */
 export function isDisplayNameVisible(state: IState): boolean {
-    return !state['features/base/config'].hideDisplayName;
+    return !state["features/base/config"].hideDisplayName;
 }
 
 /**
@@ -267,12 +269,12 @@ export function isDisplayNameVisible(state: IState): boolean {
  * @returns {boolean}
  */
 export function isUnifiedPlanEnabled(state: IState): boolean {
-    const { enableUnifiedOnChrome = true } = state['features/base/config'];
+    const { enableUnifiedOnChrome = true } = state["features/base/config"];
 
     return (
-        browser.supportsUnifiedPlan()
-        && (!browser.isChromiumBased()
-            || (browser.isChromiumBased() && enableUnifiedOnChrome))
+        browser.supportsUnifiedPlan() &&
+        (!browser.isChromiumBased() ||
+            (browser.isChromiumBased() && enableUnifiedOnChrome))
     );
 }
 
@@ -321,9 +323,9 @@ export function restoreConfig(baseURL: string) {
  * @returns {void}
  */
 export function setConfigFromURLParams(
-        config: IConfig,
-        interfaceConfig: any,
-        location: string | URL
+    config: IConfig,
+    interfaceConfig: any,
+    location: string | URL
 ) {
     const params = parseURLParams(location);
     const json: any = {};
@@ -349,8 +351,8 @@ export function setConfigFromURLParams(
 
     for (const param of Object.keys(params)) {
         let base = json;
-        const names = param.split('.');
-        const last = names.pop() ?? '';
+        const names = param.split(".");
+        const last = names.pop() ?? "";
 
         for (const name of names) {
             base = base[name] = base[name] || {};
@@ -371,7 +373,7 @@ export function setConfigFromURLParams(
     if (configOverride) {
         const j = {
             config: configOverride,
-            interfaceConfig: interfaceConfigOverride
+            interfaceConfig: interfaceConfigOverride,
         };
 
         overrideConfigJSON(config, interfaceConfig, j);
