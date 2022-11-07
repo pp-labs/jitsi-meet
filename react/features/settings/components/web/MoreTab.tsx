@@ -305,7 +305,6 @@ class MoreTab extends AbstractDialogTab<Props, {}> {
      */
     _renderSelfViewCheckbox() {
         const { hideSelfView, t } = this.props;
-        return null;
         return (
             <div
                 className = 'settings-sub-pane-element'
@@ -366,22 +365,21 @@ class MoreTab extends AbstractDialogTab<Props, {}> {
      */
     _renderPrejoinScreenSettings() {
         const { t, showPrejoinPage } = this.props;
-        return null;
 
-        // return (
-        //     <div
-        //         className = 'settings-sub-pane-element'
-        //         key = 'prejoin-screen'>
-        //         <span className = 'checkbox-label'>
-        //             { t('prejoin.premeeting') }
-        //         </span>
-        //         <Checkbox
-        //             checked = { showPrejoinPage }
-        //             label = { t('prejoin.showScreen') }
-        //             name = 'show-prejoin-page'
-        //             onChange = { this._onShowPrejoinPageChanged } />
-        //     </div>
-        // );
+        return (
+            <div
+                className = 'settings-sub-pane-element'
+                key = 'prejoin-screen'>
+                <span className = 'checkbox-label'>
+                    { t('prejoin.premeeting') }
+                </span>
+                <Checkbox
+                    checked = { showPrejoinPage }
+                    label = { t('prejoin.showScreen') }
+                    name = 'show-prejoin-page'
+                    onChange = { this._onShowPrejoinPageChanged } />
+            </div>
+        );
     }
 
     /**
@@ -392,7 +390,6 @@ class MoreTab extends AbstractDialogTab<Props, {}> {
      */
     _renderNotificationsSettings() {
         const { t, enabledNotifications } = this.props;
-        return null;
 
         return (
             <div
@@ -423,7 +420,6 @@ class MoreTab extends AbstractDialogTab<Props, {}> {
      */
     _renderMaxStageParticipantsSelect() {
         const { maxStageParticipants, t, stageFilmstripEnabled } = this.props;
-        return null;
 
         if (!stageFilmstripEnabled) {
             return null;
@@ -464,7 +460,8 @@ class MoreTab extends AbstractDialogTab<Props, {}> {
             <div
                 className = 'settings-sub-pane right'
                 key = 'settings-sub-pane-right'>
-                { this._renderLanguageSelect() }
+                {this._renderLanguageSelect()}
+                {/* nino - remove unwanted settings */}
                 {/* { this._renderFramerateSelect() }
                 { this._renderMaxStageParticipantsSelect() } */}
             </div>
@@ -478,18 +475,19 @@ class MoreTab extends AbstractDialogTab<Props, {}> {
      */
     _renderSettingsLeft() {
         const { disableHideSelfView, showNotificationsSettings, showPrejoinSettings } = this.props;
+        // nino - remove unwanted settings
         return null;
 
-        return (
-            <div
-                className = 'settings-sub-pane left'
-                key = 'settings-sub-pane-left'>
-                { showPrejoinSettings && this._renderPrejoinScreenSettings() }
-                { showNotificationsSettings && this._renderNotificationsSettings() }
-                { this._renderKeyboardShortcutCheckbox() }
-                { !disableHideSelfView && this._renderSelfViewCheckbox() }
-            </div>
-        );
+        // return (
+        //     <div
+        //         className = 'settings-sub-pane left'
+        //         key = 'settings-sub-pane-left'>
+        //         { showPrejoinSettings && this._renderPrejoinScreenSettings() }
+        //         { showNotificationsSettings && this._renderNotificationsSettings() }
+        //         { this._renderKeyboardShortcutCheckbox() }
+        //         { !disableHideSelfView && this._renderSelfViewCheckbox() }
+        //     </div>
+        // );
     }
 }
 
