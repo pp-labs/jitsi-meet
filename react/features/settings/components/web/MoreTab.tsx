@@ -368,20 +368,20 @@ class MoreTab extends AbstractDialogTab<Props, {}> {
         const { t, showPrejoinPage } = this.props;
         return null;
 
-        return (
-            <div
-                className = 'settings-sub-pane-element'
-                key = 'prejoin-screen'>
-                <span className = 'checkbox-label'>
-                    { t('prejoin.premeeting') }
-                </span>
-                <Checkbox
-                    checked = { showPrejoinPage }
-                    label = { t('prejoin.showScreen') }
-                    name = 'show-prejoin-page'
-                    onChange = { this._onShowPrejoinPageChanged } />
-            </div>
-        );
+        // return (
+        //     <div
+        //         className = 'settings-sub-pane-element'
+        //         key = 'prejoin-screen'>
+        //         <span className = 'checkbox-label'>
+        //             { t('prejoin.premeeting') }
+        //         </span>
+        //         <Checkbox
+        //             checked = { showPrejoinPage }
+        //             label = { t('prejoin.showScreen') }
+        //             name = 'show-prejoin-page'
+        //             onChange = { this._onShowPrejoinPageChanged } />
+        //     </div>
+        // );
     }
 
     /**
