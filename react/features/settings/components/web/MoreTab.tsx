@@ -305,7 +305,7 @@ class MoreTab extends AbstractDialogTab<Props, {}> {
      */
     _renderSelfViewCheckbox() {
         const { hideSelfView, t } = this.props;
-
+        return null;
         return (
             <div
                 className = 'settings-sub-pane-element'
@@ -366,6 +366,7 @@ class MoreTab extends AbstractDialogTab<Props, {}> {
      */
     _renderPrejoinScreenSettings() {
         const { t, showPrejoinPage } = this.props;
+        return null;
 
         return (
             <div
@@ -391,6 +392,7 @@ class MoreTab extends AbstractDialogTab<Props, {}> {
      */
     _renderNotificationsSettings() {
         const { t, enabledNotifications } = this.props;
+        return null;
 
         return (
             <div
@@ -421,6 +423,7 @@ class MoreTab extends AbstractDialogTab<Props, {}> {
      */
     _renderMaxStageParticipantsSelect() {
         const { maxStageParticipants, t, stageFilmstripEnabled } = this.props;
+        return null;
 
         if (!stageFilmstripEnabled) {
             return null;
@@ -461,9 +464,9 @@ class MoreTab extends AbstractDialogTab<Props, {}> {
             <div
                 className = 'settings-sub-pane right'
                 key = 'settings-sub-pane-right'>
-                { showLanguageSettings && this._renderLanguageSelect() }
-                { this._renderFramerateSelect() }
-                { this._renderMaxStageParticipantsSelect() }
+                { this._renderLanguageSelect() }
+                {/* { this._renderFramerateSelect() }
+                { this._renderMaxStageParticipantsSelect() } */}
             </div>
         );
     }
@@ -475,6 +478,7 @@ class MoreTab extends AbstractDialogTab<Props, {}> {
      */
     _renderSettingsLeft() {
         const { disableHideSelfView, showNotificationsSettings, showPrejoinSettings } = this.props;
+        return null;
 
         return (
             <div

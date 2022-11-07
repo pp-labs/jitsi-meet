@@ -160,7 +160,7 @@ var interfaceConfig = {
 
     // SETTINGS_SECTIONS: [ 'devices', 'language', 'moderator', 'profile', 'calendar', 'sounds' ],
 
-    SETTINGS_SECTIONS: [ 'devices', 'language' ],
+    SETTINGS_SECTIONS: [ 'devices', 'more' ],
 
     /**
      * Specify which sharing features should be displayed. If the value is not set
