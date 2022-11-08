@@ -779,13 +779,13 @@ export function getCustomTrainers(stateful: Object | Function, id: string) {
 // sally - custom functiont to get max remtoe participants based on tile/vertical view and client height
 // eslint-disable-next-line
 export function getMaxVisibleRemoteParticipants(stateful: Object | Function) {
-    // const state = toState(stateful as Function);
-    // const _currentLayout = getCurrentLayout(state);
+    const state = toState(stateful as Function);
+    const _currentLayout = getCurrentLayout(state);
     // const { clientHeight } = state['features/base/responsive-ui'];
 
-    // const tileViewActive = _currentLayout === LAYOUTS.TILE_VIEW;
+    const tileViewActive = _currentLayout === LAYOUTS.TILE_VIEW;
     // tile view - max videos = 6 (icluding one local video)
-    const maxVisibleRemoteParticipants = 6;
+    const maxVisibleRemoteParticipants = tileViewActive ? 5 : 6;
 
     // sally - set max viewable participants without srollbar
     // if (!tileViewActive) {
