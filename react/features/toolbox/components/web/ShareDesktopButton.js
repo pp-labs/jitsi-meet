@@ -1,7 +1,7 @@
 // @flow
 
 import { translate } from '../../../base/i18n';
-import { IconShareDesktop } from '../../../base/icons';
+import { IconShareDesktop, IconShareDesktopRed } from '../../../base/icons';
 import JitsiMeetJS from '../../../base/lib-jitsi-meet/_';
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
@@ -33,9 +33,11 @@ class ShareDesktopButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.shareYourScreen';
     label = 'toolbar.startScreenSharing';
     icon = IconShareDesktop;
+    toggledIcon = IconShareDesktopRed;
     toggledLabel = 'toolbar.stopScreenSharing';
     tooltip = 'toolbar.accessibilityLabel.shareYourScreen';
 
+    
     /**
      * Retrieves tooltip dynamically.
      */
@@ -72,7 +74,6 @@ class ShareDesktopButton extends AbstractButton<Props, *> {
     _isToggled() {
         return this.props._screensharing;
     }
-
     /**
      * Indicates whether this button is in disabled state or not.
      *
@@ -99,7 +100,9 @@ const mapStateToProps = state => {
 
     return {
         _desktopSharingEnabled: desktopSharingEnabled,
-        _screensharing: isScreenVideoShared(state)
+        _screensharing: isScreenVideoShared(state),
+        _isToggled: isScreenVideoShared(state),
+        _getIcon: desktopSharingEnabled ? IconShareDesktop : IconShareDesktopThumb,
     };
 };
 
