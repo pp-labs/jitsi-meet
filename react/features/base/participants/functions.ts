@@ -772,7 +772,10 @@ export function getCustomTrainers(stateful: Object | Function, id: string) {
     if (localParticipant?.name?.startsWith("Trainer")) {
         trainers.unshift(localParticipant);
     }
-
+    const localScreenShare = getLocalScreenShareParticipant(state);
+    if (localScreenShare?.name?.startsWith("Trainer")) {
+        trainers.unshift(localScreenShare);
+    }
     return trainers;
 }
 
@@ -868,7 +871,7 @@ export function getCustomOrderedRemoteParticipants(
     // sally order participants
     remoteParticipants = remoteParticipants.map((p) => {
         if (p.name?.startsWith("Trainer")) {
-                p.order = 1;
+            p.order = 1;
 
             return p;
         }
