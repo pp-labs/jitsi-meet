@@ -823,7 +823,7 @@ export function getCntVisibileActiveSpeakers(stateful: Object | Function) {
     }
 
     return Math.min(
-        remoteParticipants.length, // - cntTrainers,
+        remoteParticipants.length - cntTrainers,
         maxVisibleRemoteParticipants
     );
 }
