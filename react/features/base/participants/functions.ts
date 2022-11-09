@@ -787,7 +787,9 @@ export function getMaxVisibleRemoteParticipants(stateful: Object | Function) {
     // tile view - max videos = 6 (icluding one local video)
     const MAX_TILE_VIEW_VIDEOS = 5;
     const MAX_VERTICAL_VIEW_VIDEOS = 5;
-    const maxVisibleRemoteParticipants = tileViewActive ? MAX_TILE_VIEW_VIDEOS : MAX_VERTICAL_VIEW_VIDEOS;
+    let maxVisibleRemoteParticipants = tileViewActive
+        ? MAX_TILE_VIEW_VIDEOS
+        : MAX_VERTICAL_VIEW_VIDEOS;
 
     // sally - set max viewable participants without srollbar
     // if (!tileViewActive) {
@@ -818,7 +820,7 @@ export function getCntVisibileActiveSpeakers(stateful: Object | Function) {
     }
 
     return Math.min(
-        remoteParticipants.length - cntTrainers,
+        remoteParticipants.length, // - cntTrainers,
         maxVisibleRemoteParticipants
     );
 }
@@ -866,7 +868,7 @@ export function getCustomOrderedRemoteParticipants(
     // sally order participants
     remoteParticipants = remoteParticipants.map((p) => {
         if (p.name?.startsWith("Trainer")) {
-            p.order = 1;
+                p.order = 1;
 
             return p;
         }
