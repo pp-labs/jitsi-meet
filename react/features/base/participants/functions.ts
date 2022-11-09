@@ -785,7 +785,9 @@ export function getMaxVisibleRemoteParticipants(stateful: Object | Function) {
 
     const tileViewActive = _currentLayout === LAYOUTS.TILE_VIEW;
     // tile view - max videos = 6 (icluding one local video)
-    const maxVisibleRemoteParticipants = tileViewActive ? 5 : 6;
+    const MAX_TILE_VIEW_VIDEOS = 5;
+    const MAX_VERTICAL_VIEW_VIDEOS = 5;
+    const maxVisibleRemoteParticipants = tileViewActive ? MAX_TILE_VIEW_VIDEOS : MAX_VERTICAL_VIEW_VIDEOS;
 
     // sally - set max viewable participants without srollbar
     // if (!tileViewActive) {

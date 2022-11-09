@@ -64,7 +64,7 @@ var interfaceConfig = {
      * Whether or not the blurred video background for large video should be
      * displayed on browsers that can support it.
      */
-    DISABLE_VIDEO_BACKGROUND: false,
+    DISABLE_VIDEO_BACKGROUND: true,
 
     DISPLAY_WELCOME_FOOTER: false,
     DISPLAY_WELCOME_PAGE_ADDITIONAL_CARD: false,
