@@ -21,6 +21,8 @@ import UI from './modules/UI/UI';
 import keyboardshortcut from './modules/keyboardshortcut/keyboardshortcut';
 import translation from './modules/translation/translation';
 
+import events from "events";
+events.EventEmitter.defaultMaxListeners = 50;
 // Initialize Olm as early as possible.
 if (window.Olm) {
     window.Olm.init().catch(e => {

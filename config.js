@@ -614,7 +614,7 @@ var config = {
     // Default remote name to be displayed
 
     // Hides the display name from the participant thumbnail
-    hideDisplayName: true,
+    hideDisplayName: false,
 
     // Hides the dominant speaker name badge that hovers above the toolbox
     // hideDominantSpeakerBadge: false,
