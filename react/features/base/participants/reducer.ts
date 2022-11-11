@@ -581,16 +581,16 @@ ReducerRegistry.register<any[]>('features/base/participants/recentActive', (stat
         // eslint-disable-next-line no-case-declarations
         let newState = [ ...state ];
         // eslint-disable-next-line no-case-declarations
-        const index = state.findIndex((p: { id: any; }) => p.id === participant._id);
+        const index = state.findIndex((p: { id: any; }) => p.id === participant?._id);
 
         if (index === -1) {
             newState.push({
-                id: participant._id,
+                id: participant?._id,
                 timeStamp: Date.now()
             });
         } else {
             newState[index] = {
-                id: participant._id,
+                id: participant?._id,
                 timeStamp: Date.now()
             };
         }

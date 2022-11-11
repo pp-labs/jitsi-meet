@@ -669,8 +669,8 @@ class Filmstrip extends PureComponent <Props, State> {
     _onListItemsRendered({ visibleStartIndex, visibleStopIndex }: {
         visibleStartIndex: number; visibleStopIndex: number; }) {
         const { dispatch } = this.props;
-        const { startIndex, stopIndex } = this._calculateIndices(visibleStartIndex, visibleStopIndex + 1);// nino - fix last participant not showing
-        dispatch(setVisibleRemoteParticipants(startIndex, stopIndex)); 
+        const { startIndex, stopIndex } = this._calculateIndices(visibleStartIndex, visibleStopIndex + 5);// nino - fix last participant not showing
+        dispatch(setVisibleRemoteParticipants(0, 6)); 
     }
 
     /**
@@ -695,7 +695,7 @@ class Filmstrip extends PureComponent <Props, State> {
         const stop = (visibleRowStopIndex * _columns) + visibleColumnStopIndex;
         const { startIndex, stopIndex } = this._calculateIndices(start, stop);
 
-        dispatch(setVisibleRemoteParticipants(startIndex, stopIndex));
+        dispatch(setVisibleRemoteParticipants(0, 6));
     }
 
 
