@@ -220,12 +220,13 @@ class LargeVideo extends Component<Props> {
                             autoPlay = { !_noAutoPlayVideo }
                             id = 'largeVideo'
                             muted = { true }
-                            playsInline = { true } /* for Safari on iOS to work */ /> }
+                            playsInline={true} /* for Safari on iOS to work */ />}
+                        {_showDominantSpeakerBadge && <StageParticipantNameLabel />}
                     </div>
                 </div>
                 { interfaceConfig.DISABLE_TRANSCRIPTION_SUBTITLES
                     || <Captions /> }
-                {_showDominantSpeakerBadge && <StageParticipantNameLabel />}
+                
             </div>
         );
     }

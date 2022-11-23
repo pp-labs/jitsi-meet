@@ -24,20 +24,20 @@ const useStyles = makeStyles()((theme: Theme) => {
     return {
         badgeContainer: {
             ...withPixelLineHeight(theme.typography.bodyShortRegularLarge),
-            alignItems: 'center',
+            alignItems: 'left',
             display: 'inline-flex',
-            justifyContent: 'center',
-            marginBottom: theme.spacing(7),
+            justifyContent: 'left',
+            marginBottom: 0,
             transition: 'margin-bottom 0.3s',
             pointerEvents: 'none',
             position: 'absolute',
-            bottom: 0,
-            left: 0,
+            bottom: theme.spacing(1),
+            left: theme.spacing(2),
             width: '100%',
             zIndex: 1
         },
         containerElevated: {
-            marginBottom: theme.spacing(12)
+            marginBottom: theme.spacing(2)
         }
     };
 });
